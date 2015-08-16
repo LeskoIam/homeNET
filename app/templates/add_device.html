@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block table %}
+<h1>Add devices ?</h1>
+    <form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+    <p>
+        Device Name: {{ form.name(size=16) }}
+    </p>
+    <p>
+        Device IP: {{ form.ip(size=16) }}
+    </p>
+    <p>
+        Device Interface: {{ form.interface }}
+    </p>
+    <p>
+        Laptop: {{ form.laptop() }}
+        Tower: {{ form.laptop() }}
+        Handheld: {{ form.laptop() }}
+    </p>
+    <button value="add" type="submit" class="btn btn-success">Add Device</button>
+    </form>
+{% endblock %}

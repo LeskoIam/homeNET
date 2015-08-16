@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block table %}
+<h1>Manage devices ?</h1>
+    <style type="text/css">
+        .lesko{
+            border: 1px solid;
+        }
+    </style>
+
+    <div>
+        <form action="/add_device" method="post" name="login">
+            <button value="add" type="submit" class="btn btn-success">Add Device</button>
+        </form>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Device Id</th>
+                <th>Device Name</th>
+                <th>Device Ip</th>
+                <th>Interface</th>
+                <th>Laptop</th>
+                <th>Tower</th>
+                <th>Handheld</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for device in all_devices %}
+            <tr>
+                <td>{{ device.id }}</td>
+                <td><strong>{{ device.name }}</strong></td>
+                <td>{{ device.ip }}</td>
+                <td>{{ device.interface }}</td>
+                {% if device.laptop %}
+                    <td style="background: chocolate">&nbsp;</td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+                {% if device.tower %}
+                    <td style="background: chocolate">&nbsp;</td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+                {% if device.handheld %}
+                    <td style="background: chocolate">&nbsp;</td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+                <td>
+                    <form action="/edit/{{ device.id|string }}" method="post" name="login">
+                        <button value="edit" type="submit" class="btn btn-default">Edit</button>
+                    </form>
+                    <form action="/delete/{{ device.id|string }}" method="post" name="login">
+                        <button value="delete" type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

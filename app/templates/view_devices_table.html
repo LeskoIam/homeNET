@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block table %}
+    <div class="row">
+    <div class="col-sm-9">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>Device Name</th>
+                <th>Device Ip</th>
+                <th>Device last</th>
+                <th>Average Delay [ms]</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for device in data %}
+            {% if device.up %}
+        	    <tr class="success">
+            {% else %}
+                <tr class="danger">
+            {% endif %}
+            <td>
+            {% if device.interface == "WiFi" %}
+                <span class="glyphicon glyphicon-signal"></span>
+            {% elif device.interface == "web" %}
+                <span class="glyphicon glyphicon-cloud"></span>
+            {% else %}
+                <span class="glyphicon glyphicon-hdd"></span>
+            {% endif %}
+            </td>
+                <td><strong>{{ device.name }}</strong></td>
+                <td>{{ device.ip }}</td>
+{#                <td>{{ device.id }}</td>#}
+{#                <td>{{ device.last_up }}</td>#}
+{#                <td>{{ device.last_down }}</td>#}
+                {% if device.up and device.last_down[1] is not none%}
+                    <td><strong>down</strong> - {{ device.last_down[1] }}</td>
+                {% elif not device.up %}
+                    <td><strong>up</strong> - {{ device.last_up[1] }}</td>
+                {% else %}
+                    <td>&nbsp;</td>
+                {% endif %}
+            <td>{{ device.mean_delay[1] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <div class="col-sm-3">
+        Lesko1
+    </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            Table last updated on {{ update_time }}
+        </div>
+    </div>
+{% endblock %}
