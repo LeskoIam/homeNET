@@ -6,9 +6,12 @@ __author__ = 'Lesko'
 from flask import render_template, request, redirect, flash, jsonify
 from app import app, db
 import sqlalchemy
+from flask.ext.basicauth import BasicAuth
 
 from models import PingerData, LastEntry, Nodes
 from forms import AddNodeForm
+
+basic_auth = BasicAuth(app)
 
 
 @app.route('/table', methods=["GET", "POST"])

@@ -11,3 +11,7 @@ WTF_CSRF_ENABLED = True
 SECRET_KEY = 'you-will-never-guess'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
+
+BASIC_AUTH_FORCE = True
+BASIC_AUTH_USERNAME = "lesko"
+BASIC_AUTH_PASSWORD = "1234"
