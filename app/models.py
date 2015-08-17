@@ -32,9 +32,12 @@ class LastEntry(db.Model):
     date_time = db.Column(db.DateTime, nullable=False)
     last_common_id = db.Column(db.Integer, nullable=False, index=True)
 
-    def __init__(self, date_time, last_common_id):
+    ready_to_read = db.Column(db.Boolean(), nullable=False)
+
+    def __init__(self, date_time, last_common_id, ready_to_read):
         self.date_time = date_time
         self.last_common_id = last_common_id
+        self.ready_to_read = ready_to_read
 
     def __repr__(self):
         return '<LastEntry {0} - {1}>'.format(self.date_time, self.last_common_id)

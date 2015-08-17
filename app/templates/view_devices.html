@@ -43,7 +43,7 @@
                 {% else %}
                     <td>&nbsp;</td>
                 {% endif %}
-            <td>{{ device.mean_delay[1] }}</td>
+            <td>{{ device.mean_delay[1]|round(3) if device.mean_delay[1] else "&nbsp;"|safe }}</td>
             </tr>
         {% endfor %}
         </tbody>

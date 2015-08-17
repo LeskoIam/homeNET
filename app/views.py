@@ -22,12 +22,13 @@ def home():
 
 @app.route('/view_devices', methods=["GET", "POST"])
 def show():
-    last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time). \
+    last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time).\
+        filter(LastEntry.ready_to_read == True).\
         order_by(LastEntry.date_time.desc()).first()
 
     data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface).join(Nodes). \
         filter(PingerData.common_id == last_common_id).\
-        filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()
+        filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
 
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
         filter(PingerData.up == 1).group_by(PingerData.node_id).all()
@@ -88,7 +89,7 @@ def add_device():
 @app.route("/edit/<device_id>", methods=["GET", "POST"])
 def edit_device(device_id):
     try:
-        to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+        to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
     except IndexError:
         flash("Edit not successful!")
         return redirect("/manage_devices")
@@ -123,9 +124,9 @@ def edit_device(device_id):
 
 @app.route("/toggle_device_in_use/<device_id>", methods=["GET", "POST"])
 def toggle_device_in_use(device_id):
-    print "delete row"
+    print "Toggle row"
     try:
-        to_toggle = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+        to_toggle = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
     except IndexError:
         flash("Toggle not successful!")
         return redirect("/manage_devices")
@@ -145,7 +146,7 @@ def toggle_device_in_use(device_id):
 def delete_device(device_id):
     print "delete row"
     try:
-        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
         data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == device_id).all()
     except IndexError:
         flash("Delete not successful!")

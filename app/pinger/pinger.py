@@ -16,6 +16,13 @@ def ping_all():
         filter(Nodes.in_use != False).all()
     common_id = db.session.query(LastEntry.last_common_id).\
         order_by(LastEntry.date_time.desc()).first()[0] + 1
+    increment_last = LastEntry(datetime.datetime.today(), common_id, ready_to_read=False)
+    try:
+            db.session.add(increment_last)
+            db.session.commit()
+    except sqlalchemy.exc.IntegrityError as e:
+        print "Can't add data"
+        print e
     for device in devices:
         print "Pinging:", device.ip
         up, delay = is_up(device.ip, timeout=0.9)
@@ -30,9 +37,8 @@ def ping_all():
         except (sqlalchemy.exc.IntegrityError, sqlalchemy.exc.OperationalError) as e:
             print "Can't add data"
             print e
-    increment_last = LastEntry(datetime.datetime.today(), common_id)
+    increment_last.ready_to_read = True
     try:
-            db.session.add(increment_last)
             db.session.commit()
     except sqlalchemy.exc.IntegrityError as e:
         print "Can't add data"

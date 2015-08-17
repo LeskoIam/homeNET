@@ -1,8 +1,8 @@
 from app import app
 import sys
-# import sched, time
 # import threading
 # from app.pinger.pinger import ping_all
+# import time
 
 argv = sys.argv
 if len(argv) != 2:
@@ -12,16 +12,15 @@ ip = argv[1]
 
 
 # def pinger_worker():
-#     print "Pinger Worker"
-#     s = sched.scheduler(time.time, time.sleep)
-#
-#     def do_something(sc):
-#         print "Doing stuff..."
+#     while 1:
+#         start_time = time.time()
 #         ping_all()
-#         sc.enter(30, 1, do_something, (sc,))
-#
-#     s.enter(30, 1, do_something, (s,))
-#     s.run()
+#         delay = 60
+#         diff = time.time() - start_time
+#         if diff < 30:
+#             delay = 30
+#         print "Pinger running after:", delay, time.time()
+#         time.sleep(delay)
 #
 # t = threading.Thread(target=pinger_worker)
 # t.daemon = True

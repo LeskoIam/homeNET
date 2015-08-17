@@ -32,7 +32,7 @@ def add_nodes():
 
 
 def add_first_last_entry():
-    data = LastEntry(datetime.datetime.today(), 0)
+    data = LastEntry(datetime.datetime.today(), 0, ready_to_read=True)
     try:
         db.session.add(data)
         db.session.commit()
