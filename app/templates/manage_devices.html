@@ -19,9 +19,7 @@
                 <th>Device Name</th>
                 <th>Device Ip</th>
                 <th>Interface</th>
-                <th>Laptop</th>
-                <th>Tower</th>
-                <th>Handheld</th>
+                <th>Device Type</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
@@ -32,27 +30,13 @@
                 <td><strong>{{ device.name }}</strong></td>
                 <td>{{ device.ip }}</td>
                 <td>{{ device.interface }}</td>
-                {% if device.laptop %}
-                    <td style="background: chocolate">&nbsp;</td>
-                {% else %}
-                    <td>&nbsp;</td>
-                {% endif %}
-                {% if device.tower %}
-                    <td style="background: chocolate">&nbsp;</td>
-                {% else %}
-                    <td>&nbsp;</td>
-                {% endif %}
-                {% if device.handheld %}
-                    <td style="background: chocolate">&nbsp;</td>
-                {% else %}
-                    <td>&nbsp;</td>
-                {% endif %}
+                <td>{{ device.device_type if device.device_type != None else "" }}</td>
                 <td>
                     <form action="/edit/{{ device.id|string }}" method="post" name="edit_f">
-                        <button value="edit" type="submit" class="btn btn-default">Edit</button>
+                        <button value="edit" type="submit" class="btn btn-default btn-xs">Edit</button>
                     </form>
                     <form action="/delete/{{ device.id|string }}" method="post" name="delete_f">
-                        <button value="delete" type="submit" class="btn btn-danger">Delete</button>
+                        <button value="delete" type="submit" class="btn btn-danger btn-xs">Delete</button>
                     </form>
                 </td>
             </tr>

@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, SelectField
+from wtforms import StringField, BooleanField, SelectField, RadioField
 from wtforms.validators import DataRequired
 
 
@@ -14,8 +14,14 @@ class AddNodeForm(Form):
     ip = StringField("ip", validators=[DataRequired()])
     interface = SelectField("interface", validators=[DataRequired()],
                             choices=[("WiFi", "WiFi"),
-                                     ("physical", "physical"),
-                                     ("web", "web")])
-    laptop = BooleanField("laptop")
-    tower = BooleanField("tower")
-    handheld = BooleanField("handheld")
+                                     ("physical", "Physical")])
+    device_type = SelectField('device_type',
+                              choices=[("None", "Unknown"),
+                                       ("laptop", "Laptop"),
+                                       ("handheld", "Handheld"),
+                                       ("tower", "Tower"),
+                                       ("server", "Server"),
+                                       ("web", "Web")])
+    # laptop = BooleanField("laptop")
+    # tower = BooleanField("tower")
+    # handheld = BooleanField("handheld")

@@ -10,12 +10,10 @@
         Device IP: {{ form.ip(size=16) }}
     </p>
     <p>
-        Device Interface: {{ form.interface }}
+        Device Interface: {{ form.interface() }}
     </p>
     <p>
-        Laptop: {{ form.laptop() }}
-        Tower: {{ form.laptop() }}
-        Handheld: {{ form.laptop() }}
+        Select Device Type: {{ form.device_type() }}
     </p>
     <button value="add" type="submit" class="btn btn-success">Add Device</button>
     </form>

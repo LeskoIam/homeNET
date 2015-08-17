@@ -32,15 +32,15 @@ def show():
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
         filter(PingerData.delay != None). \
         group_by(PingerData.node_id).all()
-    print mean_delay
 
     for d in data:
         d.last_up = find_in_lists(last_up_time, d.id, 0)
         d.last_down = find_in_lists(last_down_time, d.id, 0)
         d.mean_delay = find_in_lists(mean_delay, d.id, 0)
 
-    print last_up_time
-    print last_down_time
+    # print last_up_time
+    # print last_down_time
+    # print mean_delay
 
     return render_template("view_devices_table.html",
                            data=data,
@@ -70,23 +70,23 @@ def delete_device(device_id):
 def add_device():
     form = AddNodeForm()
     if form.validate_on_submit():
-
+        print form.device_type.data
         print "All is valid"
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
-                       laptop=True if form.laptop.data else None,
-                       tower=True if form.tower.data else None,
-                       handheld=True if form.handheld.data else None)
+                       device_type=form.device_type.data if form.device_type.data != "None" else None)
         try:
             db.session.add(to_add)
             db.session.commit()
             flash("Device successfully added!")
-        except sqlalchemy.exc.IntegrityError:
-            print "Not adding nodes"
-            flash("Not successful: add_device")
+        except sqlalchemy.exc.IntegrityError as e:
+            db.session.rollback()
+            print e
+            flash("Not adding nodes - %s" % str(e.message))
         return redirect("/manage_devices")
-    flash("Form missing data!")
+    else:
+        flash("Form missing data!")
     return render_template("add_device.html", form=form)
 
 

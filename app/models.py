@@ -48,19 +48,21 @@ class Nodes(db.Model):
     ip = db.Column(db.Integer, nullable=False, unique=True, index=True)
     interface = db.Column(db.String(64), nullable=False)
 
-    laptop = db.Column(db.Boolean)
-    tower = db.Column(db.Boolean)
-    handheld = db.Column(db.Boolean)
+    device_type = db.Column(db.String(64))
+    # laptop = db.Column(db.Boolean)
+    # tower = db.Column(db.Boolean)
+    # handheld = db.Column(db.Boolean)
 
     # data_points = db.relationship('PingerData', backref="nodes", lazy='dynamic')
 
-    def __init__(self, name, ip, interface, laptop=None, tower=None, handheld=None):
+    def __init__(self, name, ip, interface, device_type=None):
         self.name = name
         self.ip = ip
         self.interface = interface
-        self.laptop = laptop
-        self.tower = tower
-        self.handheld = handheld
+        self.device_type = device_type
+        # self.laptop = laptop
+        # self.tower = tower
+        # self.handheld = handheld
 
     def __repr__(self):
         return '<Nodes {0} - {1}>'.format(self.id, self.name)
