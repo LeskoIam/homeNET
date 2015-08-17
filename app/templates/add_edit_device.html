@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block table %}
-<h1>Add devices ?</h1>
+<h1>{{ add_edit|capitalize }}</h1>
     <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
     <p>
@@ -15,6 +15,6 @@
     <p>
         Select Device Type: {{ form.device_type() }}
     </p>
-    <button value="add" type="submit" class="btn btn-success">Add Device</button>
+    <button value="add" type="submit" class="btn btn-success">{{ add_edit|capitalize + " Device" }}</button>
     </form>
 {% endblock %}

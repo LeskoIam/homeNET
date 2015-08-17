@@ -9,7 +9,7 @@ import sqlalchemy
 from flask.ext.basicauth import BasicAuth
 
 from models import PingerData, LastEntry, Nodes
-from forms import AddNodeForm
+from forms import AddEditNodeForm
 
 basic_auth = BasicAuth(app)
 
@@ -38,10 +38,6 @@ def show():
         d.last_down = find_in_lists(last_down_time, d.id, 0)
         d.mean_delay = find_in_lists(mean_delay, d.id, 0)
 
-    # print last_up_time
-    # print last_down_time
-    # print mean_delay
-
     return render_template("view_devices_table.html",
                            data=data,
                            update_time=update_time)
@@ -50,8 +46,6 @@ def show():
 @app.route("/manage_devices", methods=["GET", "POST"])
 def manage_device():
     all_devices = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
-    # print all_devices
-    # print request.form
     return render_template("manage_devices.html", all_devices=all_devices)
 
 
@@ -68,10 +62,10 @@ def delete_device(device_id):
 
 @app.route("/add_device", methods=["GET", "POST"])
 def add_device():
-    form = AddNodeForm()
+    form = AddEditNodeForm()
     if form.validate_on_submit():
-        print form.device_type.data
-        print "All is valid"
+        # print form.device_type.data
+        # print "All is valid"
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
@@ -87,12 +81,27 @@ def add_device():
         return redirect("/manage_devices")
     else:
         flash("Form missing data!")
-    return render_template("add_device.html", form=form)
+    return render_template("add_edit_device.html", form=form, add_edit="add")
 
 
 @app.route("/edit/<device_id>", methods=["GET", "POST"])
 def edit_device(device_id):
-    pass
+    to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+    form = AddEditNodeForm()
+    if form.validate_on_submit():
+        print "Edit form Valid"
+        to_edit.name = form.name.data
+        to_edit.ip = form.ip.data
+        to_edit.interface = form.interface.data
+        to_edit.device_type = form.device_type.data if form.device_type.data != "None" else None
+        db.session.commit()
+        return redirect("/manage_devices")
+
+    form.name.data = to_edit.name
+    form.ip.data = to_edit.ip
+    form.interface.data = to_edit.interface
+    form.device_type.data = to_edit.device_type
+    return render_template("add_edit_device.html", form=form, add_edit="edit")
 
 
 @app.route('/temp', methods=["GET", "POST"])

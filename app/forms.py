@@ -9,7 +9,7 @@ from wtforms import StringField, BooleanField, SelectField, RadioField
 from wtforms.validators import DataRequired
 
 
-class AddNodeForm(Form):
+class AddEditNodeForm(Form):
     name = StringField("name", validators=[DataRequired()])
     ip = StringField("ip", validators=[DataRequired()])
     interface = SelectField("interface", validators=[DataRequired()],
@@ -22,6 +22,4 @@ class AddNodeForm(Form):
                                        ("tower", "Tower"),
                                        ("server", "Server"),
                                        ("web", "Web")])
-    # laptop = BooleanField("laptop")
-    # tower = BooleanField("tower")
-    # handheld = BooleanField("handheld")
+
