@@ -17,7 +17,7 @@ def ping_all():
     common_id = db.session.query(LastEntry.last_common_id).\
         order_by(LastEntry.date_time.desc()).first()[0] + 1
     for device in devices:
-        print device.ip
+        print "Pinging:", device.ip
         up, delay = is_up(device.ip, timeout=0.9)
         data = PingerData(date_time=datetime.datetime.today(),
                           common_id=common_id,

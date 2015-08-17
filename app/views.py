@@ -114,6 +114,7 @@ def edit_device(device_id):
     form.interface.data = to_edit.interface
     form.device_type.data = to_edit.device_type
     form.in_use.data = to_edit.in_use
+    form.node_id = to_edit.id
     return render_template("add_edit_device.html",
                            form=form,
                            add_edit="edit device",
@@ -140,14 +141,45 @@ def toggle_device_in_use(device_id):
     return redirect("/manage_devices")
 
 
+@app.route("/delete/<device_id>", methods=["GET", "POST"])
+def delete_device(device_id):
+    print "delete row"
+    try:
+        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+        data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == device_id).all()
+    except IndexError:
+        flash("Delete not successful!")
+        return redirect("/manage_devices")
+    print to_delete
+    try:
+        db.session.delete(to_delete)
+        for data in to_delete:
+            db.session.delete(data)
+        db.session.commit()
+        flash("Successfully deleted {0}".format(str(to_delete)))
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        print e
+        flash("Delete not successful - %s" % str(e.message))
+    return redirect("/manage_devices")
+
+
 @app.route('/temp', methods=["GET", "POST"])
 def test():
-    # to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
-    # print to_delete
-    # for data in to_delete:
-    #     db.session.delete(data)
-    # db.session.commit()
+    to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
+    print to_delete
+    for data in to_delete:
+        db.session.delete(data)
+    db.session.commit()
     return render_template("view_devices.html")
+
+
+def delete_device_data(device_id):
+    data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == device_id).all()
+    print data_to_delete
+    for data in data_to_delete:
+        db.session.delete(data)
+    db.session.commit()
 
 
 def find_in_lists(data, search, index):
