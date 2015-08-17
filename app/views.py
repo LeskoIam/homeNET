@@ -26,7 +26,8 @@ def show():
         order_by(LastEntry.date_time.desc()).first()
 
     data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface).join(Nodes). \
-        filter(PingerData.common_id == last_common_id).order_by(Nodes.id.asc()).all()
+        filter(PingerData.common_id == last_common_id).\
+        filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()
 
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
         filter(PingerData.up == 1).group_by(PingerData.node_id).all()
@@ -67,7 +68,8 @@ def add_device():
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
-                       device_type=form.device_type.data if form.device_type.data != "None" else None)
+                       device_type=form.device_type.data if form.device_type.data != "None" else None,
+                       in_use=True)
         try:
             db.session.add(to_add)
             db.session.commit()
@@ -97,6 +99,7 @@ def edit_device(device_id):
         to_edit.ip = form.ip.data
         to_edit.interface = form.interface.data
         to_edit.device_type = form.device_type.data if form.device_type.data != "None" else None
+        to_edit.in_use = form.in_use.data
         try:
             db.session.commit()
             flash("Device successfully edited!")
@@ -110,29 +113,30 @@ def edit_device(device_id):
     form.ip.data = to_edit.ip
     form.interface.data = to_edit.interface
     form.device_type.data = to_edit.device_type
+    form.in_use.data = to_edit.in_use
     return render_template("add_edit_device.html",
                            form=form,
                            add_edit="edit device",
                            page_loc="devices - edit")
 
 
-@app.route("/delete/<device_id>", methods=["GET", "POST"])
-def delete_device(device_id):
+@app.route("/toggle_device_in_use/<device_id>", methods=["GET", "POST"])
+def toggle_device_in_use(device_id):
     print "delete row"
     try:
-        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+        to_toggle = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
     except IndexError:
-        flash("Delete not successful!")
+        flash("Toggle not successful!")
         return redirect("/manage_devices")
-    print to_delete
+    print to_toggle
+    to_toggle.in_use = not to_toggle.in_use
     try:
-        db.session.delete(to_delete)
         db.session.commit()
-        flash("Successfully deleted {0}".format(str(to_delete)))
+        # flash("Successfully toggled {0}".format(str(to_toggle)))
     except sqlalchemy.exc.IntegrityError as e:
         db.session.rollback()
         print e
-        flash("Delete not successful - %s" % str(e.message))
+        flash("Toggle not successful - %s" % str(e.message))
     return redirect("/manage_devices")
 
 

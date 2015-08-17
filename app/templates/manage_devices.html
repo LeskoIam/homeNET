@@ -13,6 +13,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>In Use</th>
                 <th>Device Id</th>
                 <th>Device Name</th>
                 <th>Device Ip</th>
@@ -24,6 +25,15 @@
         <tbody>
         {% for device in all_devices %}
             <tr>
+                <td>
+                    <form action="/toggle_device_in_use/{{ device.id|string }}" method="post" name="delete_f">
+                        {% if device.in_use %}
+                            <button value="delete" type="submit" class="btn btn-success btn-xs">Toggle</button>
+                        {% else %}
+                            <button value="delete" type="submit" class="btn btn-danger btn-xs">Toggle</button>
+                        {% endif %}
+                    </form>
+                </td>
                 <td>{{ device.id }}</td>
                 <td><strong>{{ device.name }}</strong></td>
                 <td>{{ device.ip }}</td>
@@ -31,10 +41,7 @@
                 <td>{{ device.device_type if device.device_type != None else "" }}</td>
                 <td>
                     <form action="/edit/{{ device.id|string }}" method="post" name="edit_f">
-                        <button value="edit" type="submit" class="btn btn-default btn-xs">Edit</button>
-                    </form>
-                    <form action="/delete/{{ device.id|string }}" method="post" name="delete_f">
-                        <button value="delete" type="submit" class="btn btn-danger btn-xs">Delete</button>
+                        <button value="edit" type="submit" class="btn btn-info btn-xs">Edit</button>
                     </form>
                 </td>
             </tr>

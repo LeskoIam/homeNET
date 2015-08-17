@@ -12,10 +12,12 @@ from app.models import Nodes, LastEntry, PingerData
 
 
 def ping_all():
-    devices = db.session.query(Nodes.id, Nodes.name, Nodes.ip).all()
+    devices = db.session.query(Nodes.id, Nodes.name, Nodes.ip).\
+        filter(Nodes.in_use != False).all()
     common_id = db.session.query(LastEntry.last_common_id).\
         order_by(LastEntry.date_time.desc()).first()[0] + 1
     for device in devices:
+        print device.ip
         up, delay = is_up(device.ip, timeout=0.9)
         data = PingerData(date_time=datetime.datetime.today(),
                           common_id=common_id,

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>{{ add_edit|capitalize }}</h1>
+    <h1 xmlns="http://www.w3.org/1999/html">{{ add_edit|capitalize }}</h1>
     <form action="" method="post" name="login">
         {{ form.hidden_tag() }}
         <div class="row">
@@ -19,6 +19,10 @@
             <div class="col-sm-2">
                 Device Type:
                 {{ form.device_type() }}
+            </div>
+            <div class="col-sm-2">
+                In Use:</br>
+                {{ form.in_use() }}
             </div>
         </div>
         <div class="row">

@@ -43,21 +43,20 @@ class LastEntry(db.Model):
 class Nodes(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
+    name = db.Column(db.String(64), index=True, unique=True)
 
     ip = db.Column(db.Integer, nullable=False, unique=True, index=True)
     interface = db.Column(db.String(64), nullable=False)
     device_type = db.Column(db.String(64))
-    # laptop = db.Column(db.Boolean)
-    # tower = db.Column(db.Boolean)
-    # handheld = db.Column(db.Boolean)
+    in_use = db.Column(db.Boolean(), nullable=False)
 
     # data_points = db.relationship('PingerData', backref="nodes", lazy='dynamic')
 
-    def __init__(self, name, ip, interface, device_type=None):
+    def __init__(self, name, ip, interface, in_use, device_type=None):
         self.name = name
         self.ip = ip
         self.interface = interface
+        self.in_use = in_use
         self.device_type = device_type
 
     def __repr__(self):

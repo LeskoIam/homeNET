@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, BooleanField
 from wtforms.validators import DataRequired
 
 
@@ -22,4 +22,6 @@ class AddEditNodeForm(Form):
                                        ("tower", "Tower"),
                                        ("server", "Server"),
                                        ("web", "Web")])
+
+    in_use = BooleanField("in_use", default=True)
 
