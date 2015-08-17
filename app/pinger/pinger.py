@@ -3,12 +3,12 @@ __author__ = 'Lesko'
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
+import sqlalchemy
+import datetime
+
 from app.common.net import is_up
 from app import db
 from app.models import Nodes, LastEntry, PingerData
-import sqlalchemy
-
-import datetime
 
 
 def ping_all():
@@ -38,7 +38,7 @@ def ping_all():
 
 
 def scan():
-    for ip in ["192.168.2.{0}".format(last) for last in range(256)]:
+    for ip in ["192.168.1.{0}".format(last) for last in range(256)]:
         if is_up(ip, timeout=0.5)[0]:
             print "{0} is up!".format(ip)
         # else:
@@ -48,3 +48,23 @@ def scan():
 if __name__ == '__main__':
     ping_all()
     # scan()
+
+    # import sched, time
+    # import threading
+    #
+    # def pinger_worker():
+    #     print "Pinger Worker"
+    #     s = sched.scheduler(time.time, time.sleep)
+    #
+    #     def do_something(sc):
+    #         print "Doing stuff..."
+    #         ping_all()
+    #         sc.enter(30, 1, do_something, (sc,))
+    #
+    #     s.enter(30, 1, do_something, (s,))
+    #     s.run()
+    #
+    # t = threading.Thread(target=pinger_worker)
+    # t.daemon = True
+    # t.start()
+    # t.join()

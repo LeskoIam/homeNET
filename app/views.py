@@ -3,11 +3,11 @@ __author__ = 'Lesko'
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-from flask import render_template, request, redirect, flash, jsonify
-from app import app, db
+from flask import render_template, redirect, flash
 import sqlalchemy
 from flask.ext.basicauth import BasicAuth
 
+from app import app, db
 from models import PingerData, LastEntry, Nodes
 from forms import AddEditNodeForm
 
@@ -40,24 +40,16 @@ def show():
 
     return render_template("view_devices_table.html",
                            data=data,
-                           update_time=update_time)
+                           update_time=update_time,
+                           page="/table")
 
 
 @app.route("/manage_devices", methods=["GET", "POST"])
-def manage_device():
+def manage_devices():
     all_devices = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
-    return render_template("manage_devices.html", all_devices=all_devices)
-
-
-@app.route("/delete/<device_id>", methods=["GET", "POST"])
-def delete_device(device_id):
-    print "delete row"
-    to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
-    print to_delete
-    db.session.delete(to_delete)
-    db.session.commit()
-    flash("Successfully deleted {0}".format(str(to_delete)))
-    return redirect("/manage_devices")
+    return render_template("manage_devices.html",
+                           all_devices=all_devices,
+                           page="/manage_devices")
 
 
 @app.route("/add_device", methods=["GET", "POST"])
@@ -79,14 +71,19 @@ def add_device():
             print e
             flash("Not adding nodes - %s" % str(e.message))
         return redirect("/manage_devices")
-    else:
-        flash("Form missing data!")
-    return render_template("add_edit_device.html", form=form, add_edit="add")
+    return render_template("add_edit_device.html",
+                           form=form,
+                           add_edit="add",
+                           page="/manage_devices")
 
 
 @app.route("/edit/<device_id>", methods=["GET", "POST"])
 def edit_device(device_id):
-    to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+    try:
+        to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+    except IndexError:
+        flash("Edit not successful!")
+        return redirect("/manage_devices")
     form = AddEditNodeForm()
     if form.validate_on_submit():
         print "Edit form Valid"
@@ -94,14 +91,43 @@ def edit_device(device_id):
         to_edit.ip = form.ip.data
         to_edit.interface = form.interface.data
         to_edit.device_type = form.device_type.data if form.device_type.data != "None" else None
-        db.session.commit()
+        try:
+            db.session.commit()
+            flash("Device successfully edited!")
+        except sqlalchemy.exc.IntegrityError as e:
+            db.session.rollback()
+            print e
+            flash("Not editing nodes - %s" % str(e.message))
         return redirect("/manage_devices")
 
     form.name.data = to_edit.name
     form.ip.data = to_edit.ip
     form.interface.data = to_edit.interface
     form.device_type.data = to_edit.device_type
-    return render_template("add_edit_device.html", form=form, add_edit="edit")
+    return render_template("add_edit_device.html",
+                           form=form,
+                           add_edit="edit",
+                           page="/manage_devices")
+
+
+@app.route("/delete/<device_id>", methods=["GET", "POST"])
+def delete_device(device_id):
+    print "delete row"
+    try:
+        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).all()[0]
+    except IndexError:
+        flash("Delete not successful!")
+        return redirect("/manage_devices")
+    print to_delete
+    try:
+        db.session.delete(to_delete)
+        db.session.commit()
+        flash("Successfully deleted {0}".format(str(to_delete)))
+    except sqlalchemy.exc.IntegrityError as e:
+        db.session.rollback()
+        print e
+        flash("Delete not successful - %s" % str(e.message))
+    return redirect("/manage_devices")
 
 
 @app.route('/temp', methods=["GET", "POST"])

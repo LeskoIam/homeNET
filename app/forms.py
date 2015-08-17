@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, SelectField, RadioField
+from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired
 
 
