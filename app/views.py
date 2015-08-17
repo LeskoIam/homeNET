@@ -14,6 +14,7 @@ from forms import AddEditNodeForm
 basic_auth = BasicAuth(app)
 
 
+@app.route('/')
 @app.route('/home')
 def home():
     return render_template("home.html", page_loc="home")
@@ -43,7 +44,7 @@ def show():
         d.last_down = find_in_lists(last_down_time, d.id, 0)
         d.mean_delay = find_in_lists(mean_delay, d.id, 0)
 
-    return render_template("view_devices_table.html",
+    return render_template("view_devices.html",
                            data=data,
                            update_time=update_time,
                            page_loc="devices - view")
@@ -137,7 +138,12 @@ def delete_device(device_id):
 
 @app.route('/temp', methods=["GET", "POST"])
 def test():
-    return render_template("view_devices_table.html")
+    # to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
+    # print to_delete
+    # for data in to_delete:
+    #     db.session.delete(data)
+    # db.session.commit()
+    return render_template("view_devices.html")
 
 
 def find_in_lists(data, search, index):

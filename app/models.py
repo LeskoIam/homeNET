@@ -47,7 +47,6 @@ class Nodes(db.Model):
 
     ip = db.Column(db.Integer, nullable=False, unique=True, index=True)
     interface = db.Column(db.String(64), nullable=False)
-
     device_type = db.Column(db.String(64))
     # laptop = db.Column(db.Boolean)
     # tower = db.Column(db.Boolean)
@@ -60,9 +59,6 @@ class Nodes(db.Model):
         self.ip = ip
         self.interface = interface
         self.device_type = device_type
-        # self.laptop = laptop
-        # self.tower = tower
-        # self.handheld = handheld
 
     def __repr__(self):
         return '<Nodes {0} - {1}>'.format(self.id, self.name)
