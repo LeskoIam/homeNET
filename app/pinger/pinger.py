@@ -54,7 +54,22 @@ def scan():
 
 
 if __name__ == '__main__':
-    ping_all()
+    import time
+    # ping_all()
+
+    def pinger_worker():
+        while 1:
+            start_time = time.time()
+            ping_all()
+            delay = 60
+            diff = time.time() - start_time
+            if diff < 30:
+                delay = 30
+            print "Pinger running after:", delay, time.time()
+            time.sleep(delay)
+
+    pinger_worker()
+#
     # scan()
 
     # import sched, time
