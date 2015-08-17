@@ -51,16 +51,10 @@
         </div>
     </nav>
 
-    {% block table %}{% endblock %}
+    {% block content %}{% endblock %}
 
 </div>
 <script src="{{ url_for('static', filename='scripts/jquery-1.11.3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-<script type="text/javascript">
-    // Highlight where we are on navigational panel
-    $(function() {
-        $('.nav a[href="' + '{{ page }}' + '"]').parent().addClass('active');
-    })
-    </script>
 </body>
 </html>

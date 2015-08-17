@@ -78,7 +78,7 @@ def add_device():
         return redirect("/manage_devices")
     return render_template("add_edit_device.html",
                            form=form,
-                           add_edit="add",
+                           add_edit="add device",
                            page_loc="devices - add")
 
 
@@ -111,7 +111,7 @@ def edit_device(device_id):
     form.device_type.data = to_edit.device_type
     return render_template("add_edit_device.html",
                            form=form,
-                           add_edit="edit",
+                           add_edit="edit device",
                            page_loc="devices - edit")
 
 
