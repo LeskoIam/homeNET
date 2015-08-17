@@ -75,9 +75,9 @@ def add_device():
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
-                       laptop=form.laptop.data,
-                       tower=form.tower.data,
-                       handheld=form.handheld.data)
+                       laptop=True if form.laptop.data else None,
+                       tower=True if form.tower.data else None,
+                       handheld=True if form.handheld.data else None)
         try:
             db.session.add(to_add)
             db.session.commit()
@@ -96,7 +96,7 @@ def edit_device(device_id):
 
 
 @app.route('/temp', methods=["GET", "POST"])
-def navbar():
+def test():
     return render_template("view_devices_table.html")
 
 
