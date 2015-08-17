@@ -14,7 +14,12 @@ from forms import AddEditNodeForm
 basic_auth = BasicAuth(app)
 
 
-@app.route('/table', methods=["GET", "POST"])
+@app.route('/home')
+def home():
+    return render_template("home.html", page_loc="home")
+
+
+@app.route('/view_devices', methods=["GET", "POST"])
 def show():
     last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time). \
         order_by(LastEntry.date_time.desc()).first()
@@ -41,7 +46,7 @@ def show():
     return render_template("view_devices_table.html",
                            data=data,
                            update_time=update_time,
-                           page="/table")
+                           page_loc="devices - view")
 
 
 @app.route("/manage_devices", methods=["GET", "POST"])
@@ -49,7 +54,7 @@ def manage_devices():
     all_devices = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
     return render_template("manage_devices.html",
                            all_devices=all_devices,
-                           page="/manage_devices")
+                           page_loc="devices - manage")
 
 
 @app.route("/add_device", methods=["GET", "POST"])
@@ -74,7 +79,7 @@ def add_device():
     return render_template("add_edit_device.html",
                            form=form,
                            add_edit="add",
-                           page="/manage_devices")
+                           page_loc="devices - add")
 
 
 @app.route("/edit/<device_id>", methods=["GET", "POST"])
@@ -107,7 +112,7 @@ def edit_device(device_id):
     return render_template("add_edit_device.html",
                            form=form,
                            add_edit="edit",
-                           page="/manage_devices")
+                           page_loc="devices - edit")
 
 
 @app.route("/delete/<device_id>", methods=["GET", "POST"])

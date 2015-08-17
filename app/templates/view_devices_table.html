@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block table %}
     <div class="row">
+        <div class="col-sm-6">
+            Table last updated on {{ update_time }}
+        </div>
+    </div>
+    <div class="row">
     <div class="col-sm-9">
     <table class="table">
         <thead>
@@ -48,10 +53,5 @@
         Lesko1
     </div>
 
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            Table last updated on {{ update_time }}
-        </div>
     </div>
 {% endblock %}

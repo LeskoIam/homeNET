@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 {% block table %}
-<h1>{{ add_edit|capitalize }}</h1>
+    <h1>{{ add_edit|capitalize }}</h1>
     <form action="" method="post" name="login">
-    {{ form.hidden_tag() }}
-    <p>
-        Device Name: {{ form.name(size=16) }}
-    </p>
-    <p>
-        Device IP: {{ form.ip(size=16) }}
-    </p>
-    <p>
-        Device Interface: {{ form.interface() }}
-    </p>
-    <p>
-        Select Device Type: {{ form.device_type() }}
-    </p>
-    <button value="add" type="submit" class="btn btn-success">{{ add_edit|capitalize + " Device" }}</button>
+        {{ form.hidden_tag() }}
+        <p>
+            Device Name: {{ form.name(size=16) }}
+        </p>
+        <p>
+            Device IP: {{ form.ip(size=16) }}
+        </p>
+        <p>
+            Device Interface: {{ form.interface() }}
+        </p>
+        <p>
+            Select Device Type: {{ form.device_type() }}
+        </p>
+        <button value="add" type="submit" class="btn btn-success">{{ add_edit|capitalize + " Device" }}</button>
     </form>
 {% endblock %}
