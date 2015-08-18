@@ -11,6 +11,8 @@ from app import app, db
 from models import PingerData, LastEntry, Nodes
 from forms import AddEditNodeForm
 
+from pprint import pprint
+
 basic_auth = BasicAuth(app)
 
 
@@ -20,14 +22,36 @@ def home():
     return render_template("home.html", page_loc="home")
 
 
+def get_chart_data():
+    nodes = db.session.query(Nodes).filter(Nodes.in_use == True).order_by(Nodes.id.asc()).all()
+    pprint(nodes)
+    series = []
+    for node in nodes:
+        d = db.session.query(PingerData.date_time, PingerData.delay).join(Nodes). \
+            filter(Nodes.id == node.id).limit(10).all()
+        print node.name
+        pprint(d)
+        data = []
+        for delay in d:
+            data.append(delay[1]*1000 if delay[1] is not None else "null")
+
+        series.append(
+            {
+                "name": str(node.name),
+                "data": data
+            })
+    pprint(series)
+    return series
+
+
 @app.route('/view_devices', methods=["GET", "POST"])
 def show():
-    last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time).\
-        filter(LastEntry.ready_to_read == True).\
+    last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time). \
+        filter(LastEntry.ready_to_read == True). \
         order_by(LastEntry.date_time.desc()).first()
 
     data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface).join(Nodes). \
-        filter(PingerData.common_id == last_common_id).\
+        filter(PingerData.common_id == last_common_id). \
         filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
 
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
