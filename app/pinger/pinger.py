@@ -5,6 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 import sqlalchemy
 import datetime
+import socket
 
 from app.common.net import is_up
 from app import db
@@ -25,7 +26,10 @@ def ping_all():
         print e
     for device in devices:
         print "Pinging:", device.ip
-        up, delay = is_up(device.ip, timeout=0.9)
+        try:
+            up, delay = is_up(device.ip, timeout=0.9)
+        except socket.gaierror:
+            up, delay = False, None
         data = PingerData(date_time=datetime.datetime.today(),
                           common_id=common_id,
                           up=up,

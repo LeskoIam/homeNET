@@ -64,3 +64,6 @@ class Nodes(db.Model):
 
     def __repr__(self):
         return '<Nodes {0} - {1}>'.format(self.id, self.name)
+
+    def __str__(self):
+        return "{name} - {ip}".format(name=self.name, ip= self.ip)

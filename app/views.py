@@ -66,15 +66,16 @@ def add_device():
     if form.validate_on_submit():
         # print form.device_type.data
         # print "All is valid"
+        print form.in_use.data
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
                        device_type=form.device_type.data if form.device_type.data != "None" else None,
-                       in_use=True)
+                       in_use=form.in_use.data)
         try:
             db.session.add(to_add)
             db.session.commit()
-            flash("Device successfully added!")
+            flash("Successfully added {0}".format(str(to_add)))
         except sqlalchemy.exc.IntegrityError as e:
             db.session.rollback()
             print e
@@ -103,7 +104,7 @@ def edit_device(device_id):
         to_edit.in_use = form.in_use.data
         try:
             db.session.commit()
-            flash("Device successfully edited!")
+            flash("Successfully edited {0}".format(str(to_edit)))
         except sqlalchemy.exc.IntegrityError as e:
             db.session.rollback()
             print e
@@ -154,10 +155,10 @@ def delete_device(device_id):
     print to_delete
     try:
         db.session.delete(to_delete)
-        for data in to_delete:
+        for data in data_to_delete:
             db.session.delete(data)
         db.session.commit()
-        flash("Successfully deleted {0}".format(str(to_delete)))
+        flash("Successfully deleted {0} and it's data".format(str(to_delete)))
     except sqlalchemy.exc.IntegrityError as e:
         db.session.rollback()
         print e
