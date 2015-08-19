@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="row">
+    <div class="row" xmlns="http://www.w3.org/1999/html">
         <div class="col-sm-6">
             Table last updated on {{ update_time }}
         </div>
@@ -11,45 +11,45 @@
         <thead>
             <tr>
                 <th>&nbsp;</th>
-                <th>Device Name</th>
-                <th>Device Address</th>
-                <th>Device last</th>
-                <th>Average Delay [ms]</th>
+                <th>Node Name</th>
+                <th>Node Address</th>
+                <th>Node last</th>
+                <th>Node Delay [ms]</th>
             </tr>
         </thead>
         <tbody>
-        {% for device in data %}
-            {% if device.up %}
+        {% for node in data %}
+            {% if node.up %}
         	    <tr class="success">
             {% else %}
                 <tr class="danger">
             {% endif %}
             <td>
-            {% if device.interface == "WiFi" %}
+            {% if node.interface == "WiFi" %}
                 <span class="glyphicon glyphicon-signal"></span>
             {% else %}
                 <span class="glyphicon glyphicon-hdd"></span>
             {% endif %}
-            {% if device.device_type == "web" %}
+            {% if node.node_type == "web" %}
                 <span class="glyphicon glyphicon-cloud"></span>
             {% else %}
                 &nbsp;
             {% endif %}
             </td>
 
-            <td><strong>{{ device.name }}</strong></td>
-            <td>{{ device.ip }}</td>
+            <td><strong>{{ node.name }}</strong></td>
+            <td>{{ node.ip }}</td>
 {#                <td>{{ device.id }}</td>#}
 {#                <td>{{ device.last_up }}</td>#}
 {#                <td>{{ device.last_down }}</td>#}
-            {% if device.up and device.last_down[1] is not none%}
-                <td><strong>down</strong> - {{ device.last_down[1] }}</td>
-            {% elif not device.up %}
-                <td><strong>up</strong> - {{ device.last_up[1] }}</td>
+            {% if node.up and node.last_down[1] is not none%}
+                <td><strong>down</strong> - {{ node.last_down[1] }}</td>
+            {% elif not node.up %}
+                <td><strong>up</strong> - {{ node.last_up[1] }}</td>
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}
-            <td>{{ device.mean_delay[1]|round(3) if device.mean_delay[1] else "&nbsp;"|safe }}</td>
+            <td>{{ node.mean_delay[1]|round(3) if node.mean_delay[1] else "&nbsp;"|safe }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -59,5 +59,78 @@
 {#        Lesko1#}
 {#    </div>#}
 
+
+
     </div>
+    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">smth</div>
+    <script type="text/javascript">
+{#    $(function () {#}
+{#        $.getJSON("/test", function (jdata) {#}
+{#            var j = 1;#}
+{#            $(".test_c").text(jdata.data);#}
+{#        });#}
+{#    });#}
+
+{#    $(document).ready(function() {#}
+{##}
+{#    var options = {#}
+{#        chart: {#}
+{#            renderTo: 'test_c'#}
+{#        },#}
+{#        series: [1,2,3]#}
+{#    };#}
+{##}
+{#    $.getJSON("/test", function(jdata) {#}
+{#        $(".test_c").text(jdata.data);#}
+{#        options.series[0].data = jdata.data;#}
+{##}
+{#        var chart = new Highcharts.Chart(options);#}
+{#    });#}
+{##}
+{#{);#}
+
+$(document).ready(function() {
+    $.getJSON("/test", function (jdata) {
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'test_c',
+                type: "column"
+{#						height: 155#}
+
+					},
+                    title: {
+                        text: 'Ping Delay',
+                        x: -20 //center
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature (ms)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: 'ms'
+                    },
+                    plotOptions: {
+                        line: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [{
+                        name: jdata.name,
+                        data: jdata.data
+                    }]
+                });
+            });
+        });
+
+
+
+</script>
 {% endblock %}

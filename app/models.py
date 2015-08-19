@@ -50,17 +50,17 @@ class Nodes(db.Model):
 
     ip = db.Column(db.Integer, nullable=False, unique=True, index=True)
     interface = db.Column(db.String(64), nullable=False)
-    device_type = db.Column(db.String(64))
+    node_type = db.Column(db.String(64))
     in_use = db.Column(db.Boolean(), nullable=False)
 
     # data_points = db.relationship('PingerData', backref="nodes", lazy='dynamic')
 
-    def __init__(self, name, ip, interface, in_use, device_type=None):
+    def __init__(self, name, ip, interface, in_use, node_type=None):
         self.name = name
         self.ip = ip
         self.interface = interface
         self.in_use = in_use
-        self.device_type = device_type
+        self.node_type = node_type
 
     def __repr__(self):
         return '<Nodes {0} - {1}>'.format(self.id, self.name)

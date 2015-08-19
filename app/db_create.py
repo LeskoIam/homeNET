@@ -14,17 +14,17 @@ import datetime
 def add_nodes():
     data = [
         Nodes(name="Router gateway", ip="192.168.1.1", interface="physical", in_use=True),
-        Nodes(name="Neva", ip="192.168.1.50", interface="physical", device_type="laptop", in_use=True),
-        Nodes(name="Lesko", ip="192.168.1.51", interface="physical", device_type="laptop", in_use=True),
+        Nodes(name="Neva", ip="192.168.1.50", interface="physical", node_type="laptop", in_use=True),
+        Nodes(name="Lesko", ip="192.168.1.51", interface="physical", node_type="laptop", in_use=True),
         Nodes(name="ServerBBB", ip="192.168.1.52", interface="physical", in_use=True),
         Nodes(name="Virtual Ubuntu", ip="192.168.1.53", interface="physical", in_use=True),
         Nodes(name="NAS", ip="192.168.1.100", interface="physical", in_use=True),
         Nodes(name="Rigol - Oscilloscope", ip="192.168.1.200", interface="physical", in_use=True),
-        Nodes(name="Server234", ip="192.168.1.234", interface="physical", device_type="laptop", in_use=True),
+        Nodes(name="Server234", ip="192.168.1.234", interface="physical", node_type="laptop", in_use=True),
         Nodes(name="Router - gateway", ip="192.168.2.1", interface="WiFi", in_use=True),
-        Nodes(name="Neva phone", ip="192.168.2.3", interface="WiFi", device_type="handheld", in_use=True),
-        Nodes(name="Neva PC", ip="192.168.2.4", interface="WiFi", device_type="laptop", in_use=True),
-        Nodes(name="Lesko phone", ip="192.168.2.5", interface="WiFi", device_type="handheld", in_use=True),
+        Nodes(name="Neva phone", ip="192.168.2.3", interface="WiFi", node_type="handheld", in_use=True),
+        Nodes(name="Neva PC", ip="192.168.2.4", interface="WiFi", node_type="laptop", in_use=True),
+        Nodes(name="Lesko phone", ip="192.168.2.5", interface="WiFi", node_type="handheld", in_use=True),
     ]
     for node in data:
         db.session.add(node)

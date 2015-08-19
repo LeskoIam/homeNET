@@ -7,40 +7,40 @@
 {#    </style>#}
     <div align="right">
         <form action="/add_device" method="post" name="add_f">
-            <button value="add" type="submit" class="btn btn-success">Add Device</button>
+            <button value="add" type="submit" class="btn btn-success">Add Node</button>
         </form>
     </div>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>In Use</th>
-                <th>Device Id</th>
-                <th>Device Name</th>
-                <th>Device Address</th>
+                <th>Node Id</th>
+                <th>Node Name</th>
+                <th>Node Address</th>
                 <th>Interface</th>
-                <th>Device Type</th>
+                <th>Node Type</th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
         <tbody>
-        {% for device in all_devices %}
+        {% for node in all_nodes %}
             <tr>
                 <td>
-                    <form action="/toggle_device_in_use/{{ device.id|string }}" method="post" name="delete_f">
-                        {% if device.in_use %}
+                    <form action="/toggle_device_in_use/{{ node.id|string }}" method="post" name="delete_f">
+                        {% if node.in_use %}
                             <button value="delete" type="submit" class="btn btn-success btn-xs">Toggle</button>
                         {% else %}
                             <button value="delete" type="submit" class="btn btn-danger btn-xs">Toggle</button>
                         {% endif %}
                     </form>
                 </td>
-                <td>{{ device.id }}</td>
-                <td><strong>{{ device.name }}</strong></td>
-                <td>{{ device.ip }}</td>
-                <td>{{ device.interface }}</td>
-                <td>{{ device.device_type if device.device_type != None else "" }}</td>
+                <td>{{ node.id }}</td>
+                <td><strong>{{ node.name }}</strong></td>
+                <td>{{ node.ip }}</td>
+                <td>{{ node.interface }}</td>
+                <td>{{ node.node_type if node.node_type != None else "" }}</td>
                 <td>
-                    <form action="/edit/{{ device.id|string }}" method="post" name="edit_f">
+                    <form action="/edit/{{ node.id|string }}" method="post" name="edit_f">
                         <button value="edit" type="submit" class="btn btn-info btn-xs">Edit</button>
                     </form>
                 </td>

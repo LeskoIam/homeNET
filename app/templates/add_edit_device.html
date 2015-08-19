@@ -5,20 +5,20 @@
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="col-sm-2">
-                Device Name:
+                Node Name:
                 {{ form.name(size=16) }}
             </div>
             <div class="col-sm-2">
-                Device Ip:
+                Node Ip:
                 {{ form.ip(size=16) }}
             </div>
             <div class="col-sm-2">
-                Device Interface:
+                Node Interface:
                 {{ form.interface() }}
             </div>
             <div class="col-sm-2">
-                Device Type:
-                {{ form.device_type() }}
+                Node Type:
+                {{ form.node_type() }}
             </div>
             <div class="col-sm-2">
                 In Use:</br>
@@ -35,7 +35,7 @@
     </form>
     {% if "edit" in add_edit %}
         <form action="/delete/{{ form.node_id }}" method="post" name="edit_f">
-            <button value="edit" type="submit" class="btn btn-danger btn-xs">Delete device and device data!</button>
+            <button value="edit" type="submit" class="btn btn-danger btn-xs">Delete node and node data!</button>
         </form>
         {% endif %}
 {% endblock %}

@@ -3,7 +3,7 @@ __author__ = 'Lesko'
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-from flask import render_template, redirect, flash, request
+from flask import render_template, redirect, flash, request, jsonify
 import sqlalchemy
 from flask.ext.basicauth import BasicAuth
 
@@ -29,20 +29,20 @@ def get_chart_data():
     series = []
     for node in nodes:
         data = db.session.query(PingerData.date_time, PingerData.delay).join(Nodes). \
-            filter(Nodes.id == node.id).limit(10).all()
+            filter(Nodes.id == node.id).limit(100).all()
         print node.name
-        pprint(data)
+        # pprint(data)
         node_data = []
         for delay in data:
-            node_data.append(delay[1]*1000 if delay[1] is not None else "null")
+            node_data.append(delay[1]*1000 if delay[1] is not None else None)
 
         series.append(
             {
                 "name": str(node.name),
                 "data": node_data
             })
-    pprint(series)
-    return None
+    # pprint(series)
+    return jsonify(**series[-3])
 
 
 @app.route('/view_devices', methods=["GET", "POST"])
@@ -51,7 +51,7 @@ def show():
         filter(LastEntry.ready_to_read == True). \
         order_by(LastEntry.date_time.desc()).first()
 
-    data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface, Nodes.device_type).join(Nodes). \
+    data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface, Nodes.node_type).join(Nodes). \
         filter(PingerData.common_id == last_common_id). \
         filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
 
@@ -78,15 +78,15 @@ def show():
 
 
 @app.route("/manage_devices", methods=["GET", "POST"])
-def manage_devices():
-    all_devices = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
+def manage_nodes():
+    all_nodes = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
     return render_template("manage_devices.html",
-                           all_devices=all_devices,
+                           all_nodes=all_nodes,
                            page_loc="devices - manage")
 
 
 @app.route("/add_device", methods=["GET", "POST"])
-def add_device():
+def add_node():
     form = AddEditNodeForm()
     if form.validate_on_submit():
         # print form.device_type.data
@@ -95,7 +95,7 @@ def add_device():
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
-                       device_type=form.device_type.data if form.device_type.data != "None" else None,
+                       node_type=form.node_type.data if form.node_type.data != "None" else None,
                        in_use=form.in_use.data)
         try:
             db.session.add(to_add)
@@ -112,10 +112,10 @@ def add_device():
                            page_loc="devices - add")
 
 
-@app.route("/edit/<device_id>", methods=["GET", "POST"])
-def edit_device(device_id):
+@app.route("/edit/<node_id>", methods=["GET", "POST"])
+def edit_node(node_id):
     try:
-        to_edit = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
+        to_edit = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
     except IndexError:
         flash("Edit not successful!")
         return redirect("/manage_devices")
@@ -125,7 +125,7 @@ def edit_device(device_id):
         to_edit.name = form.name.data
         to_edit.ip = form.ip.data
         to_edit.interface = form.interface.data
-        to_edit.device_type = form.device_type.data if form.device_type.data != "None" else None
+        to_edit.node_type = form.node_type.data if form.node_type.data != "None" else None
         to_edit.in_use = form.in_use.data
         try:
             db.session.commit()
@@ -139,7 +139,7 @@ def edit_device(device_id):
     form.name.data = to_edit.name
     form.ip.data = to_edit.ip
     form.interface.data = to_edit.interface
-    form.device_type.data = to_edit.device_type
+    form.node_type.data = to_edit.node_type
     form.in_use.data = to_edit.in_use
     form.node_id = to_edit.id
     return render_template("add_edit_device.html",
@@ -148,11 +148,11 @@ def edit_device(device_id):
                            page_loc="devices - edit")
 
 
-@app.route("/toggle_device_in_use/<device_id>", methods=["GET", "POST"])
-def toggle_device_in_use(device_id):
+@app.route("/toggle_device_in_use/<node_id>", methods=["GET", "POST"])
+def toggle_node_in_use(node_id):
     print "Toggle row"
     try:
-        to_toggle = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
+        to_toggle = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
     except IndexError:
         flash("Toggle not successful!")
         return redirect("/manage_devices")
@@ -168,12 +168,12 @@ def toggle_device_in_use(device_id):
     return redirect("/manage_devices")
 
 
-@app.route("/delete/<device_id>", methods=["GET", "POST"])
-def delete_device(device_id):
+@app.route("/delete/<node_id>", methods=["GET", "POST"])
+def delete_node(node_id):
     print "delete row"
     try:
-        to_delete = db.session.query(Nodes).filter(Nodes.id == int(device_id)).first()
-        data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == device_id).all()
+        to_delete = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
+        data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
     except IndexError:
         flash("Delete not successful!")
         return redirect("/manage_devices")
@@ -201,8 +201,8 @@ def test():
     return render_template("view_devices.html")
 
 
-def delete_device_data(device_id):
-    data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == device_id).all()
+def delete_node_data(node_id):
+    data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
     print data_to_delete
     for data in data_to_delete:
         db.session.delete(data)

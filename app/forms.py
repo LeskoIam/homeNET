@@ -15,14 +15,13 @@ class AddEditNodeForm(Form):
     interface = SelectField("interface", validators=[DataRequired()],
                             choices=[("WiFi", "WiFi"),
                                      ("physical", "Physical")])
-    device_type = SelectField('device_type',
-                              choices=[("None", "Unknown"),
-                                       ("laptop", "Laptop"),
-                                       ("handheld", "Handheld"),
-                                       ("tower", "Tower"),
-                                       ("server", "Server"),
-                                       ("web", "Web")])
+    node_type = SelectField('node_type',
+                            choices=[("None", "Unknown"),
+                                     ("laptop", "Laptop"),
+                                     ("handheld", "Handheld"),
+                                     ("tower", "Tower"),
+                                     ("server", "Server"),
+                                     ("web", "Web")])
 
     in_use = BooleanField("in_use", default=True)
     node_id = HiddenField("node_id")
-
