@@ -51,7 +51,7 @@ def show():
         filter(LastEntry.ready_to_read == True). \
         order_by(LastEntry.date_time.desc()).first()
 
-    data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface).join(Nodes). \
+    data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface, Nodes.device_type).join(Nodes). \
         filter(PingerData.common_id == last_common_id). \
         filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
 

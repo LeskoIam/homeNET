@@ -30,19 +30,25 @@
             {% else %}
                 <span class="glyphicon glyphicon-hdd"></span>
             {% endif %}
+            {% if device.device_type == "web" %}
+                <span class="glyphicon glyphicon-cloud"></span>
+            {% else %}
+                &nbsp;
+            {% endif %}
             </td>
-                <td><strong>{{ device.name }}</strong></td>
-                <td>{{ device.ip }}</td>
+
+            <td><strong>{{ device.name }}</strong></td>
+            <td>{{ device.ip }}</td>
 {#                <td>{{ device.id }}</td>#}
 {#                <td>{{ device.last_up }}</td>#}
 {#                <td>{{ device.last_down }}</td>#}
-                {% if device.up and device.last_down[1] is not none%}
-                    <td><strong>down</strong> - {{ device.last_down[1] }}</td>
-                {% elif not device.up %}
-                    <td><strong>up</strong> - {{ device.last_up[1] }}</td>
-                {% else %}
-                    <td>&nbsp;</td>
-                {% endif %}
+            {% if device.up and device.last_down[1] is not none%}
+                <td><strong>down</strong> - {{ device.last_down[1] }}</td>
+            {% elif not device.up %}
+                <td><strong>up</strong> - {{ device.last_up[1] }}</td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
             <td>{{ device.mean_delay[1]|round(3) if device.mean_delay[1] else "&nbsp;"|safe }}</td>
             </tr>
         {% endfor %}
