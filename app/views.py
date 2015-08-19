@@ -3,7 +3,7 @@ __author__ = 'Lesko'
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-from flask import render_template, redirect, flash
+from flask import render_template, redirect, flash, request
 import sqlalchemy
 from flask.ext.basicauth import BasicAuth
 
@@ -22,26 +22,27 @@ def home():
     return render_template("home.html", page_loc="home")
 
 
+@app.route("/test")
 def get_chart_data():
     nodes = db.session.query(Nodes).filter(Nodes.in_use == True).order_by(Nodes.id.asc()).all()
     pprint(nodes)
     series = []
     for node in nodes:
-        d = db.session.query(PingerData.date_time, PingerData.delay).join(Nodes). \
+        data = db.session.query(PingerData.date_time, PingerData.delay).join(Nodes). \
             filter(Nodes.id == node.id).limit(10).all()
         print node.name
-        pprint(d)
-        data = []
-        for delay in d:
-            data.append(delay[1]*1000 if delay[1] is not None else "null")
+        pprint(data)
+        node_data = []
+        for delay in data:
+            node_data.append(delay[1]*1000 if delay[1] is not None else "null")
 
         series.append(
             {
                 "name": str(node.name),
-                "data": data
+                "data": node_data
             })
     pprint(series)
-    return series
+    return None
 
 
 @app.route('/view_devices', methods=["GET", "POST"])

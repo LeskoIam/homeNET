@@ -66,4 +66,4 @@ class Nodes(db.Model):
         return '<Nodes {0} - {1}>'.format(self.id, self.name)
 
     def __str__(self):
-        return "{name} - {ip}".format(name=self.name, ip= self.ip)
+        return "{name} - {ip}".format(name=self.name, ip=self.ip)
