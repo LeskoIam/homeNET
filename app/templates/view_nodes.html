@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="col-sm-6">
+            Table last updated on {{ update_time }}
+        </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th>Node Name</th>
+                <th>Node Address</th>
+{#                <th>Node last</th>#}
+{#                <th>Node Delay [ms]</th>#}
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for node in data %}
+            {% if node.up %}
+        	    <tr class="success">
+            {% else %}
+                <tr class="danger">
+            {% endif %}
+            <td>
+            {% if node.interface == "WiFi" %}
+                <span class="glyphicon glyphicon-signal"></span>
+            {% else %}
+                <span class="glyphicon glyphicon-hdd"></span>
+            {% endif %}
+            {% if node.node_type == "web" %}
+                &nbsp;<span class="glyphicon glyphicon-cloud"></span>
+            {% else %}
+                &nbsp;
+            {% endif %}
+            </td>
+
+            <td><strong>{{ node.name }}</strong></td>
+            <td>{{ node.ip }}</td>
+{#                <td>{{ device.id }}</td>#}
+{#                <td>{{ device.last_up }}</td>#}
+{#                <td>{{ device.last_down }}</td>#}
+{#            {% if node.up and node.last_down[1] is not none%}#}
+{#                <td><strong>down</strong> - {{ node.last_down[1] }}</td>#}
+{#            {% elif not node.up %}#}
+{#                <td><strong>up</strong> - {{ node.last_up[1] }}</td>#}
+{#            {% else %}#}
+{#                <td>&nbsp;</td>#}
+{#            {% endif %}#}
+{#            <td>{{ node.mean_delay[1]|round(3) if node.mean_delay[1] else "&nbsp;"|safe }}</td>#}
+            <td>
+                <form action="/node_details/{{ node.id|string }}" method="post" name="details_f">
+                    <button value="edit" type="submit" class="btn btn-info btn-xs">Details</button>
+                </form>
+            </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{#    <div class="col-sm-3">#}
+{#        Lesko1#}
+{#    </div>#}
+    </div>
+{% endblock %}

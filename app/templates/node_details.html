@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+    <p>
+        <h3>Node {{ node_id }}: {{ node_name }}</h3>
+        Last up time: {{ last_up_time  if last_up_time is not none else "No data"}}<br>
+        Last down time: {{ last_down_time  if last_down_time is not none else "No data"}}<br>
+        Average ping delay: {{ mean_delay|round(3) if mean_delay is not none else "No data" }}<br>
+    </p>
+<div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+    <script type="text/javascript">
+$(document).ready(function() {
+    $.getJSON("/delay_data/{{ node_id|safe }}", function (jdata) {
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'test_c',
+{#                type: "column"#}
+{#						height: 155#}
+
+					},
+                    title: {
+                        text: 'Ping Delay - last 200 readings (2000s)',
+                        x: -20 //center
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature (ms)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: 'ms'
+                    },
+                    plotOptions: {
+                        line: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [{
+                        name: jdata.name,
+                        data: jdata.data
+                    }]
+                });
+            });
+        });
+
+
+
+</script>
+{% endblock %}
