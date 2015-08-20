@@ -8,8 +8,8 @@ import sqlalchemy
 from flask.ext.basicauth import BasicAuth
 
 from app import app, db
-from models import PingerData, LastEntry, Nodes
-from forms import AddEditNodeForm
+from models import PingerData, LastEntry, Nodes, AppSettings
+from forms import AddEditNodeForm, SettingsForm
 from pprint import pprint
 import datetime
 basic_auth = BasicAuth(app)
@@ -188,6 +188,22 @@ def delete_node(node_id):
     return redirect("/manage_nodes")
 
 
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    form = SettingsForm()
+    if form.validate_on_submit():
+        print form.plot_back_period.data
+        update_setting("details_plot_back_period",
+                       form.plot_back_period.data,
+                       int)
+        flash("Settings successfully changed!")
+    back_period, _ = get_setting("details_plot_back_period", int)
+    form.plot_back_period.data = back_period
+    return render_template("settings.html",
+                           form=form,
+                           page_loc="nodes - settings")
+
+
 @app.route('/temp', methods=["GET", "POST"])
 def test():
     to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
@@ -204,18 +220,20 @@ def test():
 #                                                   #
 # ###################################################
 
+
 @app.route("/api/delay_data/<node_id>")
 def get_node_delay_data(node_id=None):
+    back_period, _ = get_setting("details_plot_back_period", int)
     data = db.session.query(PingerData.date_time, PingerData.delay, Nodes.name).join(Nodes). \
         filter(Nodes.id == PingerData.node_id).filter(Nodes.id == node_id). \
-        order_by(PingerData.date_time.desc()).limit(200).all()
+        order_by(PingerData.date_time.desc()).limit(back_period).all()
     node_data = []
     up_times = []
     down_data = []
     for delay in data:
         node_data.append(delay[1] * 1000 if delay[1] is not None else None)
         up_times.append(time_since_epoch(delay[0])*1000)
-        down_data.append(0 if delay[1] is None else None)
+        down_data.append(-0.01 if delay[1] is None else None)
     # pprint(node_data)
     # pprint(down_data)
     # pprint(up_times)
@@ -230,7 +248,8 @@ def get_node_delay_data(node_id=None):
             "data": zip(up_times, down_data),
             "color": "red"
         }
-    ]}
+    ],
+        "back_period": back_period}
     # pprint(series)
     return jsonify(**series)
 
@@ -254,6 +273,18 @@ def find_in_lists(data, search, index):
         if d[index] == search:
             return d
     return None
+
+
+def get_setting(setting_name, ret_type):
+    value = ret_type(db.session.query(AppSettings.value).filter(AppSettings.name == setting_name).first()[0])
+    default = ret_type(db.session.query(AppSettings.default_value).filter(AppSettings.name == setting_name).first()[0])
+    return value, default
+
+
+def update_setting(setting_name, new_value, ret_type):
+    to_update = db.session.query(AppSettings).filter(AppSettings.name == setting_name).first()
+    to_update.value = ret_type(new_value)
+    db.session.commit()
 
 
 def time_since_epoch(t):

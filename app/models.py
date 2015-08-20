@@ -7,7 +7,6 @@ from app import db
 
 
 class PingerData(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     node_id = db.Column(db.Integer, db.ForeignKey('nodes.id'))
     date_time = db.Column(db.DateTime, nullable=False)
@@ -27,7 +26,6 @@ class PingerData(db.Model):
 
 
 class LastEntry(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     date_time = db.Column(db.DateTime, nullable=False)
     last_common_id = db.Column(db.Integer, nullable=False, index=True)
@@ -44,7 +42,6 @@ class LastEntry(db.Model):
 
 
 class Nodes(db.Model):
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
 
@@ -67,3 +64,23 @@ class Nodes(db.Model):
 
     def __str__(self):
         return "{name} - {ip}".format(name=self.name, ip=self.ip)
+
+
+class AppSettings(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False, unique=True)
+    value_type = db.Column(db.String(16), nullable=False)
+    value = db.Column(db.String, nullable=False)
+    default_value = db.Column(db.String, nullable=False)
+
+    def __init__(self, name, value_type, value, default_value):
+        self.name = name
+        self.value_type = value_type
+        self.value = value
+        self.default_value = default_value
+
+    def __repr__(self):
+        return "<AppSettings {0} '{1}': type: <{2}>; value '{3}'>".format(self.id,
+                                                                          self.name,
+                                                                          self.value_type,
+                                                                          self.value)

@@ -1,4 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-
+<form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-sm-4">
+            Plot back period:
+            {{ form.plot_back_period(size=5) }} readings
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p><br>
+                <button value="save" type="submit" class="btn btn-success">Save Settings</button>
+            </p>
+        </div>
+    </div>
+</form>
 {% endblock %}

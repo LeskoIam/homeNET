@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, BooleanField, HiddenField
+from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField
 from wtforms.validators import DataRequired
 
 
@@ -25,3 +25,7 @@ class AddEditNodeForm(Form):
 
     in_use = BooleanField("in_use", default=True)
     node_id = HiddenField("node_id")
+
+
+class SettingsForm(Form):
+    plot_back_period = IntegerField("plot_back_period", validators=[DataRequired()])

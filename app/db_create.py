@@ -5,8 +5,9 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from app import db
-from app.models import Nodes, LastEntry
+from app.models import Nodes, LastEntry, AppSettings
 import sqlalchemy
+from sqlalchemy.schema import CreateTable
 
 import datetime
 
@@ -39,7 +40,24 @@ def add_first_last_entry():
     except sqlalchemy.exc.IntegrityError:
             print "Not adding nodes"
 
+
+def add_settings(name, value_type, value, default_value):
+    data = AppSettings(name=name,
+                       value_type=value_type,
+                       value=value,
+                       default_value=default_value)
+    try:
+        db.session.add(data)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError:
+        db.session.rollback()
+        print "Not adding settings"
+
 if __name__ == '__main__':
     db.create_all()
-    add_nodes()
-    add_first_last_entry()
+    # add_nodes()
+    # add_first_last_entry()
+    add_settings("details_plot_back_period",
+                 "int",
+                 200,
+                 200)

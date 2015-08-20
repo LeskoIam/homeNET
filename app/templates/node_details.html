@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
     <h3>Node {{ node_id }}: {{ node_name }}</h3>
-    <p>
-        Last up time: {{ last_up_time|format_datetime if last_up_time is not none else "No data"}}<br />
-        Last down time: {{ last_down_time|format_datetime  if last_down_time is not none else "No data"}}<br />
-        Average ping delay: {{ mean_delay|round(3)|string + " ms" if mean_delay is not none else "No data" }}<br />
-    </p>
+    <div class="row">
+        <div class="col-sm-4">
+            <b>Last up time:</b> {{ last_up_time|format_datetime if last_up_time is not none else "No data"}}<br />
+        </div>
+        <div class="col-sm-4">
+            <b>Last down time:</b> {{ last_down_time|format_datetime  if last_down_time is not none else "No data"}}<br />
+        </div>
+        <div class="col-sm-4">
+            <b>Average ping delay:</b> {{ mean_delay|round(3)|string + " ms" if mean_delay is not none else "No data" }}<br />
+        </div>
+    </div>
     <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
     <script type="text/javascript">
 $(document).ready(function() {
@@ -18,7 +24,7 @@ $(document).ready(function() {
 
 					},
                     title: {
-                        text: 'Ping Delay - last 200 readings',
+                        text: 'Ping Delay - last ' + jdata.back_period + ' readings',
                         x: -20 //center
                     },
                     xAxis: {
@@ -44,7 +50,7 @@ $(document).ready(function() {
                             }
                         }
                     },
-                    series: jdata["data"]
+                    series: jdata.data
                 });
             });
         });
