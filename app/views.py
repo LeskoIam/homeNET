@@ -204,6 +204,11 @@ def settings():
                            page_loc="nodes - settings")
 
 
+@app.route("/agregator")
+def view_agregator():
+    return render_template("agregator.html",
+                           page_loc="agregator")
+
 @app.route('/temp', methods=["GET", "POST"])
 def test():
     to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
