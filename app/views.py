@@ -11,7 +11,7 @@ from app import app, db
 from models import PingerData, LastEntry, Nodes
 from forms import AddEditNodeForm
 
-from pprint import pprint
+# from pprint import pprint
 
 basic_auth = BasicAuth(app)
 
@@ -73,19 +73,19 @@ def view_nodes():
 
 @app.route("/node_details/<node_id>", methods=["GET", "POST"])
 def show_node_details(node_id=None):
-    print node_id
+    # print node_id
     node_name = db.session.query(Nodes.name).filter(Nodes.id == node_id).first()[0]
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
         filter(PingerData.up == 1).filter(PingerData.node_id == node_id).group_by(PingerData.node_id).all()
-    pprint(last_up_time)
+    # pprint(last_up_time)
     last_down_time = db.session.query(PingerData.node_id, PingerData.date_time). \
         filter(PingerData.up == 0).filter(PingerData.node_id == node_id).group_by(PingerData.node_id).all()
-    pprint(last_down_time)
+    # pprint(last_down_time)
     mean_delay = db.session.query(PingerData.node_id,
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
         filter(PingerData.delay != None).filter(PingerData.node_id == node_id). \
         group_by(PingerData.node_id).all()
-    pprint(mean_delay)
+    # pprint(mean_delay)
     try:
         last_up_time = last_up_time[0][1]
     except IndexError:
@@ -121,7 +121,7 @@ def add_node():
     if form.validate_on_submit():
         # print form.device_type.data
         # print "All is valid"
-        print form.in_use.data
+        # print form.in_use.data
         to_add = Nodes(name=form.name.data,
                        ip=form.ip.data,
                        interface=form.interface.data,
@@ -186,7 +186,7 @@ def toggle_node_in_use(node_id):
     except IndexError:
         flash("Toggle not successful!")
         return redirect("/manage_nodes")
-    print to_toggle
+    # print to_toggle
     to_toggle.in_use = not to_toggle.in_use
     try:
         db.session.commit()
@@ -207,7 +207,7 @@ def delete_node(node_id):
     except IndexError:
         flash("Delete not successful!")
         return redirect("/manage_nodes")
-    print to_delete
+    # print to_delete
     try:
         db.session.delete(to_delete)
         for data in data_to_delete:
@@ -224,7 +224,7 @@ def delete_node(node_id):
 @app.route('/temp', methods=["GET", "POST"])
 def test():
     to_delete = db.session.query(PingerData).filter(PingerData.node_id == 2).all()
-    print to_delete
+    # print to_delete
     for data in to_delete:
         db.session.delete(data)
     db.session.commit()
@@ -233,7 +233,7 @@ def test():
 
 def delete_node_data(node_id):
     data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
-    print data_to_delete
+    # print data_to_delete
     for data in data_to_delete:
         db.session.delete(data)
     db.session.commit()

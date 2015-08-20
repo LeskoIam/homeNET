@@ -8,6 +8,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
+
 db = SQLAlchemy(app)
 
 from app import views, models
+
+import custom_jinja_filters
+app.jinja_env.filters["format_datetime"] = custom_jinja_filters.format_datetime
