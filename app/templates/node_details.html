@@ -9,7 +9,7 @@
     <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
     <script type="text/javascript">
 $(document).ready(function() {
-    $.getJSON("/delay_data/{{ node_id|safe }}", function (jdata) {
+    $.getJSON("/api/delay_data/{{ node_id|safe }}", function (jdata) {
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'test_c',
@@ -18,12 +18,15 @@ $(document).ready(function() {
 
 					},
                     title: {
-                        text: 'Ping Delay - last 200 readings (2000s)',
+                        text: 'Ping Delay - last 200 readings',
                         x: -20 //center
+                    },
+                    xAxis: {
+                        type: 'datetime'
                     },
                     yAxis: {
                         title: {
-                            text: 'Temperature (ms)'
+                            text: 'Delay (ms)'
                         },
                         plotLines: [{
                             value: 0,
@@ -37,14 +40,11 @@ $(document).ready(function() {
                     plotOptions: {
                         line: {
                             marker: {
-                                enabled: false
+                                enabled: true
                             }
                         }
                     },
-                    series: [{
-                        name: jdata.name,
-                        data: jdata.data
-                    }]
+                    series: jdata["data"]
                 });
             });
         });

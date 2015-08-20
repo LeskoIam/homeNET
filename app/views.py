@@ -10,9 +10,8 @@ from flask.ext.basicauth import BasicAuth
 from app import app, db
 from models import PingerData, LastEntry, Nodes
 from forms import AddEditNodeForm
-
-# from pprint import pprint
-
+from pprint import pprint
+import datetime
 basic_auth = BasicAuth(app)
 
 
@@ -20,22 +19,6 @@ basic_auth = BasicAuth(app)
 @app.route('/home')
 def home():
     return render_template("home.html", page_loc="home")
-
-
-@app.route("/delay_data/<node_id>")
-def get_node_delay_data(node_id=None):
-
-    data = db.session.query(PingerData.date_time, PingerData.delay, Nodes.name).join(Nodes). \
-        filter(Nodes.id == PingerData.node_id).filter(Nodes.id == node_id).limit(200).all()
-    node_data = []
-    for delay in data:
-        node_data.append(delay[1] * 1000 if delay[1] is not None else None)
-
-    series = {
-        "name": str(data[0].name),
-        "data": node_data
-    }
-    return jsonify(**series)
 
 
 @app.route('/view_nodes', methods=["GET", "POST"])
@@ -48,22 +31,6 @@ def view_nodes():
         Nodes). \
         filter(PingerData.common_id == last_common_id). \
         filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
-
-    # last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-    #     filter(PingerData.up == 1).group_by(PingerData.node_id).all()
-    #
-    # last_down_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-    #     filter(PingerData.up == 0).group_by(PingerData.node_id).all()
-    #
-    # mean_delay = db.session.query(PingerData.node_id,
-    #                               (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
-    #     filter(PingerData.delay != None). \
-    #     group_by(PingerData.node_id).all()
-
-    # for d in data:
-    #     d.last_up = find_in_lists(last_up_time, d.id, 0)
-    #     d.last_down = find_in_lists(last_down_time, d.id, 0)
-    #     d.mean_delay = find_in_lists(mean_delay, d.id, 0)
 
     return render_template("view_nodes.html",
                            data=data,
@@ -231,6 +198,49 @@ def test():
     return render_template("view_nodes.html")
 
 
+# ###################################################
+#                                                   #
+#                  API VIEWS                        #
+#                                                   #
+# ###################################################
+
+@app.route("/api/delay_data/<node_id>")
+def get_node_delay_data(node_id=None):
+    data = db.session.query(PingerData.date_time, PingerData.delay, Nodes.name).join(Nodes). \
+        filter(Nodes.id == PingerData.node_id).filter(Nodes.id == node_id). \
+        order_by(PingerData.date_time.desc()).limit(200).all()
+    node_data = []
+    up_times = []
+    down_data = []
+    for delay in data:
+        node_data.append(delay[1] * 1000 if delay[1] is not None else None)
+        up_times.append(time_since_epoch(delay[0])*1000)
+        down_data.append(0 if delay[1] is None else None)
+    # pprint(node_data)
+    # pprint(down_data)
+    # pprint(up_times)
+    series = {"data": [
+        {
+            "name": "Node Up",
+            "data": zip(up_times, node_data),
+            "color": "green"
+        },
+        {
+            "name": "Node Down",
+            "data": zip(up_times, down_data),
+            "color": "red"
+        }
+    ]}
+    # pprint(series)
+    return jsonify(**series)
+
+
+# ###################################################
+#                                                   #
+#                  HELPER FUNCTIONS                 #
+#                                                   #
+# ###################################################
+
 def delete_node_data(node_id):
     data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
     # print data_to_delete
@@ -244,3 +254,7 @@ def find_in_lists(data, search, index):
         if d[index] == search:
             return d
     return None
+
+
+def time_since_epoch(t):
+    return (t - datetime.datetime(1970, 1, 1)).total_seconds()
