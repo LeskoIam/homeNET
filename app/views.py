@@ -226,7 +226,7 @@ def view_agregator():
                            page_loc="agregator")
 
 
-@app.route("/server_temp")
+@app.route("/server_temp", methods=["GET", "POST"])
 def view_server_temp():
     form = BackPeriodForm()
     back_period = None
@@ -430,9 +430,9 @@ def csv_skip_rows(csv_file, n):
 
 
 def get_files():
-    csv_folder = u"D:\workspace\homeNet"
+    csv_folder, _ = get_setting("SERVER_TEMP_CSV_FOLDER", str)
     csv_files = []
-    files = os.listdir(csv_folder)
+    files = os.listdir(unicode(csv_folder))
     for csv_file in files:
         name, ext = os.path.splitext(csv_file)
         if ext == ".csv":
