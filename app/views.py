@@ -4,17 +4,18 @@ __author__ = 'Lesko'
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
 from flask import render_template, redirect, flash, request, jsonify
-import sqlalchemy
 from flask.ext.basicauth import BasicAuth
+import sqlalchemy
 
-from app import app, db
-from models import PingerData, LastEntry, Nodes, AppSettings
 from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
+from models import PingerData, LastEntry, Nodes, AppSettings
+from common import stats
+from app import app, db
+
+from StringIO import StringIO
 from pprint import pprint
 import datetime
-from StringIO import StringIO
 import csv
-from common import stats
 import os
 
 basic_auth = BasicAuth(app)
@@ -226,8 +227,8 @@ def view_agregator():
                            page_loc="agregator")
 
 
-@app.route("/server_temp", methods=["GET", "POST"])
-def view_server_temp():
+@app.route("/view_server", methods=["GET", "POST"])
+def view_server():
     form = BackPeriodForm()
     back_period = None
     if form.validate_on_submit():
@@ -296,16 +297,13 @@ def view_server_temp():
     limits = {"proc_max_temp": proc_max_temp}
     print "lesko", limits
     pprint(stat_data)
-    return render_template("server_temp.html",
+    return render_template("view_server.html",
                            form=form,
-                           # table_data=table_data[:get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)[0] + 1],  # firs row is header
-                           # chart_temperature=chart_real_time_temperature,
-                           # chart_load=chart_real_time_load,
                            back_period=back_period,
                            stat_data=stat_data,
                            limits=limits,
                            update_time=update_time,
-                           page_loc="server temperature")
+                           page_loc="server")
 
 
 @app.route('/temp', methods=["GET", "POST"])
@@ -492,13 +490,9 @@ class SettingReturn(object):
         self.default = default
 
 
-def get_setting(setting_name, ret_type, pre_proc=None, *kwarg):
+def get_setting(setting_name, ret_type):
     value = ret_type(db.session.query(AppSettings.value).filter(AppSettings.name == setting_name).first()[0])
     default = ret_type(db.session.query(AppSettings.default_value).filter(AppSettings.name == setting_name).first()[0])
-    # if pre_proc is not None:
-    #     if pre_proc == "split":
-    #         velue = value.split(kwarg[0])
-    # print "\n\n", value, "\n\n"
     out = SettingReturn(value=value, default=default)
     return out
 
