@@ -19,8 +19,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    var lat = 46.085129;
-    var lon = 14.4754;
+    var lat = 46.08492521;
+    var lon = 14.47540596;
     $.getJSON('http://opendata.si/vreme/report/?lat='+ lat +'&lon='+ lon, function (jdata) {
         $('p.test_c').text(jdata.copyright);
 {#        var a = new Date(jdata.forecast.updated*1000);#}

@@ -29,3 +29,7 @@ class AddEditNodeForm(Form):
 
 class SettingsForm(Form):
     plot_back_period = IntegerField("plot_back_period", validators=[DataRequired()])
+
+
+class BackPeriodForm(Form):
+    back_period = IntegerField('back_period')

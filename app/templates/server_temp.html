@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="plot_load_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="plot_temperature_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+            </div>
+        </div>
+
+    </br>
+
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form action="" method="post" name="login">
+                        {{ form.hidden_tag() }}
+                          <p>
+                              For how long back do you want to see the data:<br>
+                              {{ form.back_period(size=6) }}<br>
+                          </p>
+                          <p><input type="submit" value="Show me!"></p>
+                      </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-8">
+            <table border="1">
+
+            {% for line in table_data %}
+                <tr>
+                {% for cell in line %}
+                    <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+            </table>
+        </div>
+
+        <div class="col-sm-2">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>Stats:</h3>
+                </div>
+            </div>
+
+            {% for proc in stat_data %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <b>{{ proc.name + ":" }} </b>
+                        <ul>
+                            <li>{{ "Mean temp:" + proc.mean|round(2)|string  }}</li>
+                            <li>{{ "St. dev.:" + proc.st_dev|round(2)|string  }}</li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function() {
+            $('#plot_temperature_container').highcharts({
+                title: {
+                    text: 'Processor core temperatures',
+                    x: -20 //center
+                },
+                yAxis: {
+                    title: {
+                        text: 'Temperature (°C)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: '°C'
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+{#                legend: {#}
+{#                    enabled: false,#}
+{#                    layout: 'vertical',#}
+{#                    align: 'right',#}
+{#                    verticalAlign: 'middle',#}
+{#                    borderWidth: 0#}
+{#                },#}
+                series: {{ chart_temperature|safe }}
+            });
+        });
+
+
+        $(function() {
+            $('#plot_load_container').highcharts({
+                title: {
+                    text: 'Processor load',
+                    x: -20 //center
+                },
+                yAxis: {
+                    title: {
+                        text: 'Load (%)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                /* legend: {
+                    enabled: false,
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                }, */
+                series: {{ chart_load|safe }}
+            });
+        });
+    </script>
+{% endblock %}

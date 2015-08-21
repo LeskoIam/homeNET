@@ -9,9 +9,14 @@ from flask.ext.basicauth import BasicAuth
 
 from app import app, db
 from models import PingerData, LastEntry, Nodes, AppSettings
-from forms import AddEditNodeForm, SettingsForm
+from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
 from pprint import pprint
 import datetime
+from StringIO import StringIO
+import csv
+from common import stats
+import os
+
 basic_auth = BasicAuth(app)
 
 
@@ -193,11 +198,11 @@ def settings():
     form = SettingsForm()
     if form.validate_on_submit():
         print form.plot_back_period.data
-        update_setting("details_plot_back_period",
+        update_setting("DETAILS_PLOT_BACK_PERIOD",
                        form.plot_back_period.data,
                        int)
         flash("Settings successfully changed!")
-    back_period, _ = get_setting("details_plot_back_period", int)
+    back_period, _ = get_setting("DETAILS_PLOT_BACK_PERIOD", int)
     form.plot_back_period.data = back_period
     return render_template("settings.html",
                            form=form,
@@ -208,6 +213,103 @@ def settings():
 def view_agregator():
     return render_template("agregator.html",
                            page_loc="agregator")
+
+
+@app.route("/server_temp")
+def view_server_temp():
+    form = BackPeriodForm()
+    back_period = None
+    if form.validate_on_submit():
+        back_period = form.back_period.data
+
+    table_data = read_temp_log(get_files(),
+                               back_period=back_period if back_period is not None else
+                               get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)[0])
+
+    temperature_chart_data = [[], [], [], []]
+    load_chart_data = [[], [], [], []]
+    for row in table_data:
+        if row[0].startswith("Tim"):
+            continue
+        temperature_chart_data[0].append(float(row[1]))
+        temperature_chart_data[1].append(float(row[2]))
+        temperature_chart_data[2].append(float(row[3]))
+        temperature_chart_data[3].append(float(row[4]))
+
+        load_chart_data[0].append(float(row[5]))
+        load_chart_data[1].append(float(row[6]))
+        load_chart_data[2].append(float(row[7]))
+        load_chart_data[3].append(float(row[8]))
+
+    chart_real_time_temperature = [
+        {
+            "name": "Core 0",
+            "data": temperature_chart_data[0]
+        },
+        {
+            "name": "Core 1",
+            "data": temperature_chart_data[1]
+        },
+        {
+            "name": "Core 2",
+            "data": temperature_chart_data[2]
+        },
+        {
+            "name": "Core 3",
+            "data": temperature_chart_data[3]
+        }
+    ]
+
+    chart_real_time_load = [
+        {
+            "name": "Core 0",
+            "data": load_chart_data[0]
+        },
+        {
+            "name": "Core 1",
+            "data": load_chart_data[1]
+        },
+        {
+            "name": "Core 2",
+            "data": load_chart_data[2]
+        },
+        {
+            "name": "Core 3",
+            "data": load_chart_data[3]
+        }
+    ]
+
+    stat_data = [
+        {
+            "name": "Core 0",
+            "mean": stats.mean(temperature_chart_data[0]),
+            "st_dev": stats.st_dev(temperature_chart_data[0])
+        },
+        {
+            "name": "Core 1",
+            "mean": stats.mean(temperature_chart_data[1]),
+            "st_dev": stats.st_dev(temperature_chart_data[1])
+        },
+        {
+            "name": "Core 2",
+            "mean": stats.mean(temperature_chart_data[2]),
+            "st_dev": stats.st_dev(temperature_chart_data[2])
+        },
+        {
+            "name": "Core 3",
+            "mean": stats.mean(temperature_chart_data[3]),
+            "st_dev": stats.st_dev(temperature_chart_data[3])
+        },
+    ]
+
+    return render_template("server_temp.html",
+                           form=form,
+                           table_data=table_data[:get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)[0] + 1],  # firs row is header
+                           chart_temperature=chart_real_time_temperature,
+                           chart_load=chart_real_time_load,
+                           stat_data=stat_data,
+                           page_loc="server temperature")
+
 
 @app.route('/temp', methods=["GET", "POST"])
 def test():
@@ -228,7 +330,7 @@ def test():
 
 @app.route("/api/delay_data/<node_id>")
 def get_node_delay_data(node_id=None):
-    back_period, _ = get_setting("details_plot_back_period", int)
+    back_period, _ = get_setting("DETAILS_PLOT_BACK_PERIOD", int)
     data = db.session.query(PingerData.date_time, PingerData.delay, Nodes.name).join(Nodes). \
         filter(Nodes.id == PingerData.node_id).filter(Nodes.id == node_id). \
         order_by(PingerData.date_time.desc()).limit(back_period).all()
@@ -237,7 +339,7 @@ def get_node_delay_data(node_id=None):
     down_data = []
     for delay in data:
         node_data.append(delay[1] * 1000 if delay[1] is not None else None)
-        up_times.append(time_since_epoch(delay[0])*1000)
+        up_times.append(time_since_epoch(delay[0]) * 1000)
         down_data.append(-0.01 if delay[1] is None else None)
     # pprint(node_data)
     # pprint(down_data)
@@ -280,9 +382,13 @@ def find_in_lists(data, search, index):
     return None
 
 
-def get_setting(setting_name, ret_type):
+def get_setting(setting_name, ret_type, pre_proc=None, *kwarg):
     value = ret_type(db.session.query(AppSettings.value).filter(AppSettings.name == setting_name).first()[0])
     default = ret_type(db.session.query(AppSettings.default_value).filter(AppSettings.name == setting_name).first()[0])
+    # if pre_proc is not None:
+    #     if pre_proc == "split":
+    #         velue = value.split(kwarg[0])
+    print "\n\n", value, "\n\n"
     return value, default
 
 
@@ -294,3 +400,87 @@ def update_setting(setting_name, new_value, ret_type):
 
 def time_since_epoch(t):
     return (t - datetime.datetime(1970, 1, 1)).total_seconds()
+
+
+def remove_non_ascii(mystring):
+    out = ""
+    for s in mystring:
+        try:
+            s.decode('ascii')
+            out += s
+        except UnicodeDecodeError:
+            out += " "
+    return out
+
+
+def csv_skip_rows(csv_file, n):
+    for a in range(n):
+        next(csv_file)
+
+
+def get_files():
+    csv_folder = u"D:\workspace\homeNet"
+    csv_files = []
+    files = os.listdir(csv_folder)
+    for csv_file in files:
+        name, ext = os.path.splitext(csv_file)
+        if ext == ".csv":
+            csv_files.append(os.path.join(csv_folder, csv_file))
+    return csv_files
+
+
+def read_temp_log(files, back_period):
+    out = []
+    for csv_file_path in files:
+        with open(csv_file_path, "rb") as csv_file:
+            hm = tail(csv_file, back_period)
+            csv_file = StringIO(hm)
+            data = csv.reader(csv_file, delimiter=",")
+            for row in data:
+                row = [remove_non_ascii(c) for c in row]
+                wanted = map(int, "0 1 2 3 4 9 14 19 24".split())
+                out_row = []
+                error = False
+                for i in wanted:
+                    try:
+                        out_row.append(row[i])
+                    except IndexError:
+                        error = True
+                        break
+                if not error:
+                    out.append(out_row)
+    out = list(reversed(out))
+    out.insert(0, get_setting("SERVER_TEMP_TABLE_HEADER", str)[0].split("|"))
+    return out
+
+
+def _tail(f, window=20):
+    BUFSIZ = 1024
+    f.seek(0, 2)  # move to the end of the file
+    bites = f.tell()  # where in the file -> end of file -> file size [bytes]
+    size = window
+    block = -1
+    data = []
+    while size > 0 and bites > 0:
+        if bites - BUFSIZ > 0:
+            # Seek back one whole BUFSIZ
+            f.seek(block * BUFSIZ, 2)
+            # read BUFFER
+            data.append(f.read(BUFSIZ))
+        else:
+            # file too small, start from beginning
+            f.seek(0, 0)
+            # only read what was not read
+            data.append(f.read(bites))
+        lines_found = data[-1].count('\n')
+        size -= lines_found
+        bites -= BUFSIZ
+        block -= 1
+    data.reverse()
+    return '\n'.join(''.join(data).splitlines()[-window:])
+
+
+def tail(f, window=20):
+    t = _tail(f, window + 1)
+    n, t = t.split("\n", 1)
+    return t

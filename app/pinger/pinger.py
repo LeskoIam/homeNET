@@ -10,6 +10,7 @@ import sqlite3 as lite
 import sys
 sys.path.append("../..")
 from app.common.net import is_up
+import app
 
 
 def ping_all(connection):
@@ -23,11 +24,8 @@ def ping_all(connection):
         curr = connection.cursor()
         curr.execute("SELECT last_entry.last_common_id AS last_entry_last_common_id FROM last_entry ORDER BY last_entry.date_time DESC LIMIT 1")
         common_id = curr.fetchall()[0][0] + 1
-        print common_id, type(common_id)
     with connection:
         curr = connection.cursor()
-        print curr.mogrify("INSERT INTO last_entry (date_time, last_common_id, ready_to_read) VALUES (%s, %s, %s)",
-                     (datetime.datetime.today(), common_id, "FALSE"))
         curr.execute("INSERT INTO last_entry (date_time, last_common_id, ready_to_read) VALUES (%s, %s, %s)",
                      (datetime.datetime.today(), common_id, "FALSE"))
         print common_id
@@ -58,15 +56,15 @@ if __name__ == '__main__':
     import time
     import psycopg2
 
-    try:
-        conn = psycopg2.connect("dbname='homeNET' user='lesko' host='192.168.1.52' password='ma19ne99'")
-    except:
-        print "I am unable to connect to the database"
+    # try:
+    #     conn = psycopg2.connect("dbname='homeNET' user='lesko' host='192.168.1.53' password='ma19ne99'")
+    # except:
+    #     print "I am unable to connect to the database"
 
 
     def pinger_worker():
         # con = lite.connect("D:/workspace/homeNet/app.db")
-        con = psycopg2.connect("dbname='homeNET' user='lesko' host='192.168.1.52' password='ma19ne99'")
+        con = psycopg2.connect("dbname='homeNET' user='lesko' host='192.168.1.53' password='ma19ne99'")
         while 1:
             start_time = time.time()
             ping_all(con)
