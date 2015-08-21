@@ -3,18 +3,33 @@
     <p>
     <b>A lot of information on the same page here will be :)</b>
     </p>
-    Radar info update on: <span class="updated_text_radar">test3</span><br>
-    Rain level: <span class="rain_level">test</span><br>
-    Rain: <span class="rain_mmph">test2</span> mm/h<br>
-    <img class="img-rounded" src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif">
 
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
 
         </div>
-{#        <div class="col-sm-6">#}
-{#            <img class="img-rounded" src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif">#}
-{#        </div>#}
+        <div class="col-sm-6">
+            <h3>Weather</h3>
+            <p>
+                <b>Information for locaion:</b> <span class="location"><i>location</i></span><br>
+                <br>
+                <b>Radar info update on:</b> <span class="updated_text_radar">test3</span><br>
+                <b>Rain level:</b> <span class="rain_level">test</span><br>
+                <b>Rain:</b> <span class="rain_mmph">test2</span> mm/h<br>
+            </p>
+            <p>
+                <img class="img-rounded img-responsive"
+                     src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif">
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+
+        </div>
+        <div class="col-sm-6">
+
+        </div>
     </div>
 
 <script type="text/javascript">
@@ -28,6 +43,7 @@ $(document).ready(function() {
         $('span.rain_level').text(jdata.radar.rain_level);
         $('span.updated_text_radar').text(jdata.radar.updated_text);
         $('span.rain_mmph').text(jdata.radar.rain_mmph);
+        $('span.location').text('lat: ' + lat.toString() + ' lon: ' + lon.toString())
 
 
     });

@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+     <div class="row">
+        <div class="col-sm-12 text-center">
+            <h3>Data for last <span class="num_of_readings">N</span> readings</h3>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-6">
             Last updated on {{ update_time|format_datetime }}
@@ -58,6 +63,7 @@
     <script type="text/javascript">
     $(document).ready(function() {
         $.getJSON("/api/server_data/{{ back_period|safe }}", function (jdata) {
+            $('span.num_of_readings').text(jdata.chart_real_time_load.data[0].data.length);
             $('#plot_temperature_container').highcharts({
                 title: {
                     text: 'Processor core temperatures',
