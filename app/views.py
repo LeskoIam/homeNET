@@ -208,13 +208,13 @@ def settings():
                        form.server_temp_max_table_rows.data,
                        int)
         flash("Settings successfully changed!")
-    details_plot_back_period, _ = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
-    server_temp_plot_back_period, _ = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
-    server_temp_max_table_rows, _ = get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)
+    details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
+    server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
+    server_temp_max_table_rows = get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)
 
-    form.node_details_plot_back_period.data = details_plot_back_period
-    form.server_temp_plot_back_period.data = server_temp_plot_back_period
-    form.server_temp_max_table_rows.data = server_temp_max_table_rows
+    form.node_details_plot_back_period.data = details_plot_back_period.value
+    form.server_temp_plot_back_period.data = server_temp_plot_back_period.value
+    form.server_temp_max_table_rows.data = server_temp_max_table_rows.value
     return render_template("settings.html",
                            form=form,
                            page_loc="nodes - settings")
@@ -231,11 +231,13 @@ def view_server_temp():
     form = BackPeriodForm()
     back_period = None
     if form.validate_on_submit():
+        print "Form OK 22"
         back_period = form.back_period.data
+        print back_period
 
     table_data = read_temp_log(get_files(),
                                back_period=back_period if back_period is not None else
-                               get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)[0])
+                               get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int).value)
 
     temperature_chart_data = [[], [], [], []]
     load_chart_data = [[], [], [], []]
@@ -252,72 +254,43 @@ def view_server_temp():
         load_chart_data[2].append(float(row[7]))
         load_chart_data[3].append(float(row[8]))
 
-    chart_real_time_temperature = [
-        {
-            "name": "Core 0",
-            "data": temperature_chart_data[0]
-        },
-        {
-            "name": "Core 1",
-            "data": temperature_chart_data[1]
-        },
-        {
-            "name": "Core 2",
-            "data": temperature_chart_data[2]
-        },
-        {
-            "name": "Core 3",
-            "data": temperature_chart_data[3]
-        }
-    ]
-
-    chart_real_time_load = [
-        {
-            "name": "Core 0",
-            "data": load_chart_data[0]
-        },
-        {
-            "name": "Core 1",
-            "data": load_chart_data[1]
-        },
-        {
-            "name": "Core 2",
-            "data": load_chart_data[2]
-        },
-        {
-            "name": "Core 3",
-            "data": load_chart_data[3]
-        }
-    ]
-
     stat_data = [
         {
             "name": "Core 0",
-            "mean": stats.mean(temperature_chart_data[0]),
-            "st_dev": stats.st_dev(temperature_chart_data[0])
+            "temp_mean": stats.mean(temperature_chart_data[0]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
+            "load_mean": stats.mean(load_chart_data[0]),
+            "load_st_dev": stats.st_dev(load_chart_data[0])
         },
         {
             "name": "Core 1",
-            "mean": stats.mean(temperature_chart_data[1]),
-            "st_dev": stats.st_dev(temperature_chart_data[1])
+            "temp_mean": stats.mean(temperature_chart_data[1]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
+            "load_mean": stats.mean(load_chart_data[1]),
+            "load_st_dev": stats.st_dev(load_chart_data[1])
         },
         {
             "name": "Core 2",
-            "mean": stats.mean(temperature_chart_data[2]),
-            "st_dev": stats.st_dev(temperature_chart_data[2])
+            "temp_mean": stats.mean(temperature_chart_data[2]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
+            "load_mean": stats.mean(load_chart_data[2]),
+            "load_st_dev": stats.st_dev(load_chart_data[2])
         },
         {
             "name": "Core 3",
-            "mean": stats.mean(temperature_chart_data[3]),
-            "st_dev": stats.st_dev(temperature_chart_data[3])
+            "temp_mean": stats.mean(temperature_chart_data[3]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
+            "load_mean": stats.mean(load_chart_data[3]),
+            "load_st_dev": stats.st_dev(load_chart_data[3])
         },
     ]
 
     return render_template("server_temp.html",
                            form=form,
-                           table_data=table_data[:get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)[0] + 1],  # firs row is header
-                           chart_temperature=chart_real_time_temperature,
-                           chart_load=chart_real_time_load,
+                           # table_data=table_data[:get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)[0] + 1],  # firs row is header
+                           # chart_temperature=chart_real_time_temperature,
+                           # chart_load=chart_real_time_load,
+                           back_period=back_period,
                            stat_data=stat_data,
                            page_loc="server temperature")
 
@@ -341,10 +314,10 @@ def test():
 
 @app.route("/api/delay_data/<node_id>")
 def get_node_delay_data(node_id=None):
-    back_period, _ = get_setting("DETAILS_PLOT_BACK_PERIOD", int)
+    back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     data = db.session.query(PingerData.date_time, PingerData.delay, Nodes.name).join(Nodes). \
         filter(Nodes.id == PingerData.node_id).filter(Nodes.id == node_id). \
-        order_by(PingerData.date_time.desc()).limit(back_period).all()
+        order_by(PingerData.date_time.desc()).limit(back_period.value).all()
     node_data = []
     up_times = []
     down_data = []
@@ -358,23 +331,130 @@ def get_node_delay_data(node_id=None):
     series = {"data": [
         {
             "name": "Node Up",
-            "data": zip(up_times, node_data),
+            "data": zip(up_times, node_data)[::-1],
             "color": "green"
         },
         {
             "name": "Node Down",
-            "data": zip(up_times, down_data),
+            "data": zip(up_times, down_data)[::-1],
             "color": "red"
         }
     ],
-        "back_period": back_period}
+        "back_period": back_period.value
+    }
     # pprint(series)
     return jsonify(**series)
 
 
+@app.route("/api/server_data")
+@app.route("/api/server_data/<back_period>")
+def get_server_data(back_period):
+    print "get_server_data"
+    print back_period, type(back_period), repr(back_period)
+    if back_period != "None":
+        back_period = int(back_period)
+    else:
+        back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int).value
+    table_data = read_temp_log(get_files(),
+                               back_period=back_period)
+
+    temperature_chart_data = [[], [], [], [], []]
+    load_chart_data = [[], [], [], [], []]
+    for row in table_data:
+        if row[0].startswith("Tim"):
+            continue
+        # print row[0]
+        # row[0] = datetime.datetime.strptime(row[0], "%H:%M:%S %m/%d/%y")
+        date_time = datetime.datetime.strptime(row[0], "%H:%M:%S %m/%d/%y")
+        temperature_chart_data[0].append(float(row[1]))
+        temperature_chart_data[1].append(float(row[2]))
+        temperature_chart_data[2].append(float(row[3]))
+        temperature_chart_data[3].append(float(row[4]))
+        temperature_chart_data[4].append(time_since_epoch(date_time)*1000)
+
+        load_chart_data[0].append(float(row[5]))
+        load_chart_data[1].append(float(row[6]))
+        load_chart_data[2].append(float(row[7]))
+        load_chart_data[3].append(float(row[8]))
+        load_chart_data[4].append(time_since_epoch(date_time)*1000)
+
+    # print temperature_chart_data[3]
+    data = {
+    "chart_real_time_temperature": { "data": [
+        {
+            "name": "Core 0",
+            "data": zip(temperature_chart_data[4], temperature_chart_data[0])[::-1]
+        },
+        {
+            "name": "Core 1",
+            "data": zip(temperature_chart_data[4], temperature_chart_data[1])[::-1]
+        },
+        {
+            "name": "Core 2",
+            "data": zip(temperature_chart_data[4], temperature_chart_data[2])[::-1]
+        },
+        {
+            "name": "Core 3",
+            "data": zip(temperature_chart_data[4], temperature_chart_data[3])[::-1]
+        }
+    ]},
+
+    "chart_real_time_load": { "data": [
+        {
+            "name": "Core 0",
+            "data": zip(load_chart_data[4], load_chart_data[0])[::-1]
+        },
+        {
+            "name": "Core 1",
+            "data": zip(load_chart_data[4], load_chart_data[1])[::-1]
+        },
+        {
+            "name": "Core 2",
+            "data": zip(load_chart_data[4], load_chart_data[2])[::-1]
+        },
+        {
+            "name": "Core 3",
+            "data": zip(load_chart_data[4], load_chart_data[3])[::-1]
+        }
+    ]},
+
+    "stat_data" : {"data": [
+        {
+            "name": "Core 0",
+            "temp_mean": stats.mean(temperature_chart_data[0]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
+            "load_mean": stats.mean(load_chart_data[0]),
+            "load_st_dev": stats.st_dev(load_chart_data[0])
+        },
+        {
+            "name": "Core 1",
+            "temp_mean": stats.mean(temperature_chart_data[1]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
+            "load_mean": stats.mean(load_chart_data[1]),
+            "load_st_dev": stats.st_dev(load_chart_data[1])
+        },
+        {
+            "name": "Core 2",
+            "temp_mean": stats.mean(temperature_chart_data[2]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
+            "load_mean": stats.mean(load_chart_data[2]),
+            "load_st_dev": stats.st_dev(load_chart_data[2])
+        },
+        {
+            "name": "Core 3",
+            "temp_mean": stats.mean(temperature_chart_data[3]),
+            "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
+            "load_mean": stats.mean(load_chart_data[3]),
+            "load_st_dev": stats.st_dev(load_chart_data[3])
+        },
+    ]}
+    }
+    return jsonify(**data)
+
+
 # ###################################################
 #                                                   #
-#                  HELPER FUNCTIONS                 #
+#             HELPER FUNCTIONS & CLASSES            #
 #                                                   #
 # ###################################################
 
@@ -393,14 +473,21 @@ def find_in_lists(data, search, index):
     return None
 
 
+class SettingReturn(object):
+    def __init__(self, value, default):
+        self.value = value
+        self.default = default
+
+
 def get_setting(setting_name, ret_type, pre_proc=None, *kwarg):
     value = ret_type(db.session.query(AppSettings.value).filter(AppSettings.name == setting_name).first()[0])
     default = ret_type(db.session.query(AppSettings.default_value).filter(AppSettings.name == setting_name).first()[0])
     # if pre_proc is not None:
     #     if pre_proc == "split":
     #         velue = value.split(kwarg[0])
-    print "\n\n", value, "\n\n"
-    return value, default
+    # print "\n\n", value, "\n\n"
+    out = SettingReturn(value=value, default=default)
+    return out
 
 
 def update_setting(setting_name, new_value, ret_type):
@@ -430,13 +517,13 @@ def csv_skip_rows(csv_file, n):
 
 
 def get_files():
-    csv_folder, _ = get_setting("SERVER_TEMP_CSV_FOLDER", str)
+    csv_folder = get_setting("SERVER_TEMP_CSV_FOLDER", str)
     csv_files = []
-    files = os.listdir(unicode(csv_folder))
+    files = os.listdir(unicode(csv_folder.value))
     for csv_file in files:
         name, ext = os.path.splitext(csv_file)
         if ext == ".csv":
-            csv_files.append(os.path.join(csv_folder, csv_file))
+            csv_files.append(os.path.join(csv_folder.value, csv_file))
     return csv_files
 
 
@@ -461,7 +548,7 @@ def read_temp_log(files, back_period):
                 if not error:
                     out.append(out_row)
     out = list(reversed(out))
-    out.insert(0, get_setting("SERVER_TEMP_TABLE_HEADER", str)[0].split("|"))
+    out.insert(0, get_setting("SERVER_TEMP_TABLE_HEADER", str).value.split("|"))
     return out
 
 

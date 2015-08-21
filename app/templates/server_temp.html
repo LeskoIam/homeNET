@@ -1,80 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
-        <div class="row">
-            <div class="col-xs-6">
-                <div id="plot_temperature_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-            </div>
-        <div class="col-xs-6">
-                <div id="plot_load_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-            </div>
+    <div class="row" >
+    {% for proc in stat_data %}
+        <div class="col-sm-3" style="border: solid 4px lightgrey; border-radius: 8px;">
+            <b>{{ proc.name + ":" }} </b>
+            <h5>Temperature:</h5>
+            <ul>
+                <li>Mean temp: {{ proc.temp_mean|round(2) }} °C</li>
+                <li>St. dev.: {{ proc.temp_st_dev|round(2) }} °C</li>
+            </ul>
+            <h5>Load:</h5>
+            <ul>
+                <li>Mean load: {{ proc.load_mean|round(2)|string }} %</li>
+                <li>St. dev.: {{ proc.load_st_dev|round(2)|string }} %</li>
+            </ul>
         </div>
-
-{#        <div class="row">#}
-{#            <div class="col-xs-12">#}
-{#                <div id="plot_temperature_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>#}
-{#            </div>#}
-{#        </div>#}
-
-    </br>
-
+    {% endfor %}
+    </div>
     <div class="row">
-        <div class="col-sm-2">
-            <div class="row">
-                <div class="col-sm-12">
-                    <form action="" method="post" name="login">
-                        {{ form.hidden_tag() }}
-                          <p>
-                              For how long back do you want to see the data:<br>
-                              {{ form.back_period(size=6) }}<br>
-                          </p>
-                          <p><input type="submit" value="Show me!"></p>
-                      </form>
-                </div>
-            </div>
-
+        <div class="col-sm-12" align="right">
+            <form action="" method="post" name="login">
+                {{ form.hidden_tag() }}
+                For how long back do you want to see the data:
+                {{ form.back_period(size=6) }}
+                <button value="add" type="submit" class="btn btn-success">Show me</button>
+            </form>
         </div>
-        <div class="col-sm-8">
-            <table border="1">
-
-            {% for line in table_data %}
-                <tr>
-                {% for cell in line %}
-                    <td>{{ cell }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-
-            </table>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-xs-6">
+            <div id="plot_temperature_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
         </div>
-
-        <div class="col-sm-2">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h3>Stats:</h3>
-                </div>
-            </div>
-
-            {% for proc in stat_data %}
-                <div class="row">
-                    <div class="col-sm-12">
-                        <b>{{ proc.name + ":" }} </b>
-                        <ul>
-                            <li>{{ "Mean temp:" + proc.mean|round(2)|string  }}</li>
-                            <li>{{ "St. dev.:" + proc.st_dev|round(2)|string  }}</li>
-                        </ul>
-                    </div>
-                </div>
-            {% endfor %}
+    <div class="col-xs-6">
+            <div id="plot_load_container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
         </div>
     </div>
 
+    <br>
+
+
+{#        <div class="col-sm-8">#}
+{#            <table border="1">#}
+{##}
+{#            {% for line in table_data %}#}
+{#                <tr>#}
+{#                {% for cell in line %}#}
+{#                    <td>{{ cell }}</td>#}
+{#                {% endfor %}#}
+{#            </tr>#}
+{#            {% endfor %}#}
+{##}
+{#            </table>#}
+{#        </div>#}
+
+{#        <div class="col-sm-2">#}
+{#            <div class="row">#}
+{#                <div class="col-sm-12">#}
+{#                    <h3>Stats:</h3>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            {% for proc in stat_data %}#}
+{#                <div class="row">#}
+{#                    <div class="col-sm-12">#}
+{#                        <b>{{ proc.name + ":" }} </b>#}
+{#                        <ul>#}
+{#                            <li>{{ "Mean temp:" + proc.mean|round(2)|string  }}</li>#}
+{#                            <li>{{ "St. dev.:" + proc.st_dev|round(2)|string  }}</li>#}
+{#                        </ul>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+
+
     <script type="text/javascript">
-        $(function() {
+    $(document).ready(function() {
+        $.getJSON("/api/server_data/{{ back_period|safe }}", function (jdata) {
             $('#plot_temperature_container').highcharts({
                 title: {
                     text: 'Processor core temperatures',
                     x: -20 //center
                 },
+                xAxis: {
+                        type: 'datetime'
+                    },
                 yAxis: {
                     title: {
                         text: 'Temperature (°C)'
@@ -95,53 +106,47 @@
                         }
                     }
                 },
-{#                legend: {#}
-{#                    enabled: false,#}
-{#                    layout: 'vertical',#}
-{#                    align: 'right',#}
-{#                    verticalAlign: 'middle',#}
-{#                    borderWidth: 0#}
-{#                },#}
-                series: {{ chart_temperature|safe }}
+                series: jdata.chart_real_time_temperature.data
             });
-        });
 
-
-        $(function() {
-            $('#plot_load_container').highcharts({
-                title: {
-                    text: 'Processor load',
-                    x: -20 //center
-                },
-                yAxis: {
+                $('#plot_load_container').highcharts({
                     title: {
-                        text: 'Load (%)'
+                        text: 'Processor load',
+                        x: -20 //center
                     },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
-                },
-                tooltip: {
-                    valueSuffix: '%'
-                },
-                plotOptions: {
-                    line: {
-                        marker: {
-                            enabled: false
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Load (%)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '%'
+                    },
+                    plotOptions: {
+                        line: {
+                            marker: {
+                                enabled: false
+                            }
                         }
-                    }
-                },
-                /* legend: {
+                    },
+                     /* legend: {
                     enabled: false,
                     layout: 'vertical',
                     align: 'right',
                     verticalAlign: 'middle',
                     borderWidth: 0
                 }, */
-                series: {{ chart_load|safe }}
+                series: jdata.chart_real_time_load.data
             });
         });
+            });
     </script>
 {% endblock %}
