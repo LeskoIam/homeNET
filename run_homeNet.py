@@ -26,5 +26,5 @@ ip = argv[1]
 # t.daemon = True
 # t.start()
 
-app.run(host=ip, port=5000, debug=True)
+app.run(host=ip, port=5000, debug=True, threaded=True)
 # t.join()

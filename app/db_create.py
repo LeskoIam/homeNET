@@ -57,7 +57,19 @@ if __name__ == '__main__':
     db.create_all()
     add_nodes()
     add_first_last_entry()
-    add_settings("details_plot_back_period",
+    add_settings("NODE_DETAILS_PLOT_BACK_PERIOD",
                  "int",
                  200,
                  200)
+    add_settings("SERVER_TEMP_PLOT_BACK_PERIOD",
+                 "int",
+                 120,
+                 120)
+    add_settings("SERVER_TEMP_TABLE_HEADER",
+                 "str",
+                 "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)",
+                 "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)")
+    add_settings("SERVER_TEMP_CSV_FOLDER",
+                 "str",
+                 "C:\Program Files\Core Temp",
+                 "C:\Program Files\Core Temp")

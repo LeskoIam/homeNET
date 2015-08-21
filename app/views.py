@@ -194,7 +194,7 @@ def delete_node(node_id):
 
 
 @app.route("/settings", methods=["GET", "POST"])
-def settings():
+def view_settings():
     form = SettingsForm()
     if form.validate_on_submit():
         print form.node_details_plot_back_period.data
@@ -204,17 +204,12 @@ def settings():
         update_setting("SERVER_TEMP_PLOT_BACK_PERIOD",
                        form.server_temp_plot_back_period.data,
                        int)
-        update_setting("SERVER_TEMP_MAX_TABLE_ROWS",
-                       form.server_temp_max_table_rows.data,
-                       int)
         flash("Settings successfully changed!")
     details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
-    server_temp_max_table_rows = get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)
 
     form.node_details_plot_back_period.data = details_plot_back_period.value
     form.server_temp_plot_back_period.data = server_temp_plot_back_period.value
-    form.server_temp_max_table_rows.data = server_temp_max_table_rows.value
     return render_template("settings.html",
                            form=form,
                            page_loc="nodes - settings")
@@ -241,9 +236,12 @@ def view_server_temp():
 
     temperature_chart_data = [[], [], [], []]
     load_chart_data = [[], [], [], []]
+    all_date_time = []
     for row in table_data:
         if row[0].startswith("Tim"):
             continue
+        date_time = datetime.datetime.strptime(row[0], "%H:%M:%S %m/%d/%y")
+        all_date_time.append(date_time)
         temperature_chart_data[0].append(float(row[1]))
         temperature_chart_data[1].append(float(row[2]))
         temperature_chart_data[2].append(float(row[3]))
@@ -253,7 +251,7 @@ def view_server_temp():
         load_chart_data[1].append(float(row[6]))
         load_chart_data[2].append(float(row[7]))
         load_chart_data[3].append(float(row[8]))
-
+    update_time = all_date_time[0]
     stat_data = [
         {
             "name": "Core 0",
@@ -292,6 +290,7 @@ def view_server_temp():
                            # chart_load=chart_real_time_load,
                            back_period=back_period,
                            stat_data=stat_data,
+                           update_time=update_time,
                            page_loc="server temperature")
 
 

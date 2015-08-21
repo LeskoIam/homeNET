@@ -68,10 +68,10 @@ if __name__ == '__main__':
         while 1:
             start_time = time.time()
             ping_all(con)
-            delay = 60
+            delay = 120
             diff = time.time() - start_time
             if diff < 30:
-                delay = 30
+                delay = 60
             print "Pinger running after:", delay, time.time()
             time.sleep(delay)
 

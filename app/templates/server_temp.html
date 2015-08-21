@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+    <div class="row">
+        <div class="col-sm-6">
+            Last updated on {{ update_time|format_datetime }}
+        </div>
+    </div>
     <div class="row" >
     {% for proc in stat_data %}
         <div class="col-sm-3" style="border: solid 4px lightgrey; border-radius: 8px;">
@@ -17,6 +22,7 @@
         </div>
     {% endfor %}
     </div>
+    <br>
     <div class="row">
         <div class="col-sm-12" align="right">
             <form action="" method="post" name="login">
@@ -38,42 +44,6 @@
     </div>
 
     <br>
-
-
-{#        <div class="col-sm-8">#}
-{#            <table border="1">#}
-{##}
-{#            {% for line in table_data %}#}
-{#                <tr>#}
-{#                {% for cell in line %}#}
-{#                    <td>{{ cell }}</td>#}
-{#                {% endfor %}#}
-{#            </tr>#}
-{#            {% endfor %}#}
-{##}
-{#            </table>#}
-{#        </div>#}
-
-{#        <div class="col-sm-2">#}
-{#            <div class="row">#}
-{#                <div class="col-sm-12">#}
-{#                    <h3>Stats:</h3>#}
-{#                </div>#}
-{#            </div>#}
-{##}
-{#            {% for proc in stat_data %}#}
-{#                <div class="row">#}
-{#                    <div class="col-sm-12">#}
-{#                        <b>{{ proc.name + ":" }} </b>#}
-{#                        <ul>#}
-{#                            <li>{{ "Mean temp:" + proc.mean|round(2)|string  }}</li>#}
-{#                            <li>{{ "St. dev.:" + proc.st_dev|round(2)|string  }}</li>#}
-{#                        </ul>#}
-{#                    </div>#}
-{#                </div>#}
-{#            {% endfor %}#}
-{#        </div>#}
-
 
     <script type="text/javascript">
     $(document).ready(function() {
