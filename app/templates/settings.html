@@ -4,8 +4,20 @@
     {{ form.hidden_tag() }}
     <div class="row">
         <div class="col-sm-4">
-            Plot back period:
-            {{ form.plot_back_period(size=5) }} readings
+            Node delay plot back period:
+            {{ form.node_details_plot_back_period(size=5) }} readings
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            Server plot back period:
+            {{ form.server_temp_plot_back_period(size=5) }} readings
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            Server plot maximum table rows:
+            {{ form.server_temp_max_table_rows(size=5) }} rows
         </div>
     </div>
     <div class="row">

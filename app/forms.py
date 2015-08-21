@@ -28,7 +28,9 @@ class AddEditNodeForm(Form):
 
 
 class SettingsForm(Form):
-    plot_back_period = IntegerField("plot_back_period", validators=[DataRequired()])
+    node_details_plot_back_period = IntegerField("node_details_plot_back_period")
+    server_temp_plot_back_period = IntegerField("server_temp_plot_back_period")
+    server_temp_max_table_rows = IntegerField("server_temp_max_table_rows")
 
 
 class BackPeriodForm(Form):

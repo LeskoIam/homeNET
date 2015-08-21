@@ -197,13 +197,24 @@ def delete_node(node_id):
 def settings():
     form = SettingsForm()
     if form.validate_on_submit():
-        print form.plot_back_period.data
-        update_setting("DETAILS_PLOT_BACK_PERIOD",
-                       form.plot_back_period.data,
+        print form.node_details_plot_back_period.data
+        update_setting("NODE_DETAILS_PLOT_BACK_PERIOD",
+                       form.node_details_plot_back_period.data,
+                       int)
+        update_setting("SERVER_TEMP_PLOT_BACK_PERIOD",
+                       form.server_temp_plot_back_period.data,
+                       int)
+        update_setting("SERVER_TEMP_MAX_TABLE_ROWS",
+                       form.server_temp_max_table_rows.data,
                        int)
         flash("Settings successfully changed!")
-    back_period, _ = get_setting("DETAILS_PLOT_BACK_PERIOD", int)
-    form.plot_back_period.data = back_period
+    details_plot_back_period, _ = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
+    server_temp_plot_back_period, _ = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
+    server_temp_max_table_rows, _ = get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)
+
+    form.node_details_plot_back_period.data = details_plot_back_period
+    form.server_temp_plot_back_period.data = server_temp_plot_back_period
+    form.server_temp_max_table_rows.data = server_temp_max_table_rows
     return render_template("settings.html",
                            form=form,
                            page_loc="nodes - settings")
