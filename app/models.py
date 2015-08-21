@@ -45,7 +45,7 @@ class Nodes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
 
-    ip = db.Column(db.Integer, nullable=False, unique=True, index=True)
+    ip = db.Column(db.String(64), nullable=False, unique=True, index=True)
     interface = db.Column(db.String(64), nullable=False)
     node_type = db.Column(db.String(64))
     in_use = db.Column(db.Boolean(), nullable=False)

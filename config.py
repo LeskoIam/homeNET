@@ -10,8 +10,9 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'you-will-never-guess'
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
+# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
+SQLALCHEMY_DATABASE_URI = 'postgresql://lesko:*****@192.168.1.52/homeNET'
 
 BASIC_AUTH_FORCE = True
 BASIC_AUTH_USERNAME = "lesko"
-BASIC_AUTH_PASSWORD = "ma19ne99"
+BASIC_AUTH_PASSWORD = "*****"

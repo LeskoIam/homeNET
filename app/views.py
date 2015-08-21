@@ -43,10 +43,10 @@ def show_node_details(node_id=None):
     # print node_id
     node_name = db.session.query(Nodes.name).filter(Nodes.id == node_id).first()[0]
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-        filter(PingerData.up == 1).filter(PingerData.node_id == node_id).group_by(PingerData.node_id).all()
-    # pprint(last_up_time)
+        filter(PingerData.up == "TRUE").filter(PingerData.node_id == node_id).all()
+    # pprint(last_up_time
     last_down_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-        filter(PingerData.up == 0).filter(PingerData.node_id == node_id).group_by(PingerData.node_id).all()
+        filter(PingerData.up == "FALSE").filter(PingerData.node_id == node_id).all()
     # pprint(last_down_time)
     mean_delay = db.session.query(PingerData.node_id,
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \

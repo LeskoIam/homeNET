@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-    <p class="test_c">test</p>
-    <p class="test_c2">test2</p>
-    <p class="test_c3">test3</p><p class="test_c4">test3</p>
+    <p>
+    <b>A lot of information on the same page here will be :)</b>
+    </p>
+    Radar info update on: <span class="updated_text_radar">test3</span><br>
+    Rain level: <span class="rain_level">test</span><br>
+    Rain: <span class="rain_mmph">test2</span> mm/h<br>
+    <img class="img-rounded" src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif">
+
     <div class="row">
         <div class="col-sm-4">
 
@@ -14,13 +19,15 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $.getJSON('http://opendata.si/vreme/report/?lat=46.085129&lon=14.4754', function (jdata) {
+    var lat = 46.085129;
+    var lon = 14.4754;
+    $.getJSON('http://opendata.si/vreme/report/?lat='+ lat +'&lon='+ lon, function (jdata) {
         $('p.test_c').text(jdata.copyright);
 {#        var a = new Date(jdata.forecast.updated*1000);#}
 {#        $('p.test_c2').text(a);#}
-        $('p.test_c3').text(jdata.radar.rain_level);
-        var a = new Date(jdata.radar.updated*1000);
-        $('p.test_c4').text(a);
+        $('span.rain_level').text(jdata.radar.rain_level);
+        $('span.updated_text_radar').text(jdata.radar.updated_text);
+        $('span.rain_mmph').text(jdata.radar.rain_mmph);
 
 
     });

@@ -55,8 +55,8 @@ def add_settings(name, value_type, value, default_value):
 
 if __name__ == '__main__':
     db.create_all()
-    # add_nodes()
-    # add_first_last_entry()
+    add_nodes()
+    add_first_last_entry()
     add_settings("details_plot_back_period",
                  "int",
                  200,
