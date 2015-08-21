@@ -5,23 +5,23 @@
         {{ form.hidden_tag() }}
         <div class="row">
             <div class="col-sm-2">
-                Node Name:
+                Node Name:<br>
                 {{ form.name(size=16) }}
             </div>
             <div class="col-sm-2">
-                Node Ip:
+                Node Ip:<br>
                 {{ form.ip(size=16) }}
             </div>
             <div class="col-sm-2">
-                Node Interface:
+                Node Interface:<br>
                 {{ form.interface() }}
             </div>
             <div class="col-sm-2">
-                Node Type:
+                Node Type:<br>
                 {{ form.node_type() }}
             </div>
             <div class="col-sm-2">
-                In Use:</br>
+                In Use:<br>
                 {{ form.in_use() }}
             </div>
         </div>

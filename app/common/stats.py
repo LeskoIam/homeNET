@@ -5,11 +5,16 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 import math
 
+
 def mean(data):
+    if len(data) <= 0:
+        return 0
     return sum(data) / float(len(data))
 
 
 def median(data):
+    if len(data) <= 0:
+        return 0
     data = sorted(data)
     data_len = len(data)
     x1 = data_len / 2
@@ -25,6 +30,8 @@ def st_dev(data):
     :param data: 1D, list, tuple,...
     :return:
     """
+    if len(data) <= 0:
+        return 0
     data_len = float(len(data))
     data_mean = mean(data)
     data1 = []
@@ -34,6 +41,8 @@ def st_dev(data):
 
 
 def diff(data):
+    if len(data) <= 0:
+        return []
     previous, data = data[0], data[1:]
     out_data = []
     for x in data:

@@ -21,6 +21,12 @@ import os
 basic_auth = BasicAuth(app)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html',
+                           page_loc="404"), 404
+
+
 @app.route('/')
 @app.route('/home')
 def home():
@@ -359,7 +365,7 @@ def get_node_delay_data(node_id=None):
 
 @app.route("/api/server_data")
 @app.route("/api/server_data/<back_period>")
-def get_server_data(back_period):
+def get_server_data(back_period="None"):
     print "get_server_data"
     print back_period, type(back_period), repr(back_period)
     if back_period != "None":
@@ -538,22 +544,25 @@ def read_temp_log(files, back_period):
     out = []
     for csv_file_path in files:
         with open(csv_file_path, "rb") as csv_file:
-            hm = tail(csv_file, back_period)
-            csv_file = StringIO(hm)
-            data = csv.reader(csv_file, delimiter=",")
-            for row in data:
-                row = [remove_non_ascii(c) for c in row]
-                wanted = map(int, "0 1 2 3 4 9 14 19 24".split())
-                out_row = []
-                error = False
-                for i in wanted:
-                    try:
-                        out_row.append(row[i])
-                    except IndexError:
-                        error = True
-                        break
-                if not error:
-                    out.append(out_row)
+            try:
+                hm = tail(csv_file, back_period)
+                csv_file = StringIO(hm)
+                data = csv.reader(csv_file, delimiter=",")
+                for row in data:
+                    row = [remove_non_ascii(c) for c in row]
+                    wanted = map(int, "0 1 2 3 4 9 14 19 24".split())
+                    out_row = []
+                    error = False
+                    for i in wanted:
+                        try:
+                            out_row.append(row[i])
+                        except IndexError:
+                            error = True
+                            break
+                    if not error:
+                        out.append(out_row)
+            except ValueError:
+                out = []
     out = list(reversed(out))
     out.insert(0, get_setting("SERVER_TEMP_TABLE_HEADER", str).value.split("|"))
     return out
