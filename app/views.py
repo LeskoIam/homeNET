@@ -227,10 +227,10 @@ def view_settings():
                            page_loc="nodes - settings")
 
 
-@app.route("/agregator")
-def view_agregator():
-    return render_template("agregator.html",
-                           page_loc="agregator")
+@app.route("/aggregator")
+def view_aggregator():
+    return render_template("aggregator.html",
+                           page_loc="aggregator")
 
 
 @app.route("/view_server", methods=["GET", "POST"])
