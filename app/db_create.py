@@ -73,3 +73,7 @@ if __name__ == '__main__':
                  "str",
                  "C:\Program Files\Core Temp",
                  "C:\Program Files\Core Temp")
+    add_settings("PROC_MAX_TEMP_LIMIT",
+                 "float",
+                 80.0,
+                 80.0)

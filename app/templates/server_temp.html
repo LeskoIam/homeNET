@@ -4,15 +4,25 @@
         <div class="col-sm-6">
             Last updated on {{ update_time|format_datetime }}
         </div>
-    </div>
+        <div class="col-sm-6" align="right">
+                <span>Set maximum processor temperature: {{ limits.proc_max_temp }} &deg;C</span>
+            </div>
+        </div>
     <div class="row" >
     {% for proc in stat_data %}
         <div class="col-sm-3" style="border: solid 4px lightgrey; border-radius: 8px;">
             <b>{{ proc.name + ":" }} </b>
             <h5>Temperature:</h5>
             <ul>
-                <li>Mean temp: {{ proc.temp_mean|round(2) }} °C</li>
-                <li>St. dev.: {{ proc.temp_st_dev|round(2) }} °C</li>
+                <li>
+                    {% if proc.last_reading >= limits.proc_max_temp %}
+                        <span style="color: red">Last reading: {{ proc.last_reading|round(2) }} &deg;C</span>
+                    {% else %}
+                        <span>Last reading: {{ proc.last_reading|round(2) }} °C</span>
+                    {% endif %}
+                </li>
+                <li>Mean temp: {{ proc.temp_mean|round(2) }} &deg;C</li>
+                <li>St. dev.: {{ proc.temp_st_dev|round(2) }} &deg;C</li>
             </ul>
             <h5>Load:</h5>
             <ul>

@@ -204,12 +204,17 @@ def view_settings():
         update_setting("SERVER_TEMP_PLOT_BACK_PERIOD",
                        form.server_temp_plot_back_period.data,
                        int)
+        update_setting("PROC_MAX_TEMP_LIMIT",
+                       form.server_temp_proc_max_temp_limit.data,
+                       float)
         flash("Settings successfully changed!")
     details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
+    server_temp_proc_max_temp_limit = get_setting("PROC_MAX_TEMP_LIMIT", float)
 
     form.node_details_plot_back_period.data = details_plot_back_period.value
     form.server_temp_plot_back_period.data = server_temp_plot_back_period.value
+    form.server_temp_proc_max_temp_limit.data = server_temp_proc_max_temp_limit.value
     return render_template("settings.html",
                            form=form,
                            page_loc="nodes - settings")
@@ -258,31 +263,39 @@ def view_server_temp():
             "temp_mean": stats.mean(temperature_chart_data[0]),
             "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
             "load_mean": stats.mean(load_chart_data[0]),
-            "load_st_dev": stats.st_dev(load_chart_data[0])
+            "load_st_dev": stats.st_dev(load_chart_data[0]),
+            "last_reading": temperature_chart_data[0][-1]
         },
         {
             "name": "Core 1",
             "temp_mean": stats.mean(temperature_chart_data[1]),
             "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
             "load_mean": stats.mean(load_chart_data[1]),
-            "load_st_dev": stats.st_dev(load_chart_data[1])
+            "load_st_dev": stats.st_dev(load_chart_data[1]),
+            "last_reading": temperature_chart_data[1][-1]
         },
         {
             "name": "Core 2",
             "temp_mean": stats.mean(temperature_chart_data[2]),
             "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
             "load_mean": stats.mean(load_chart_data[2]),
-            "load_st_dev": stats.st_dev(load_chart_data[2])
+            "load_st_dev": stats.st_dev(load_chart_data[2]),
+            "last_reading": temperature_chart_data[2][-1]
         },
         {
             "name": "Core 3",
             "temp_mean": stats.mean(temperature_chart_data[3]),
             "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
             "load_mean": stats.mean(load_chart_data[3]),
-            "load_st_dev": stats.st_dev(load_chart_data[3])
+            "load_st_dev": stats.st_dev(load_chart_data[3]),
+            "last_reading": temperature_chart_data[3][-1]
         },
     ]
 
+    proc_max_temp = get_setting("PROC_MAX_TEMP_LIMIT", float).value
+    limits = {"proc_max_temp": proc_max_temp}
+    print "lesko", limits
+    pprint(stat_data)
     return render_template("server_temp.html",
                            form=form,
                            # table_data=table_data[:get_setting("SERVER_TEMP_MAX_TABLE_ROWS", int)[0] + 1],  # firs row is header
@@ -290,6 +303,7 @@ def view_server_temp():
                            # chart_load=chart_real_time_load,
                            back_period=back_period,
                            stat_data=stat_data,
+                           limits=limits,
                            update_time=update_time,
                            page_loc="server temperature")
 

@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField
+from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField
 from wtforms.validators import DataRequired
 
 
@@ -30,7 +30,7 @@ class AddEditNodeForm(Form):
 class SettingsForm(Form):
     node_details_plot_back_period = IntegerField("node_details_plot_back_period")
     server_temp_plot_back_period = IntegerField("server_temp_plot_back_period")
-    server_temp_max_table_rows = IntegerField("server_temp_max_table_rows")
+    server_temp_proc_max_temp_limit = FloatField("server_temp_proc_max_temp_limit")
 
 
 class BackPeriodForm(Form):
