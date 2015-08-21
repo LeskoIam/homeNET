@@ -224,7 +224,7 @@ def view_settings():
     form.server_temp_proc_max_temp_limit.data = server_temp_proc_max_temp_limit.value
     return render_template("settings.html",
                            form=form,
-                           page_loc="nodes - settings")
+                           page_loc="settings")
 
 
 @app.route("/aggregator")
