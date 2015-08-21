@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>404 - Page you are looking for, found, can not be ...</h1>
+{#<h1>404 - Page you are looking for, found, can not be ...</h1>#}
+    <div class="row">
+        <div class="col-sm-12" align="center">
+            <a href="https://www.ted.com/talks/renny_gleeson_404_the_story_of_a_page_not_found?language=en"><img class="img-responsive img-rounded"
+                             src="{{ url_for("static", filename="img/404.png") }}"></a>
+            </div>
+    </div>
 {% endblock %}
