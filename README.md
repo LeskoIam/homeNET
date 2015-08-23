@@ -8,12 +8,12 @@ with IP "GPIB" plus a few virtual machines and it's nice to know if devices are 
 looking at this page.
 
 I also wanted to know how my server is doing, is it overheating and what's the processor load. All this
-information is available on this page.
+information is available on the Server page.
 
 Feel free to clone, suggest, and so on.
 
-With this project I also wanted to learn about web design because I don't have many experiences in this
-field. So I'm using new to me things (highcharts, bootstrap, jquery)
+With this project I wanted to learn about web design because I don't have many experiences in this
+field. So I'm using new to me things (highcharts, bootstrap, jquery).
 
 Project uses this software "stack":
 
@@ -28,18 +28,18 @@ Features are constantly added and improved and are therefor constantly changing.
 
 ### 1. Nodes view
 A node is a local or internet network address (www.google.com, 192.168.1.1).
-
-Every node is periodically pinged to check if it is alive and what its ping delay is. 
+Every node is periodically pinged to check if it is alive and what its ping delay is.
 All information is logged to database for app use.
 
-There is also a detailed node view where additional information and delay plot about the node is available.
+There is also a detailed node view where additional information and delay plot is available.
 
 ### 2. Aggregator
+It will serve as a quick information view.
 Various information from local network, internet, weather,...
 
 ### 3. Server
-Local server temperature and load monitoring. 
-Parses [Core Temp](http://www.alcpu.com/CoreTemp/) logs for data. Shows individual core temperature 
+Local server temperature and load monitoring.
+Parses [Core Temp](http://www.alcpu.com/CoreTemp/) logs for data. Shows individual core temperature
 and load data.
 
 Historical data is shown in a plot.
