@@ -1,8 +1,23 @@
 # homeNET
-Web app for local network home page.
-It uses:
+Always wanted to have a local network (intranet) landing site.
+This is what I came up with. It's a project in it's infancy and will be added on as I remember new stuff.
 
-* [postgreSQL](http://www.postgresql.org/) for data storage.
+The idea is to have a single place where relevant information (relevant to me/you) can be quickly accessed.
+I run a small-ish home network with a server, NAS, a few [BBB](http://beagleboard.org/black), oscilloscope
+with IP "GPIB" plus a few virtual machines and it's nice to know if devices are up and running just by
+looking at this page.
+
+I also wanted to know how my server is doing, is it overheating and what's the processor load. All this
+information is available on this page.
+
+Feel free to clone, suggest, and so on.
+
+With this project I also wanted to learn about web design because I don't have many experiences in this
+field. So I'm using new to me things (highcharts, bootstrap, jquery)
+
+Project uses this software "stack":
+
+* [postgreSQL](http://www.postgresql.org/) for data storage (It's free and very, very good!)
 * [flask](http://flask.pocoo.org/) for backend
 * [bootstrap](http://getbootstrap.com/) for frontend
 * [highcharts](http://www.highcharts.com/) for plotting

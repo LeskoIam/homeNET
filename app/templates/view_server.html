@@ -21,9 +21,9 @@
             <ul>
                 <li>
                     {% if proc.last_reading >= limits.proc_max_temp %}
-                        <span style="color: red">Last reading: {{ proc.last_reading|round(2) }} &deg;C</span>
+                        <span style="color: red">Last reading: {{ proc.temperature_last_reading|round(2) }} &deg;C</span>
                     {% else %}
-                        <span>Last reading: {{ proc.last_reading|round(2) }} °C</span>
+                        <span>Last reading: {{ proc.temperature_last_reading|round(2) }} °C</span>
                     {% endif %}
                 </li>
                 <li>Mean temp: {{ proc.temp_mean|round(2) }} &deg;C</li>
