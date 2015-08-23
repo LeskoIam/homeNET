@@ -271,7 +271,7 @@ def view_server():
             "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
             "load_mean": stats.mean(load_chart_data[0]),
             "load_st_dev": stats.st_dev(load_chart_data[0]),
-            "last_reading": temperature_chart_data[0][-1]
+            "last_reading": temperature_chart_data[0][0]
         },
         {
             "name": "Core 1",
@@ -279,7 +279,7 @@ def view_server():
             "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
             "load_mean": stats.mean(load_chart_data[1]),
             "load_st_dev": stats.st_dev(load_chart_data[1]),
-            "last_reading": temperature_chart_data[1][-1]
+            "last_reading": temperature_chart_data[1][0]
         },
         {
             "name": "Core 2",
@@ -287,7 +287,7 @@ def view_server():
             "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
             "load_mean": stats.mean(load_chart_data[2]),
             "load_st_dev": stats.st_dev(load_chart_data[2]),
-            "last_reading": temperature_chart_data[2][-1]
+            "last_reading": temperature_chart_data[2][0]
         },
         {
             "name": "Core 3",
@@ -295,7 +295,7 @@ def view_server():
             "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
             "load_mean": stats.mean(load_chart_data[3]),
             "load_st_dev": stats.st_dev(load_chart_data[3]),
-            "last_reading": temperature_chart_data[3][-1]
+            "last_reading": temperature_chart_data[3][0]
         },
     ]
 
