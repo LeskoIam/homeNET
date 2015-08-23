@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-    <p>
-    <b>A lot of information on the same page here will be :)</b>
-    </p>
 
     <div class="row">
         <div class="col-sm-6">
-
+            <h3 style="color: #009900">Network summary</h3>
+            <h4 style="color: #116644;">Nodes</h4>
+            <p>
+                There are <b><span class="n_all_active_nodes">n_all_active</span></b> active nodes and
+                <b><span class="n_up_nodes">n_up_nodes</span></b> are up.
+            </p>
         </div>
         <div class="col-sm-6">
-            <h3>Weather</h3>
+            <h3 style="color: #009900">Weather</h3>
             <p>
                 <b>Information for locaion:</b> <span class="location"><i>location</i></span><br>
                 <br>
-                <b>Radar info update on:</b> <span class="updated_text_radar">test3</span><br>
+                <b>Radar info update on:</b> <span class="radar_updated_text">test3</span><br>
                 <b>Rain level:</b> <span class="rain_level">test</span><br>
                 <b>Rain:</b> <span class="rain_mmph">test2</span> mm/h<br>
             </p>
@@ -41,9 +43,17 @@ $(document).ready(function() {
 {#        var a = new Date(jdata.forecast.updated*1000);#}
 {#        $('p.test_c2').text(a);#}
         $('span.rain_level').text(jdata.radar.rain_level);
-        $('span.updated_text_radar').text(jdata.radar.updated_text);
+        $('span.radar_updated_text').text(jdata.radar.updated_text);
         $('span.rain_mmph').text(jdata.radar.rain_mmph);
         $('span.location').text('lat: ' + lat.toString() + ' lon: ' + lon.toString())
+
+
+    });
+
+    $.getJSON('/api/network_summary', function (jdata) {
+        $('span.n_all_nodes').text(jdata.network.n_all_nodes);
+        $('span.n_all_active_nodes').text(jdata.network.n_all_active_nodes);
+        $('span.n_up_nodes').text(jdata.network.n_all_up_nodes);
 
 
     });

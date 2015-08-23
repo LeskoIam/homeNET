@@ -20,7 +20,7 @@
             <h5>Temperature:</h5>
             <ul>
                 <li>
-                    {% if proc.last_reading >= limits.proc_max_temp %}
+                    {% if proc.temperature_last_reading >= limits.proc_max_temp %}
                         <span style="color: red">Last reading: {{ proc.temperature_last_reading|round(2) }} &deg;C</span>
                     {% else %}
                         <span>Last reading: {{ proc.temperature_last_reading|round(2) }} °C</span>
