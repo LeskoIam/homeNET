@@ -63,7 +63,7 @@ def show_node_details(node_id=None):
     last_down_time = db.session.query(PingerData.node_id, PingerData.date_time). \
         filter(PingerData.up == "FALSE").filter(PingerData.node_id == node_id). \
         order_by(PingerData.date_time.desc()).first()
-    # pprint(last_down_time)
+    pprint(last_down_time)
 
     mean_delay = db.session.query(PingerData.node_id,
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
@@ -73,11 +73,12 @@ def show_node_details(node_id=None):
 
     try:
         last_up_time = last_up_time[1]
-    except IndexError:
+    except (IndexError, TypeError):
         last_up_time = None
+
     try:
         last_down_time = last_down_time[1]
-    except IndexError:
+    except (IndexError, TypeError):
         last_down_time = None
     try:
         mean_delay = mean_delay[0][1]
