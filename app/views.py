@@ -54,23 +54,29 @@ def view_nodes():
 def show_node_details(node_id=None):
     # print node_id
     node_name = db.session.query(Nodes.name).filter(Nodes.id == node_id).first()[0]
+
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-        filter(PingerData.up == "TRUE").filter(PingerData.node_id == node_id).all()
-    # pprint(last_up_time
+        filter(PingerData.up == "TRUE").filter(PingerData.node_id == node_id). \
+        order_by(PingerData.date_time.desc()).first()
+    pprint(last_up_time)
+
     last_down_time = db.session.query(PingerData.node_id, PingerData.date_time). \
-        filter(PingerData.up == "FALSE").filter(PingerData.node_id == node_id).all()
+        filter(PingerData.up == "FALSE").filter(PingerData.node_id == node_id). \
+        order_by(PingerData.date_time.desc()).first()
     # pprint(last_down_time)
+
     mean_delay = db.session.query(PingerData.node_id,
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
         filter(PingerData.delay != None).filter(PingerData.node_id == node_id). \
         group_by(PingerData.node_id).all()
     # pprint(mean_delay)
+
     try:
-        last_up_time = last_up_time[0][1]
+        last_up_time = last_up_time[1]
     except IndexError:
         last_up_time = None
     try:
-        last_down_time = last_down_time[0][1]
+        last_down_time = last_down_time[1]
     except IndexError:
         last_down_time = None
     try:
