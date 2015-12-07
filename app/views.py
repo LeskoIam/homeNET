@@ -1,3 +1,4 @@
+# coding=utf-8
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
@@ -8,7 +9,7 @@ from flask.ext.basicauth import BasicAuth
 import sqlalchemy
 
 from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
-from models import PingerData, LastEntry, Nodes, AppSettings
+from models import PingerData, LastEntry, Nodes, AppSettings, SensorData, Sensors
 from common import stats
 from app import app, db
 
@@ -221,14 +222,19 @@ def view_settings():
         update_setting("PROC_MAX_TEMP_LIMIT",
                        form.server_temp_proc_max_temp_limit.data,
                        float)
+        update_setting("TEMPERATURE_BACK_PLOT_PERIOD",
+                       form.temperature_back_plot_period.data,
+                       int)
         flash("Settings successfully changed!")
     details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
     server_temp_proc_max_temp_limit = get_setting("PROC_MAX_TEMP_LIMIT", float)
+    temperature_plot_back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int)
 
     form.node_details_plot_back_period.data = details_plot_back_period.value
     form.server_temp_plot_back_period.data = server_temp_plot_back_period.value
     form.server_temp_proc_max_temp_limit.data = server_temp_proc_max_temp_limit.value
+    form.temperature_back_plot_period.data = temperature_plot_back_period.value
     return render_template("settings.html",
                            form=form,
                            page_loc="settings")
@@ -238,6 +244,21 @@ def view_settings():
 def view_aggregator():
     return render_template("aggregator.html",
                            page_loc="aggregator")
+
+
+@app.route("/environment", methods=["GET", "POST"])
+def view_environment():
+    form = BackPeriodForm()
+    back_period = None
+    if form.validate_on_submit():
+        print "Form OK 21"
+        back_period = form.back_period.data
+        print back_period
+    back_period = back_period if back_period is not None else get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+    return render_template("environment.html",
+                           form=form,
+                           page_loc="environment",
+                           back_period=back_period)
 
 
 @app.route("/view_server", methods=["GET", "POST"])
@@ -476,6 +497,37 @@ def get_server_data(back_period="None"):
     return jsonify(**data)
 
 
+@app.route("/api/temperature_data")
+@app.route("/api/temperature_data/<back_period>")
+def get_temperature(back_period="None"):
+    print back_period, type(back_period), repr(back_period)
+    if back_period != "None":
+        back_period = int(back_period)
+
+    data = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+    print "Sensor_data:", data
+
+    temperature_data = []
+    timestamp = []
+    for temperature in data:
+        temperature_data.append(temperature[1] if temperature[1] is not None else None)
+        timestamp.append(time_since_epoch(temperature[0]) * 1000)
+    series = {"data": [
+        {
+            "name": "Temperature °C",
+            "data": zip(timestamp, temperature_data)[::-1],
+            "color": "green"
+        },
+    ],
+        "back_period": back_period,
+        "last_reading": temperature_data[0],
+        "last_hour_average": stats.mean(temperature_data)
+    }
+    return jsonify(**series)
+
+
 @app.route("/api/network_summary")
 def get_network_summary():
     # Out of M nodes (n_all_nodes) N are active (pinged) and U nodes are up
@@ -487,10 +539,10 @@ def get_network_summary():
         filter(PingerData.common_id == last_common_id). \
         filter(PingerData.up == True).one()[0]
 
-    print n_all_nodes, type(n_all_nodes)
-    print n_all_active_nodes, type(n_all_active_nodes)
-    print last_common_id
-    print n_all_up_nodes
+    # print n_all_nodes, type(n_all_nodes)
+    # print n_all_active_nodes, type(n_all_active_nodes)
+    # print last_common_id
+    # print n_all_up_nodes
 
     data = {
         "network": {

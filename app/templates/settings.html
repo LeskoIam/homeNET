@@ -32,6 +32,18 @@
             Server alarm processor temperature:
             {{ form.server_temp_proc_max_temp_limit(size=5)|string }} &deg;C
         </div>
+    </div><br />
+
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Environment view settings:</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            Temperature plot back period:
+            {{ form.temperature_back_plot_period(size=5) }} readings
+        </div>
     </div>
     <div class="row">
         <div class="col-sm-4">

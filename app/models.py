@@ -84,3 +84,38 @@ class AppSettings(db.Model):
                                                                           self.name,
                                                                           self.value_type,
                                                                           self.value)
+
+
+class Sensors(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    location = db.Column(db.String(128), nullable=False)
+    sensor_type = db.Column(db.String(32))
+
+    def __init__(self, location, sensor_type):
+        self.location = location
+        self.sensor_type = sensor_type
+
+    def __repr__(self):
+        return "<Sensor {0} '{1}': type: <{2}>; value '{3}'>".format(self.id,
+                                                                     self.location,
+                                                                     self.sensor_type)
+
+
+class SensorData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensors.id'))
+    date_time = db.Column(db.DateTime, nullable=False)
+
+    value = db.Column(db.Float, nullable=False)
+    unit = db.Column(db.String(32))
+
+    def __init__(self, sensor_id, date_time, value, unit):
+        self.sensor_id = sensor_id
+        self.date_time = date_time
+        self.value = value
+        self.unit = unit
+
+    def __repr__(self):
+        return "<SensorData {0} '{1}': type: <{2}>; value '{3}'>".format(self.id,
+                                                                         self.value,
+                                                                         self.unit)

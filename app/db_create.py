@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from app import db
-from app.models import Nodes, LastEntry, AppSettings
+from app.models import Nodes, LastEntry, AppSettings, Sensors, SensorData
 import sqlalchemy
 from sqlalchemy.schema import CreateTable
 
@@ -53,27 +53,38 @@ def add_settings(name, value_type, value, default_value):
         db.session.rollback()
         print "Not adding settings"
 
+
+def add_sensors():
+    data = Sensors("palm flower pot", "temperature")
+    try:
+        db.session.add(data)
+        db.session.commit()
+    except sqlalchemy.exc.IntegrityError:
+            print "Not adding sensor"
+
+
 if __name__ == '__main__':
     db.create_all()
-    add_nodes()
-    add_first_last_entry()
-    add_settings("NODE_DETAILS_PLOT_BACK_PERIOD",
-                 "int",
-                 200,
-                 200)
-    add_settings("SERVER_TEMP_PLOT_BACK_PERIOD",
-                 "int",
-                 120,
-                 120)
-    add_settings("SERVER_TEMP_TABLE_HEADER",
-                 "str",
-                 "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)",
-                 "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)")
-    add_settings("SERVER_TEMP_CSV_FOLDER",
-                 "str",
-                 "C:\Program Files\Core Temp",
-                 "C:\Program Files\Core Temp")
-    add_settings("PROC_MAX_TEMP_LIMIT",
-                 "float",
-                 80.0,
-                 80.0)
+    # add_nodes()
+    # add_first_last_entry()
+    # add_sensors()
+    # add_settings("NODE_DETAILS_PLOT_BACK_PERIOD",
+    #              "int",
+    #              200,
+    #              200)
+    # add_settings("SERVER_TEMP_PLOT_BACK_PERIOD",
+    #              "int",
+    #              120,
+    #              120)
+    # add_settings("SERVER_TEMP_TABLE_HEADER",
+    #              "str",
+    #              "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)",
+    #              "Time|Core 0 Temp|Core 1 Temp|Core 2 Temp|Core 3 Temp|Core 0 load (%)|Core 1 load (%)|Core 2 load (%)|Core 3 load (%)")
+    # add_settings("SERVER_TEMP_CSV_FOLDER",
+    #              "str",
+    #              "C:\Program Files\Core Temp",
+    #              "C:\Program Files\Core Temp")
+    # add_settings("PROC_MAX_TEMP_LIMIT",
+    #              "float",
+    #              80.0,
+    #              80.0)

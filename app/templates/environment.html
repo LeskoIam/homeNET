@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Indoor Temperature</h2><br />
+
+    <div class="row">
+        <div class="col-sm-4">
+            <b>Last reading:</b> <span class="last_temp">last reading</span> °C<br />
+        </div>
+        <div class="col-sm-4">
+            <b>Average:</b> <span class="last_hour_average">average temperature</span> °C<br /><br />
+        </div>
+        <div class="col-sm-4">
+            <form action="" method="post" name="login">
+                {{ form.hidden_tag() }}
+                For how long back do you want to see the data:
+                {{ form.back_period(size=6) }}
+                <button value="add" type="submit" class="btn btn-success">Show me</button>
+            </form>
+        </div>
+    </div>
+    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+    <script type="text/javascript">
+
+$(document).ready(function() {
+    $.getJSON("/api/temperature_data/{{ back_period|safe }}", function (jdata) {
+        $('span.last_temp').text(jdata.last_reading);
+        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'test_c',
+{#                type: "column"#}
+{#						height: 155#}
+
+					},
+                    title: {
+                        text: 'Indoor Temperature - last ' + jdata.back_period + ' readings',
+                        x: -20 //center
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature (°C)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '°C'
+                    },
+                    plotOptions: {
+                        line: {
+                            marker: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    series: jdata.data
+                });
+            });
+        });
+
+
+
+</script>
+{% endblock %}
