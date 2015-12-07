@@ -1,11 +1,6 @@
 # coding=utf-8
-__author__ = 'Lesko'
-# Documentation is like sex.
-# When it's good, it's very good.
-# When it's bad, it's better than nothing.
-# When it lies to you, it may be a while before you realize something's wrong.
 from flask import render_template, redirect, flash, request, jsonify
-from flask.ext.basicauth import BasicAuth
+# from flask.ext.basicauth import BasicAuth
 import sqlalchemy
 
 from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
@@ -19,7 +14,15 @@ import datetime
 import csv
 import os
 
-basic_auth = BasicAuth(app)
+__author__ = 'Lesko'
+
+# Documentation is like sex.
+# When it's good, it's very good.
+# When it's bad, it's better than nothing.
+# When it lies to you, it may be a while before you realize something's wrong.
+
+
+# basic_auth = BasicAuth(app)
 
 
 @app.errorhandler(404)
@@ -503,11 +506,13 @@ def get_temperature(back_period="None"):
     print back_period, type(back_period), repr(back_period)
     if back_period != "None":
         back_period = int(back_period)
+    else:
+        back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
 
     data = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
         filter(Sensors.id == SensorData.sensor_id). \
         order_by(SensorData.date_time.desc()).limit(back_period).all()
-    print "Sensor_data:", data
+    # print "Sensor_data:", data
 
     temperature_data = []
     timestamp = []
