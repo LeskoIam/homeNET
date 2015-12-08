@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
     <h2>Indoor Temperature</h2><br />
+    <div class="row">
+        <div class="col-sm-6">
+            Last updated on <span class="last_update_time">last update time</span>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-sm-4">
@@ -25,6 +30,7 @@ $(document).ready(function() {
     $.getJSON("/api/temperature_data/{{ back_period|safe }}", function (jdata) {
         $('span.last_temp').text(jdata.last_reading);
         $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));
+        $('span.last_update_time').text(jdata.last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'test_c',

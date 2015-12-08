@@ -2,12 +2,10 @@
 from flask import render_template, redirect, flash, request, jsonify
 # from flask.ext.basicauth import BasicAuth
 import sqlalchemy
-
 from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
 from models import PingerData, LastEntry, Nodes, AppSettings, SensorData, Sensors
 from common import stats
 from app import app, db
-
 from StringIO import StringIO
 from pprint import pprint
 import datetime
@@ -15,6 +13,7 @@ import csv
 import os
 
 __author__ = 'Lesko'
+
 
 # Documentation is like sex.
 # When it's good, it's very good.
@@ -418,84 +417,84 @@ def get_server_data(back_period="None"):
         temperature_chart_data[1].append(float(row[2]))
         temperature_chart_data[2].append(float(row[3]))
         temperature_chart_data[3].append(float(row[4]))
-        temperature_chart_data[4].append(time_since_epoch(date_time)*1000)
+        temperature_chart_data[4].append(time_since_epoch(date_time) * 1000)
 
         load_chart_data[0].append(float(row[5]))
         load_chart_data[1].append(float(row[6]))
         load_chart_data[2].append(float(row[7]))
         load_chart_data[3].append(float(row[8]))
-        load_chart_data[4].append(time_since_epoch(date_time)*1000)
+        load_chart_data[4].append(time_since_epoch(date_time) * 1000)
 
     # print temperature_chart_data[3]
     data = {
-    "chart_real_time_temperature": { "data": [
-        {
-            "name": "Core 0",
-            "data": zip(temperature_chart_data[4], temperature_chart_data[0])[::-1]
-        },
-        {
-            "name": "Core 1",
-            "data": zip(temperature_chart_data[4], temperature_chart_data[1])[::-1]
-        },
-        {
-            "name": "Core 2",
-            "data": zip(temperature_chart_data[4], temperature_chart_data[2])[::-1]
-        },
-        {
-            "name": "Core 3",
-            "data": zip(temperature_chart_data[4], temperature_chart_data[3])[::-1]
-        }
-    ]},
+        "chart_real_time_temperature": {"data": [
+            {
+                "name": "Core 0",
+                "data": zip(temperature_chart_data[4], temperature_chart_data[0])[::-1]
+            },
+            {
+                "name": "Core 1",
+                "data": zip(temperature_chart_data[4], temperature_chart_data[1])[::-1]
+            },
+            {
+                "name": "Core 2",
+                "data": zip(temperature_chart_data[4], temperature_chart_data[2])[::-1]
+            },
+            {
+                "name": "Core 3",
+                "data": zip(temperature_chart_data[4], temperature_chart_data[3])[::-1]
+            }
+        ]},
 
-    "chart_real_time_load": { "data": [
-        {
-            "name": "Core 0",
-            "data": zip(load_chart_data[4], load_chart_data[0])[::-1]
-        },
-        {
-            "name": "Core 1",
-            "data": zip(load_chart_data[4], load_chart_data[1])[::-1]
-        },
-        {
-            "name": "Core 2",
-            "data": zip(load_chart_data[4], load_chart_data[2])[::-1]
-        },
-        {
-            "name": "Core 3",
-            "data": zip(load_chart_data[4], load_chart_data[3])[::-1]
-        }
-    ]},
+        "chart_real_time_load": {"data": [
+            {
+                "name": "Core 0",
+                "data": zip(load_chart_data[4], load_chart_data[0])[::-1]
+            },
+            {
+                "name": "Core 1",
+                "data": zip(load_chart_data[4], load_chart_data[1])[::-1]
+            },
+            {
+                "name": "Core 2",
+                "data": zip(load_chart_data[4], load_chart_data[2])[::-1]
+            },
+            {
+                "name": "Core 3",
+                "data": zip(load_chart_data[4], load_chart_data[3])[::-1]
+            }
+        ]},
 
-    "stat_data" : {"data": [
-        {
-            "name": "Core 0",
-            "temp_mean": stats.mean(temperature_chart_data[0]),
-            "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
-            "load_mean": stats.mean(load_chart_data[0]),
-            "load_st_dev": stats.st_dev(load_chart_data[0])
-        },
-        {
-            "name": "Core 1",
-            "temp_mean": stats.mean(temperature_chart_data[1]),
-            "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
-            "load_mean": stats.mean(load_chart_data[1]),
-            "load_st_dev": stats.st_dev(load_chart_data[1])
-        },
-        {
-            "name": "Core 2",
-            "temp_mean": stats.mean(temperature_chart_data[2]),
-            "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
-            "load_mean": stats.mean(load_chart_data[2]),
-            "load_st_dev": stats.st_dev(load_chart_data[2])
-        },
-        {
-            "name": "Core 3",
-            "temp_mean": stats.mean(temperature_chart_data[3]),
-            "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
-            "load_mean": stats.mean(load_chart_data[3]),
-            "load_st_dev": stats.st_dev(load_chart_data[3])
-        },
-    ]}
+        "stat_data": {"data": [
+            {
+                "name": "Core 0",
+                "temp_mean": stats.mean(temperature_chart_data[0]),
+                "temp_st_dev": stats.st_dev(temperature_chart_data[0]),
+                "load_mean": stats.mean(load_chart_data[0]),
+                "load_st_dev": stats.st_dev(load_chart_data[0])
+            },
+            {
+                "name": "Core 1",
+                "temp_mean": stats.mean(temperature_chart_data[1]),
+                "temp_st_dev": stats.st_dev(temperature_chart_data[1]),
+                "load_mean": stats.mean(load_chart_data[1]),
+                "load_st_dev": stats.st_dev(load_chart_data[1])
+            },
+            {
+                "name": "Core 2",
+                "temp_mean": stats.mean(temperature_chart_data[2]),
+                "temp_st_dev": stats.st_dev(temperature_chart_data[2]),
+                "load_mean": stats.mean(load_chart_data[2]),
+                "load_st_dev": stats.st_dev(load_chart_data[2])
+            },
+            {
+                "name": "Core 3",
+                "temp_mean": stats.mean(temperature_chart_data[3]),
+                "temp_st_dev": stats.st_dev(temperature_chart_data[3]),
+                "load_mean": stats.mean(load_chart_data[3]),
+                "load_st_dev": stats.st_dev(load_chart_data[3])
+            },
+        ]}
     }
     return jsonify(**data)
 
@@ -516,8 +515,9 @@ def get_temperature(back_period="None"):
 
     temperature_data = []
     timestamp = []
+    timestamp_str = data[0][0]
     for temperature in data:
-        temperature_data.append(temperature[1] if temperature[1] is not None else None)
+        temperature_data.append(temperature[1] if temperature[1] is not None else None)  # ????
         timestamp.append(time_since_epoch(temperature[0]) * 1000)
     series = {"data": [
         {
@@ -526,9 +526,10 @@ def get_temperature(back_period="None"):
             "color": "green"
         },
     ],
-        "back_period": back_period,
+        "back_period": len(temperature_data),
         "last_reading": temperature_data[0],
-        "last_hour_average": stats.mean(temperature_data)
+        "last_hour_average": stats.mean(temperature_data),
+        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
     }
     return jsonify(**series)
 
