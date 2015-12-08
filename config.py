@@ -13,6 +13,6 @@ SECRET_KEY = 'you-will-never-guess'
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'app.db')
 SQLALCHEMY_DATABASE_URI = 'postgresql://lesko:*****@192.168.1.52/homeNET'
 
-BASIC_AUTH_FORCE = True
-BASIC_AUTH_USERNAME = "lesko"
-BASIC_AUTH_PASSWORD = "*****"
+# BASIC_AUTH_FORCE = True
+# BASIC_AUTH_USERNAME = "lesko"
+# BASIC_AUTH_PASSWORD = "*****"
