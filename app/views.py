@@ -14,18 +14,21 @@ import os
 
 __author__ = 'Lesko'
 
-
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-
 
 # basic_auth = BasicAuth(app)
 
 
 @app.errorhandler(404)
 def page_not_found(e):
+    """Handles when unknown address is requested.
+
+    :param e: error code description
+    :return: response
+    """
     return render_template('404.html',
                            page_loc="404"), 404
 
@@ -33,11 +36,20 @@ def page_not_found(e):
 @app.route('/')
 @app.route('/home')
 def home():
+    """Render homepage.
+
+    :return: response
+    """
     return render_template("home.html", page_loc="home")
 
 
 @app.route('/view_nodes', methods=["GET", "POST"])
 def view_nodes():
+    """Show network nodes and their status.
+
+    :return: response
+    """
+    # LastEntry.ready_to_read == True, to ensure no partial pinger data is displayed.
     last_common_id, update_time = db.session.query(LastEntry.last_common_id, LastEntry.date_time). \
         filter(LastEntry.ready_to_read == True). \
         order_by(LastEntry.date_time.desc()).first()
@@ -55,7 +67,11 @@ def view_nodes():
 
 @app.route("/node_details/<node_id>", methods=["GET", "POST"])
 def show_node_details(node_id=None):
-    # print node_id
+    """Show node details page filed with specific (node_id) information.
+
+    :param node_id: id of the node
+    :return: response
+    """
     node_name = db.session.query(Nodes.name).filter(Nodes.id == node_id).first()[0]
 
     last_up_time = db.session.query(PingerData.node_id, PingerData.date_time). \
@@ -68,6 +84,7 @@ def show_node_details(node_id=None):
         order_by(PingerData.date_time.desc()).first()
     pprint(last_down_time)
 
+    # Calculate mean with SQL
     mean_delay = db.session.query(PingerData.node_id,
                                   (db.func.sum(PingerData.delay) / db.func.count(PingerData.delay)) * 1000). \
         filter(PingerData.delay != None).filter(PingerData.node_id == node_id). \
@@ -98,6 +115,11 @@ def show_node_details(node_id=None):
 
 @app.route("/manage_nodes", methods=["GET", "POST"])
 def manage_nodes():
+    """Show manage mode view. Nodes can be deleted, added,
+     edited in this view.
+
+    :return: response
+    """
     all_nodes = db.session.query(Nodes).order_by(Nodes.id.asc()).all()
     return render_template("manage_nodes.html",
                            all_nodes=all_nodes,
@@ -106,6 +128,10 @@ def manage_nodes():
 
 @app.route("/add_node", methods=["GET", "POST"])
 def add_node():
+    """Add node dialog.
+
+    :return: response
+    """
     form = AddEditNodeForm()
     if form.validate_on_submit():
         # print form.device_type.data
@@ -133,6 +159,11 @@ def add_node():
 
 @app.route("/edit/<node_id>", methods=["GET", "POST"])
 def edit_node(node_id):
+    """Node information can be edited in this view.
+
+    :param node_id: id of the node to be edited
+    :return: response
+    """
     try:
         to_edit = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
     except IndexError:
@@ -169,6 +200,11 @@ def edit_node(node_id):
 
 @app.route("/toggle_node_in_use/<node_id>", methods=["GET", "POST"])
 def toggle_node_in_use(node_id):
+    """Toggles visible nodes.
+
+    :param node_id: id of the node to be toggled
+    :return: redirect
+    """
     print "Toggle row"
     try:
         to_toggle = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
@@ -192,15 +228,15 @@ def delete_node(node_id):
     print "delete row"
     try:
         to_delete = db.session.query(Nodes).filter(Nodes.id == int(node_id)).first()
-        data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
+        # data_to_delete = db.session.query(PingerData).filter(PingerData.node_id == node_id).all()
     except IndexError:
         flash("Delete not successful!")
         return redirect("/manage_nodes")
     # print to_delete
     try:
         db.session.delete(to_delete)
-        for data in data_to_delete:
-            db.session.delete(data)
+        # for data in data_to_delete:
+        #     db.session.delete(data)
         db.session.commit()
         flash("Successfully deleted {0} and it's data".format(str(to_delete)))
     except sqlalchemy.exc.IntegrityError as e:
