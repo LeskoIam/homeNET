@@ -35,7 +35,7 @@
     </form>
     {% if "edit" in add_edit %}
         <form action="/delete/{{ form.node_id }}" method="post" name="edit_f">
-            <button value="edit" type="submit" class="btn btn-danger btn-xs">Delete node and node data!</button>
+            <button value="edit" type="submit" class="btn btn-danger btn-xs">Delete node!</button>
         </form>
         {% endif %}
 {% endblock %}
