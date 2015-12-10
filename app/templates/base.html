@@ -26,11 +26,8 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-    <div class="jumbotron">
-        <h3>HomeNET</h3>
-        <h5 style="color: #116644">By Lesko</h5>
-    </div>
     <nav role="navigation" class="navbar navbar-default">
+        <a class="navbar-brand" href="/home">homeNET</a>
         <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/home">Home</a></li>
@@ -47,7 +44,7 @@
                 <li><a href="/view_server">Server</a></li>
                 <li><a href="/settings">Settings</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right" l>
+            <ul class="nav navbar-nav navbar-right">
                 <li><a href="#"><b>{{ page_loc|capitalize }}</b></a></li>
                     </ul>
         </div>
