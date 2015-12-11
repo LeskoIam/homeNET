@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6">
+            Last updated on <span class="last_update_time">last update time</span>
+        </div>
+    </div>
+
+    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Enter current heating status</h2>
+        </div>
+    </div>
+
+    <form action="" method="post" name="login">
+    {{ form.hidden_tag() }}
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-sm-6">
+                    Kitchen
+                </div>
+                <div class="col-sm-2">
+                    {{ form.kitchen(size=1) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-sm-6">
+                    Hallway
+                </div>
+                <div class="col-sm-2">
+                    {{ form.hallway(size=1) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-sm-6">
+                    Bathroom
+                </div>
+                <div class="col-sm-2">
+                    {{ form.bathroom(size=1) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="row">
+                <div class="col-sm-6">
+                    Room
+                </div>
+                <div class="col-sm-2">
+                    {{ form.room(size=1) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p><br>
+                <button value="save" type="submit" class="btn btn-success">Save Data</button>
+            </p>
+        </div>
+    </div>
+    </form>
+
+
+
+
+    <script type="text/javascript">
+$(document).ready(function() {
+    $.getJSON("/api/heating_data", function (jdata) {
+        $('span.last_update_time').text(jdata.last_update_time);
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'test_c',
+                type: 'column'
+            },
+            title: {
+                text: 'Heating State'
+            },
+            subtitle: {
+                text: 'Last state of heat distribution sensors'
+            },
+            xAxis: jdata.xAxis,
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Heating'
+                }
+            },
+            series: jdata.data
+        });
+    });
+});
+</script>
+
+{% endblock %}

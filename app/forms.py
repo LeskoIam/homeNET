@@ -6,7 +6,7 @@ __author__ = 'Lesko'
 
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class AddEditNodeForm(Form):
@@ -36,3 +36,15 @@ class SettingsForm(Form):
 
 class BackPeriodForm(Form):
     back_period = IntegerField('back_period')
+
+
+class HeatConsumptionInput(Form):
+    kitchen = IntegerField("kitchen", validators=[Optional()])
+    hallway = IntegerField("hallway", validators=[Optional()])
+    bathroom = IntegerField("bathroom", validators=[Optional()])
+    room = IntegerField("room", validators=[Optional()])
+
+
+class WaterConsumption(Form):
+    hot = FloatField("hot water", validators=[Optional()])
+    cold = FloatField("cold water", validators=[Optional()])

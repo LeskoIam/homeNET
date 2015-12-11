@@ -1,8 +1,9 @@
 # coding=utf-8
 from flask import render_template, redirect, flash, request, jsonify
 # from flask.ext.basicauth import BasicAuth
+from collections import OrderedDict
 import sqlalchemy
-from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
+from forms import AddEditNodeForm, SettingsForm, BackPeriodForm, HeatConsumptionInput, WaterConsumption
 from models import PingerData, LastEntry, Nodes, AppSettings, SensorData, Sensors
 from common import stats
 from app import app, db
@@ -284,6 +285,88 @@ def view_aggregator():
                            page_loc="aggregator")
 
 
+@app.route("/heating", methods=['GET', 'POST'])
+def heating():
+    form = HeatConsumptionInput()
+    if form.validate_on_submit():
+        unit = "e"
+        timestamp = datetime.datetime.today()
+
+        # Kitchen
+        if form.kitchen.data is not None:
+            sensor_id = 2
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.kitchen.data,
+                              unit=unit)
+            db.session.add(data)
+        # Hallway
+        if form.hallway.data is not None:
+            sensor_id = 3
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.hallway.data,
+                              unit=unit)
+            db.session.add(data)
+        # Bathroom
+        if form.bathroom.data is not None:
+            sensor_id = 4
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.bathroom.data,
+                              unit=unit)
+            db.session.add(data)
+        # Room
+        if form.room.data is not None:
+            sensor_id = 5
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.room.data,
+                              unit=unit)
+            db.session.add(data)
+
+        db.session.commit()
+        flash("Successfully entered data!")
+        return redirect('/environment')
+
+    return render_template("heating.html",
+                           form=form,
+                           page_loc="heating")
+
+
+@app.route("/water", methods=['GET', 'POST'])
+def water():
+    form = WaterConsumption()
+    if form.validate_on_submit():
+        unit = "m3"
+        timestamp = datetime.datetime.today()
+
+        # Hot water
+        if form.hot.data is not None:
+            sensor_id = 7
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.hot.data,
+                              unit=unit)
+            db.session.add(data)
+        # Cold Water
+        if form.cold.data is not None:
+            sensor_id = 6
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.cold.data,
+                              unit=unit)
+            db.session.add(data)
+
+        db.session.commit()
+        flash("Successfully entered data!")
+        return redirect('/environment')
+
+    return render_template("water.html",
+                           form=form,
+                           page_loc="water")
+
+
 @app.route("/environment", methods=["GET", "POST"])
 def view_environment():
     form = BackPeriodForm()
@@ -429,6 +512,71 @@ def get_node_delay_data(node_id=None):
     return jsonify(**series)
 
 
+@app.route("/api/heating_data")
+def get_heating_data():
+    colors = {"kitchen": "red",
+              "hallway": "grey",
+              "bathroom": "blue",
+              "room": "green"}
+    all_heating_sensors = db.session.query(Sensors.id, Sensors.location).\
+        filter(Sensors.id.in_((2, 3, 4, 5))).all()
+    categories = []
+    data_out = []
+    for s in all_heating_sensors:
+        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(Sensors). \
+            filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
+            order_by(SensorData.date_time.desc()).first()
+
+        data_out.append({"y": data.value, "color": colors[data.location]})
+        categories.append(data.location.capitalize())
+    timestamp_str = data[0]  # TODO. Update time for everi single sensor
+    series = {"data": [
+        {
+            "name": "Heating state",
+            "data": data_out,
+        },
+    ],
+        "xAxis": {
+            "categories": categories
+        },
+        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
+    }
+    return jsonify(**series)
+
+
+@app.route("/api/water_data")
+def get_water_data():
+    colors = {"hot": "red",
+              "cold": "blue"}
+    m_c = {6: "cold", 7: "hot"}
+    all_water_sensors = db.session.query(Sensors.id, Sensors.sensor_type).\
+        filter(Sensors.id.in_((6, 7))).all()
+    categories = []
+    data_out = []
+    for s in all_water_sensors:
+        print s.id
+        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.sensor_type).\
+            join(Sensors).filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
+            order_by(SensorData.date_time.desc()).first()
+        print data
+        data_out.append({"y": data.value, "color": colors[m_c[data.sensor_id]]})
+        categories.append(data.sensor_type.capitalize())
+    timestamp_str = data[0]  # TODO: Update time for every single sensor
+    series = {"data": [
+        {
+            "name": "Water state",
+            "data": data_out,
+        },
+    ],
+        "xAxis": {
+            "categories": categories
+        },
+        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
+    }
+    # pprint(series)
+    return jsonify(**series)
+
+
 @app.route("/api/server_data")
 @app.route("/api/server_data/<back_period>")
 def get_server_data(back_period="None"):
@@ -544,8 +692,9 @@ def get_temperature(back_period="None"):
     else:
         back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
 
+    # For now manually filter data from temperature sensor (is only one for now) "Sensors.id == 1"
     data = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
-        filter(Sensors.id == SensorData.sensor_id). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 1). \
         order_by(SensorData.date_time.desc()).limit(back_period).all()
     # print "Sensor_data:", data
 
