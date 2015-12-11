@@ -38,7 +38,7 @@ def add_first_last_entry():
         db.session.add(data)
         db.session.commit()
     except sqlalchemy.exc.IntegrityError:
-            print "Not adding nodes"
+        print "Not adding nodes"
 
 
 def add_settings(name, value_type, value, default_value):
@@ -56,19 +56,24 @@ def add_settings(name, value_type, value, default_value):
 
 def add_sensors():
     data = [  # Sensors("palm flower pot", "temperature"),
-            Sensors("kitchen", "heat consumption"),
-            Sensors("hallway", "heat consumption"),
-            Sensors("bathroom", "heat consumption"),
-            Sensors("room", "heat consumption"),
-
-            Sensors("hallway", "cold water consumption"),
-            Sensors("hallway", "hot water consumption")]
+        # Sensors("kitchen", "heat consumption"),
+        # Sensors("hallway", "heat consumption"),
+        # Sensors("bathroom", "heat consumption"),
+        # Sensors("room", "heat consumption"),
+        #
+        # Sensors("hallway", "cold water consumption"),
+        # Sensors("hallway", "hot water consumption")
+        Sensors(location="kitchen", sensor_type="radiator setting"),
+        Sensors(location="hallway", sensor_type="radiator setting"),
+        Sensors(location="bathroom", sensor_type="radiator setting"),
+        Sensors(location="room", sensor_type="radiator setting"),
+    ]
     for d in data:
         try:
             db.session.add(d)
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
-                print "Not adding sensor"
+            print "Not adding sensor"
 
 
 if __name__ == '__main__':

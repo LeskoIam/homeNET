@@ -72,9 +72,11 @@ $(document).ready(function() {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Water'
+                    text: 'Water [m3]'
                 }
             },
+            tooltip: {
+                valueSuffix: 'm3'},
             series: jdata.data
         });
     });
