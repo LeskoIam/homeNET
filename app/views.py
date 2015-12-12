@@ -365,8 +365,23 @@ def heating():
         flash("Successfully entered data!")
         return redirect('/heating')
 
+    all_radiator_settings = db.session.query(Sensors.id, Sensors.location). \
+        filter(Sensors.id.in_((8, 9, 10, 11))).order_by(Sensors.id.asc()).all()
+    data_out = []
+    for s in all_radiator_settings:
+        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(
+            Sensors). \
+            filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
+            order_by(SensorData.date_time.desc()).first()
+        data.percent = data.value/(0.01*5)
+        data_out.append(data)
+    timestamp_str = data.date_time  # TODO. Update time for every single sensor
+
+
     return render_template("heating.html",
                            form=form,
+                           radiator_data=data_out,
+                           settings_last_update_time=timestamp_str,
                            page_loc="heating")
 
 

@@ -1,12 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
+
     <div class="row">
         <div class="col-sm-6">
-            Last updated on <span class="status_last_update_time">last update time</span>
+            <h2>Last Heating Status</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on <span class="status_last_update_time">last update time</span>
+                </div>
+            </div>
+            <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+
+        <div class="col-sm-6">
+            <h2>Radiator Settings</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on {{ settings_last_update_time|format_datetime }}
+                </div>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Radiator location</th>
+                    <th>Set</th>
+                    <th>(max. setting is 5)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for radiator in radiator_data %}
+                    <tr>
+                        <td style="width: 30%;"><b>{{ radiator.location.capitalize() }}</b></td>
+                        <td style="width: 10%;">{{ radiator.value }}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" style="width:{{ radiator.percent }}%;">
+                                    <span class="sr-only">{{ radiator.percent }}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+
         </div>
     </div>
-
-    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
 
     <div class="row">
         <div class="col-sm-6">
@@ -113,7 +153,7 @@ $(document).ready(function() {
             },
             legend: {
                     enabled: true,
-                    labelFormat: '<span style="color:{color}">{name}</span>: <b>{y}</b><br/>',
+                    labelFormat: '<span style="color:{color}">{name}: {y}</span>',
                     borderWidth: 0
                 },
             series: [{
