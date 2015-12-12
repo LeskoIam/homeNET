@@ -23,15 +23,15 @@
                 <thead>
                 <tr>
                     <th>Radiator location</th>
-                    <th>Set</th>
+                    <th>Set / %</th>
                     <th>(max. setting is 5)</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for radiator in radiator_data %}
                     <tr>
-                        <td style="width: 30%;"><b>{{ radiator.location.capitalize() }}</b></td>
-                        <td style="width: 10%;">{{ radiator.value }}</td>
+                        <td style="width: 30%;"><b>{{ radiator.data.location.capitalize() }}</b></td>
+                        <td style="width: 10%;">{{ radiator.data.value }} / {{ radiator.percent }}</td>
                         <td>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" style="width:{{ radiator.percent }}%;">
@@ -42,6 +42,17 @@
                     </tr>
 
                 {% endfor %}
+                <tr style="color: green">
+                    <td style="width: 25%;"><b>SUM</b></td>
+                    <td style="width: 20%;">{{ radiator_sum_setting }} / {{ radiator_sum_percent }}</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="20" style="width:{{ radiator_sum_percent }}%; background: green">
+                                <span class="sr-only">{{ radiator_sum_percent }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
                 </tbody>
             </table>
 

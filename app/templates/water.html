@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
+
     <div class="row">
         <div class="col-sm-6">
-            Last updated on <span class="last_update_time">last update time</span>
+            <h2>Last Water Status</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on <span class="last_update_time">last update time</span>
+                </div>
+            </div>
+            <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+
+        <div class="col-sm-6">
         </div>
     </div>
-
-    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
 
     <div class="row">
         <div class="col-sm-12">
@@ -66,7 +74,10 @@ $(document).ready(function() {
             subtitle: {
                 text: 'Last status of water distribution sensors'
             },
-            xAxis: jdata.xAxis,
+            legend: {enabled: false},
+            xAxis: {
+                categories: jdata.categories
+            },
             yAxis: {
                 min: 0,
                 title: {
@@ -74,8 +85,17 @@ $(document).ready(function() {
                 }
             },
             tooltip: {
+                enabled: false,
                 valueSuffix: 'm3'},
-            series: jdata.data
+            series: [{
+                name: "Water status",
+                data:  jdata.data,
+                dataLabels: {
+                    enabled: true,
+                    align: 'center',
+                    format: '{point.y:.3f} m3' // one decimal
+                    }
+            }]
         });
     });
 });

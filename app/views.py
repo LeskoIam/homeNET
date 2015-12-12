@@ -12,6 +12,7 @@ from pprint import pprint
 import datetime
 import csv
 import os
+from collections import namedtuple
 
 __author__ = 'Lesko'
 
@@ -365,22 +366,30 @@ def heating():
         flash("Successfully entered data!")
         return redirect('/heating')
 
+    # Get radiator valve settings
     all_radiator_settings = db.session.query(Sensors.id, Sensors.location). \
         filter(Sensors.id.in_((8, 9, 10, 11))).order_by(Sensors.id.asc()).all()
     data_out = []
     for s in all_radiator_settings:
         data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(
-            Sensors). \
+                Sensors). \
             filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
             order_by(SensorData.date_time.desc()).first()
-        data.percent = data.value/(0.01*5)
-        data_out.append(data)
+        # data.__dict__["percent"] = data.value/(0.01*5)
+        a = namedtuple("set_point", ("data", "percent"))
+        a.data = data
+        a.percent = data.value / (0.01 * 5)
+        data_out.append(a)
+    sum_percent = sum([x.percent for x in data_out])/len(data_out)
+    sum_setting = sum([x.data.value for x in data_out])
+    print sum_percent, sum_setting
     timestamp_str = data.date_time  # TODO. Update time for every single sensor
-
 
     return render_template("heating.html",
                            form=form,
                            radiator_data=data_out,
+                           radiator_sum_percent=sum_percent,
+                           radiator_sum_setting=sum_setting,
                            settings_last_update_time=timestamp_str,
                            page_loc="heating")
 
@@ -570,7 +579,7 @@ def get_heating_data():
     data_out = []
     for s in all_heating_sensors:
         data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(
-            Sensors). \
+                Sensors). \
             filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
             order_by(SensorData.date_time.desc()).first()
         data_out.append({"name": data.location.capitalize(), "y": data.value})
@@ -600,17 +609,10 @@ def get_water_data():
         data_out.append({"y": data.value, "color": colors[m_c[data.sensor_id]]})
         categories.append(data.sensor_type.capitalize())
     timestamp_str = data[0]  # TODO: Update time for every single sensor
-    series = {"data": [
-        {
-            "name": "Water status",
-            "data": data_out,
-        },
-    ],
-        "xAxis": {
-            "categories": categories
-        },
-        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
-    }
+    series = {"data": data_out,
+              "categories": categories,
+              "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
+              }
     # pprint(series)
     return jsonify(**series)
 
