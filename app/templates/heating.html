@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-6">
-            Last updated on <span class="last_update_time">last update time</span>
+            Last updated on <span class="status_last_update_time">last update time</span>
         </div>
     </div>
 
@@ -63,133 +63,70 @@
         </div>
     </form>
 
-{#    <form action="" method="post" name="login">#}
-{#    {{ form.hidden_tag() }}#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Kitchen#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.kitchen_status(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Hallway#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.hallway_status(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Bathroom#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.bathroom_status(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Room#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.room_status(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-4">#}
-{#            <p><br>#}
-{#                <button value="save" type="submit" class="btn btn-success">Save Data</button>#}
-{#            </p>#}
-{#        </div>#}
-{#    </div>#}
-{#    </form>#}
-{#    </div>#}
-{##}
-{#    <div class="col-sm-6">#}
-{#        <div class="row">#}
-{#            <div class="col-sm-12">#}
-{#                <h2>Enter current radiator setting</h2>#}
-{#            </div>#}
-{#        </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Kitchen#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.kitchen_radiator(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Hallway#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.hallway_radiator(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Bathroom#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.bathroom_radiator(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#    <div class="row">#}
-{#        <div class="col-sm-2">#}
-{#            Room#}
-{#        </div>#}
-{#        <div class="col-sm-2">#}
-{#            {{ form.room_radiator(size=1) }}#}
-{#        </div>#}
-{#    </div>#}
-{#    </form>#}
-{#    </div>#}
-
-
-
-
-
-
-
     <script type="text/javascript">
 $(document).ready(function() {
     $.getJSON("/api/heating_data", function (jdata) {
-        $('span.last_update_time').text(jdata.last_update_time);
+        $('span.status_last_update_time').text(jdata.status_last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'test_c',
-                type: 'column'
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                events: {
+                    load: function(event) {
+                        var total = 0; // get total of data
+                        for (var i = 0, len = this.series[0].yData.length; i < len; i++) {
+                            total += this.series[0].yData[i];
+                        }
+                        var text = this.renderer.text(
+                                'Total: ' + total,
+                                this.plotLeft,
+                                this.plotTop - 20
+                        ).attr({
+                            zIndex: 5
+                        }).add(); // write it to the upper left hand corner
+                        }
+                }
             },
             title: {
                 text: 'Heating Status'
             },
-            subtitle: {
-                text: 'Last status of heat distribution sensors'
+            tooltip: {
+                    enabled: false,
+                pointFormat: '{series.name}: <b>{point.y}</b>'
             },
-            xAxis: jdata.xAxis,
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Heating'
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: <span color: {color}>{point.percentage:.2f} %</span>',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    },
+                    showInLegend: true
                 }
             },
-            series: jdata.data
+            legend: {
+                    enabled: true,
+                    labelFormat: '<span style="color:{color}">{name}</span>: <b>{y}</b><br/>',
+                    borderWidth: 0
+                },
+            series: [{
+                name: 'Heat status',
+                colorByPoint: true,
+                data: jdata.data
+            }]
         });
     });
 });
+
+
+
 </script>
 
 {% endblock %}

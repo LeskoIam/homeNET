@@ -15,6 +15,7 @@ import os
 
 __author__ = 'Lesko'
 
+
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
@@ -56,7 +57,7 @@ def view_nodes():
         order_by(LastEntry.date_time.desc()).first()
 
     data = db.session.query(PingerData.up, Nodes.id, Nodes.name, Nodes.ip, Nodes.interface, Nodes.node_type).join(
-        Nodes). \
+            Nodes). \
         filter(PingerData.common_id == last_common_id). \
         filter(Nodes.in_use != False).order_by(Nodes.id.asc()).all()  # TODO: == True?
 
@@ -291,7 +292,7 @@ def heating():
     if form.validate_on_submit():
         unit = "e"
         timestamp = datetime.datetime.today()
-        
+
         # Status
         # Kitchen
         if form.kitchen_status.data is not None:
@@ -549,33 +550,20 @@ def get_node_delay_data(node_id=None):
 
 @app.route("/api/heating_data")
 def get_heating_data():
-    colors = {"kitchen": "red",
-              "hallway": "grey",
-              "bathroom": "blue",
-              "room": "green"}
-    all_heating_sensors = db.session.query(Sensors.id, Sensors.location).\
-        filter(Sensors.id.in_((2, 3, 4, 5))).all()
-    categories = []
+    all_heating_sensors = db.session.query(Sensors.id, Sensors.location). \
+        filter(Sensors.id.in_((2, 3, 4, 5))).order_by(Sensors.id.asc()).all()
     data_out = []
     for s in all_heating_sensors:
-        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(Sensors). \
+        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.location).join(
+            Sensors). \
             filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
             order_by(SensorData.date_time.desc()).first()
-
-        data_out.append({"y": data.value, "color": colors[data.location]})
-        categories.append(data.location.capitalize())
-    timestamp_str = data[0]  # TODO. Update time for everi single sensor
-    series = {"data": [
-        {
-            "name": "Heating status",
-            "data": data_out,
-        },
-    ],
-        "xAxis": {
-            "categories": categories
-        },
-        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
-    }
+        data_out.append({"name": data.location.capitalize(), "y": data.value})
+    data_out = sorted(data_out, key=lambda k: k['y'])
+    timestamp_str = data.date_time  # TODO. Update time for every single sensor
+    series = {"data": data_out,
+              "status_last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
+              }
     return jsonify(**series)
 
 
@@ -584,13 +572,13 @@ def get_water_data():
     colors = {"hot": "red",
               "cold": "blue"}
     m_c = {6: "cold", 7: "hot"}
-    all_water_sensors = db.session.query(Sensors.id, Sensors.sensor_type).\
+    all_water_sensors = db.session.query(Sensors.id, Sensors.sensor_type). \
         filter(Sensors.id.in_((6, 7))).all()
     categories = []
     data_out = []
     for s in all_water_sensors:
         print s.id
-        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.sensor_type).\
+        data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.sensor_type). \
             join(Sensors).filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
             order_by(SensorData.date_time.desc()).first()
         print data
