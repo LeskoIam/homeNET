@@ -266,16 +266,21 @@ def view_settings():
         update_setting("TEMPERATURE_BACK_PLOT_PERIOD",
                        form.temperature_back_plot_period.data,
                        int)
+        update_setting("TEMPERATURE_SCAN_PERIOD",
+                       form.temperature_scan_period.data,
+                       float)
         flash("Settings successfully changed!")
     details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
     server_temp_proc_max_temp_limit = get_setting("PROC_MAX_TEMP_LIMIT", float)
     temperature_plot_back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int)
+    temperature_scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
 
     form.node_details_plot_back_period.data = details_plot_back_period.value
     form.server_temp_plot_back_period.data = server_temp_plot_back_period.value
     form.server_temp_proc_max_temp_limit.data = server_temp_proc_max_temp_limit.value
     form.temperature_back_plot_period.data = temperature_plot_back_period.value
+    form.temperature_scan_period.data = temperature_scan_period.value
     return render_template("settings.html",
                            form=form,
                            page_loc="settings")
@@ -420,7 +425,7 @@ def water():
 
         db.session.commit()
         flash("Successfully entered data!")
-        return redirect('/environment')
+        return redirect('/water')
 
     return render_template("water.html",
                            form=form,
@@ -737,7 +742,7 @@ def get_temperature(back_period="None"):
         filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 1). \
         order_by(SensorData.date_time.desc()).limit(back_period).all()
     # print "Sensor_data:", data
-
+    scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
     temperature_data = []
     timestamp = []
     timestamp_str = data[0][0]
@@ -754,7 +759,8 @@ def get_temperature(back_period="None"):
         "back_period": len(temperature_data),
         "last_reading": temperature_data[0],
         "last_hour_average": stats.mean(temperature_data),
-        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
+        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
+        "scan_period": scan_period.value
     }
     return jsonify(**series)
 

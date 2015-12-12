@@ -32,6 +32,7 @@ class SettingsForm(Form):
     server_temp_plot_back_period = IntegerField("server_temp_plot_back_period")
     server_temp_proc_max_temp_limit = FloatField("server_temp_proc_max_temp_limit")
     temperature_back_plot_period = IntegerField("temperature_back_plot_period")
+    temperature_scan_period = FloatField("temperature_scan_period")
 
 
 class BackPeriodForm(Form):

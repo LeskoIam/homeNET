@@ -39,7 +39,9 @@ $(document).ready(function() {
 
 					},
                     title: {
-                        text: 'Indoor Temperature - last ' + jdata.back_period + ' readings',
+                        text: 'Indoor Temperature - last ' +
+                        jdata.back_period + ' readings ('
+                        + jdata.scan_period + 's capture interval)',
                         x: -20 //center
                     },
                     xAxis: {
