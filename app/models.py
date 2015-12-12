@@ -116,6 +116,6 @@ class SensorData(db.Model):
         self.unit = unit
 
     def __repr__(self):
-        return "<SensorData {0} '{1}': type: <{2}>; value '{3}'>".format(self.id,
-                                                                         self.value,
-                                                                         self.unit)
+        return "<SensorData {0} '{1}': type: <{2}>".format(self.id,
+                                                           self.value,
+                                                           self.unit)

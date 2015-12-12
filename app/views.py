@@ -1,9 +1,9 @@
 # coding=utf-8
 from flask import render_template, redirect, flash, request, jsonify
 # from flask.ext.basicauth import BasicAuth
-from collections import OrderedDict
 import sqlalchemy
-from forms import AddEditNodeForm, SettingsForm, BackPeriodForm, HeatConsumptionInput, WaterConsumption
+from forms import AddEditNodeForm, SettingsForm, BackPeriodForm
+from forms import HeatConsumptionInput, WaterConsumption
 from models import PingerData, LastEntry, Nodes, AppSettings, SensorData, Sensors
 from common import stats
 from app import app, db
@@ -291,43 +291,78 @@ def heating():
     if form.validate_on_submit():
         unit = "e"
         timestamp = datetime.datetime.today()
-
+        
+        # Status
         # Kitchen
-        if form.kitchen.data is not None:
+        if form.kitchen_status.data is not None:
             sensor_id = 2
             data = SensorData(sensor_id=sensor_id,
                               date_time=timestamp,
-                              value=form.kitchen.data,
+                              value=form.kitchen_status.data,
                               unit=unit)
             db.session.add(data)
         # Hallway
-        if form.hallway.data is not None:
+        if form.hallway_status.data is not None:
             sensor_id = 3
             data = SensorData(sensor_id=sensor_id,
                               date_time=timestamp,
-                              value=form.hallway.data,
+                              value=form.hallway_status.data,
                               unit=unit)
             db.session.add(data)
         # Bathroom
-        if form.bathroom.data is not None:
+        if form.bathroom_status.data is not None:
             sensor_id = 4
             data = SensorData(sensor_id=sensor_id,
                               date_time=timestamp,
-                              value=form.bathroom.data,
+                              value=form.bathroom_status.data,
                               unit=unit)
             db.session.add(data)
         # Room
-        if form.room.data is not None:
+        if form.room_status.data is not None:
             sensor_id = 5
             data = SensorData(sensor_id=sensor_id,
                               date_time=timestamp,
-                              value=form.room.data,
+                              value=form.room_status.data,
+                              unit=unit)
+            db.session.add(data)
+
+        # Radiator
+        # Kitchen
+        if form.kitchen_radiator.data is not None:
+            sensor_id = 8
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.kitchen_radiator.data,
+                              unit=unit)
+            db.session.add(data)
+        # Hallway
+        if form.hallway_radiator.data is not None:
+            sensor_id = 9
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.hallway_radiator.data,
+                              unit=unit)
+            db.session.add(data)
+        # Bathroom
+        if form.bathroom_radiator.data is not None:
+            sensor_id = 10
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.bathroom_radiator.data,
+                              unit=unit)
+            db.session.add(data)
+        # Room
+        if form.room_radiator.data is not None:
+            sensor_id = 11
+            data = SensorData(sensor_id=sensor_id,
+                              date_time=timestamp,
+                              value=form.room_radiator.data,
                               unit=unit)
             db.session.add(data)
 
         db.session.commit()
         flash("Successfully entered data!")
-        return redirect('/environment')
+        return redirect('/heating')
 
     return render_template("heating.html",
                            form=form,
@@ -532,7 +567,7 @@ def get_heating_data():
     timestamp_str = data[0]  # TODO. Update time for everi single sensor
     series = {"data": [
         {
-            "name": "Heating state",
+            "name": "Heating status",
             "data": data_out,
         },
     ],
@@ -564,7 +599,7 @@ def get_water_data():
     timestamp_str = data[0]  # TODO: Update time for every single sensor
     series = {"data": [
         {
-            "name": "Water state",
+            "name": "Water status",
             "data": data_out,
         },
     ],

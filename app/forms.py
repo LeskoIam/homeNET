@@ -5,7 +5,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField
+from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField, DecimalField
 from wtforms.validators import DataRequired, Optional
 
 
@@ -39,10 +39,15 @@ class BackPeriodForm(Form):
 
 
 class HeatConsumptionInput(Form):
-    kitchen = IntegerField("kitchen", validators=[Optional()])
-    hallway = IntegerField("hallway", validators=[Optional()])
-    bathroom = IntegerField("bathroom", validators=[Optional()])
-    room = IntegerField("room", validators=[Optional()])
+    kitchen_status = IntegerField("kitchen_status", validators=[Optional()])
+    hallway_status = IntegerField("hallway_status", validators=[Optional()])
+    bathroom_status = IntegerField("bathroom_status", validators=[Optional()])
+    room_status = IntegerField("room_status", validators=[Optional()])
+
+    kitchen_radiator = FloatField("kitchen_radiator", validators=[Optional()])
+    hallway_radiator = FloatField("hallway_radiator", validators=[Optional()])
+    bathroom_radiator = FloatField("bathroom_radiator", validators=[Optional()])
+    room_radiator = FloatField("room_radiator", validators=[Optional()])
 
 
 class WaterConsumption(Form):

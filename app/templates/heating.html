@@ -9,7 +9,7 @@
     <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
 
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <h2>Enter current heating status</h2>
         </div>
     </div>
@@ -17,64 +17,149 @@
     <form action="" method="post" name="login">
     {{ form.hidden_tag() }}
 
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="row">
-                <div class="col-sm-6">
-                    Kitchen
-                </div>
-                <div class="col-sm-2">
-                    {{ form.kitchen(size=1) }}
-                </div>
-            </div>
-        </div>
-    </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <table class="table table-striped table-responsive table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Radiator</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="row">
-                <div class="col-sm-6">
-                    Hallway
-                </div>
-                <div class="col-sm-2">
-                    {{ form.hallway(size=1) }}
-                </div>
-            </div>
-        </div>
-    </div>
+                    <tr>
+                        <td>Kitchen</td>
+                        <td>{{ form.kitchen_status(size=1) }}</td>
+                        <td>{{ form.kitchen_radiator(size=1) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hallway</td>
+                        <td>{{ form.hallway_status(size=1) }}</td>
+                        <td>{{ form.hallway_radiator(size=1) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Bathroom</td>
+                        <td>{{ form.bathroom_status(size=1) }}</td>
+                        <td>{{ form.bathroom_radiator(size=1) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Room</td>
+                        <td>{{ form.room_status(size=1) }}</td>
+                        <td>{{ form.room_radiator(size=1) }}</td>
+                    </tr>
 
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="row">
-                <div class="col-sm-6">
-                    Bathroom
-                </div>
-                <div class="col-sm-2">
-                    {{ form.bathroom(size=1) }}
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="row">
-                <div class="col-sm-6">
-                    Room
-                </div>
-                <div class="col-sm-2">
-                    {{ form.room(size=1) }}
-                </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <p><br>
+                    <button value="save" type="submit" class="btn btn-success">Save Data</button>
+                </p>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4">
-            <p><br>
-                <button value="save" type="submit" class="btn btn-success">Save Data</button>
-            </p>
-        </div>
-    </div>
     </form>
+
+{#    <form action="" method="post" name="login">#}
+{#    {{ form.hidden_tag() }}#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Kitchen#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.kitchen_status(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Hallway#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.hallway_status(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Bathroom#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.bathroom_status(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Room#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.room_status(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-4">#}
+{#            <p><br>#}
+{#                <button value="save" type="submit" class="btn btn-success">Save Data</button>#}
+{#            </p>#}
+{#        </div>#}
+{#    </div>#}
+{#    </form>#}
+{#    </div>#}
+{##}
+{#    <div class="col-sm-6">#}
+{#        <div class="row">#}
+{#            <div class="col-sm-12">#}
+{#                <h2>Enter current radiator setting</h2>#}
+{#            </div>#}
+{#        </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Kitchen#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.kitchen_radiator(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Hallway#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.hallway_radiator(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Bathroom#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.bathroom_radiator(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#    <div class="row">#}
+{#        <div class="col-sm-2">#}
+{#            Room#}
+{#        </div>#}
+{#        <div class="col-sm-2">#}
+{#            {{ form.room_radiator(size=1) }}#}
+{#        </div>#}
+{#    </div>#}
+{#    </form>#}
+{#    </div>#}
+
+
+
 
 
 
@@ -89,10 +174,10 @@ $(document).ready(function() {
                 type: 'column'
             },
             title: {
-                text: 'Heating State'
+                text: 'Heating Status'
             },
             subtitle: {
-                text: 'Last state of heat distribution sensors'
+                text: 'Last status of heat distribution sensors'
             },
             xAxis: jdata.xAxis,
             yAxis: {
