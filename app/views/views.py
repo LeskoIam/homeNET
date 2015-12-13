@@ -9,6 +9,7 @@ from environment.environment import blueprint as env_blueprint
 from nodes.nodes import blueprint as nod_blueprint
 from server.server import blueprint as ser_blueprint
 from settings.settings import blueprint as set_blueprint
+from creatures.creatures import blueprint as cre_blueprint
 
 app.register_blueprint(blueprint=hom_blueprint)
 app.register_blueprint(blueprint=agg_blueprint)
@@ -16,6 +17,7 @@ app.register_blueprint(blueprint=env_blueprint)
 app.register_blueprint(blueprint=nod_blueprint)
 app.register_blueprint(blueprint=ser_blueprint)
 app.register_blueprint(blueprint=set_blueprint)
+app.register_blueprint(blueprint=cre_blueprint)
 
 __author__ = 'Lesko'
 

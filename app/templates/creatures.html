@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>All time data</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on <span class="last_update_time">Loading ...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div id="all_time_data_1" style="min-width: 400px; height: 400px; margin: 0 auto">
+                <h2>Loading chart ...</h2>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div id="all_time_data_2" style="min-width: 400px; height: 400px; margin: 0 auto">
+                <h2>Loading chart ...</h2>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+$(document).ready(function() {
+    $.getJSON("/api/creatures_data", function (jdata) {
+        $('span.last_update_time').text(jdata.last_update_time);
+
+        var name_1 = jdata.creatures_data[0][0].name;
+        $('h2.name_1').text(name_1);
+        var name_2 = jdata.creatures_data[1][0].name;
+        $('h2.name_2').text(name_2);
+
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'all_time_data_1',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                events: {
+                    load: show_sum_on_graph
+                }
+            },
+            title: {
+                text: name_1
+            },
+            tooltip: {
+                    enabled: false,
+                pointFormat: '{series.name}: <b>{point.y}</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.up}</b>: <span color: {color}>{point.percentage:.2f} %</span>',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    },
+                    showInLegend: true
+                }
+            },
+            legend: {
+                    enabled: true,
+                    labelFormat: '<span style="color:{color}">{up}: {y}</span>',
+                    borderWidth: 0
+                },
+            series: [{
+                name: 'Heat status',
+                colorByPoint: true,
+                data: jdata.creatures_data[0]
+            }]
+        });
+
+
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'all_time_data_2',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                events: {
+                    load: show_sum_on_graph
+                }
+            },
+            title: {
+                text: name_2
+            },
+            tooltip: {
+                    enabled: false,
+                pointFormat: '{series.name}: <b>{point.y}</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.up}</b>: <span color: {color}>{point.percentage:.2f} %</span>',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    },
+                    showInLegend: true
+                }
+            },
+            legend: {
+                    enabled: true,
+                    labelFormat: '<span style="color:{color}">{up}: {y}</span>',
+                    borderWidth: 0
+                },
+            series: [{
+                name: 'Heat status',
+                colorByPoint: true,
+                data: jdata.creatures_data[1]
+            }]
+        });
+    });
+});
+
+show_sum_on_graph = function(event) {
+                        var total = 0; // get total of data
+                        for (var i = 0, len = this.series[0].yData.length; i < len; i++) {
+                            total += this.series[0].yData[i];
+                        }
+                        var text = this.renderer.text(
+                                'Total: ' + total,
+                                this.plotLeft,
+                                this.plotTop - 20
+                        ).attr({
+                            zIndex: 5
+                        }).add(); // write it to the upper left hand corner
+                        }
+
+</script>
+
+{% endblock %}
