@@ -82,3 +82,21 @@ class SimpleMovingAverage(object):
             else:
                 av.append(sum(self.items[i + 1 - self.navg:i + 1]) / self.navg)
         return av
+
+
+def histogram(data, bin_size, min_, max_,):
+    bin_min = min_
+    bin_max = min_ + bin_size
+    bins = []
+    for d in xrange(divmod(max_, bin_size)[0]+1):
+        bins.append([bin_min, bin_max])
+        bin_min = bin_max
+        bin_max += bin_size
+    out = []
+    for bin_ in bins:
+        c = 0
+        for d in data:
+            if bin_[0] <= d < bin_[1]:
+                c += 1
+        out.append(c)
+    return out

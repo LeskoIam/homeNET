@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint, jsonify
 from app.models import PingerData, Nodes, LastEntry
 from app import db
+from app.common.stats import histogram
 
 from sqlalchemy import func
 import datetime
@@ -66,6 +67,8 @@ def get_creatures_data():
 
     creature_data = []
     creatures_data = []  # Data for all creatures together
+    hist_data_day = []
+    hist_data_week = []
     for creature in creatures:
         print "\n", creature.name, creature.id
         node_id = creature.id
@@ -86,8 +89,19 @@ def get_creatures_data():
         # creatures_data.append({"name": "{0} - Down".format(creature.name), "y": down_count})
 
     # creature_data = sorted(creature_data, key=lambda k: k['y'])
+
+        # How to filter back time period
+        # filter(PingerData.date_time > func.current_date() - 100).\
+        time_up_data = db.session.query(PingerData.date_time).filter(PingerData.node_id == node_id).\
+            filter(PingerData.up == True).all()
+        hist_data_day.append(histogram([x[0].hour for x in time_up_data], 1, 0, 23))
+        hist_data_week.append(histogram([x[0].weekday() for x in time_up_data], 1, 0, 6))
+        #print histogram([x[0].hour for x in time_up_data], 1, 0, 23)
+
     series = {"creature_data": creature_data,
               "creatures_data": creatures_data,
+              "hist_data_day": hist_data_day,
+              "hist_data_week": hist_data_week,
               "last_update_time": datetime.datetime.strftime(timestamp, "%d.%m.%Y %H:%M:%S")
               }
     return jsonify(**series)

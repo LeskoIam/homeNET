@@ -10,7 +10,9 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="row">
         <div class="col-sm-6">
             <div id="all_time_data_1" style="min-width: 400px; height: 400px; margin: 0 auto">
                 <h2>Loading chart ...</h2>
@@ -18,12 +20,31 @@
         </div>
 
         <div class="col-sm-6">
-            <div id="all_time_data_2" style="min-width: 400px; height: 400px; margin: 0 auto">
-                <h2>Loading chart ...</h2>
+            <div id="test_hist_day_1" style="min-width: 400px; height: 200px; margin: 0 auto">
+                <h2>Loading  chart ...</h2>
+            </div>
+            <div id="test_hist_week_1" style="min-width: 400px; height: 200px; margin: 0 auto">
+                <h2>Loading  chart ...</h2>
             </div>
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-sm-6">
+            <div id="all_time_data_2" style="min-width: 400px; height: 400px; margin: 0 auto">
+                <h2>Loading chart ...</h2>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div id="test_hist_day_2" style="min-width: 400px; height: 200px; margin: 0 auto">
+                <h2>Loading  chart ...</h2>
+            </div>
+            <div id="test_hist_week_2" style="min-width: 400px; height: 200px; margin: 0 auto">
+                <h2>Loading  chart ...</h2>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript">
 $(document).ready(function() {
@@ -86,10 +107,8 @@ $(document).ready(function() {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
-                type: 'pie',
-                events: {
-                    load: show_sum_on_graph
-                }
+                type: 'pie'
+
             },
             title: {
                 text: name_2
@@ -121,6 +140,172 @@ $(document).ready(function() {
                 name: 'Heat status',
                 colorByPoint: true,
                 data: jdata.creatures_data[1]
+            }]
+        });
+        var chart = new Highcharts.Chart({
+            chart: {
+                type: 'column',
+                renderTo: 'test_hist_day_1'
+            },
+            title: {text: ""},
+            subtitle: {
+                text: 'Up time vs. Hour of the day'
+            },
+            xAxis: {
+                crosshair: true,
+                tickInterval: 1
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Up Count'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.1,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false
+                }
+            },
+            series: [{
+                name: name_1,
+                data: jdata.hist_data_day[0]
+
+            }]
+        });
+        var chart = new Highcharts.Chart({
+            chart: {
+                type: 'column',
+                renderTo: 'test_hist_day_2'
+            },
+            title: {text: ""},
+            subtitle: {
+                text: 'Up time vs. Hour of the day'
+            },
+            xAxis: {
+                crosshair: true,
+                tickInterval: 1
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Up Count'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.1,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false
+                }
+            },
+            series: [{
+                name: name_2,
+                data: jdata.hist_data_day[1]
+
+            }]
+        });
+
+        var chart = new Highcharts.Chart({
+            chart: {
+                type: 'column',
+                renderTo: 'test_hist_week_1'
+            },
+            title: {text: ""},
+            subtitle: {
+                text: 'Up time vs. Day of the week (0 = Monday)'
+            },
+            xAxis: {
+                crosshair: true,
+                tickInterval: 1
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Up Count'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.1,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false
+                }
+            },
+            series: [{
+                name: name_2,
+                data: jdata.hist_data_week[1]
+
+            }]
+        });
+
+        var chart = new Highcharts.Chart({
+            chart: {
+                type: 'column',
+                renderTo: 'test_hist_week_2'
+            },
+            title: {text: ""},
+            subtitle: {
+                text: 'Up time vs. Day of the week (0 = Monday)'
+            },
+            xAxis: {
+                crosshair: true,
+                tickInterval: 1
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Up Count'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.1,
+                    borderWidth: 0,
+                    groupPadding: 0,
+                    shadow: false
+                }
+            },
+            series: [{
+                name: name_2,
+                data: jdata.hist_data_week[1]
+
             }]
         });
     });
