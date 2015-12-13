@@ -11,7 +11,8 @@ app.config.from_object('real_config')
 
 db = SQLAlchemy(app)
 
-from app import views, models
+from app import models
+from app.views import main
 
 import custom_jinja_filters
 app.jinja_env.filters["format_datetime"] = custom_jinja_filters.format_datetime
