@@ -107,7 +107,10 @@ $(document).ready(function() {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                events: {
+                    load: show_sum_on_graph
+                }
 
             },
             title: {
