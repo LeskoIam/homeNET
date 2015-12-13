@@ -1,15 +1,14 @@
+from app import db
+from app.models import Nodes, LastEntry, AppSettings, Sensors, SensorData
+import sqlalchemy
+
+import datetime
+
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-
-from app import db
-from app.models import Nodes, LastEntry, AppSettings, Sensors, SensorData
-import sqlalchemy
-from sqlalchemy.schema import CreateTable
-
-import datetime
 
 
 def add_nodes():

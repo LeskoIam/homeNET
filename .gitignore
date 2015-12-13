@@ -1,2 +1,3 @@
 *.pyc
 tests
+real_config.py

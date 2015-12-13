@@ -1,12 +1,12 @@
+from flask.ext.wtf import Form
+from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField
+from wtforms.validators import DataRequired, Optional
+
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-
-from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField, DecimalField
-from wtforms.validators import DataRequired, Optional
 
 
 class AddEditNodeForm(Form):

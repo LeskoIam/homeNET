@@ -1,16 +1,15 @@
+import datetime
+import socket
+
+import sys
+sys.path.append("../..")
+from app.common.net import is_up
+
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
 # When it lies to you, it may be a while before you realize something's wrong.
-import datetime
-import socket
-import sqlite3 as lite
-
-import sys
-sys.path.append("../..")
-from app.common.net import is_up
-import app
 
 
 def ping_all(connection):
