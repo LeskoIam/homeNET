@@ -13,7 +13,7 @@ app.config.from_object('real_config')
 db = SQLAlchemy(app)
 
 from app import models
-from app.main_views import main_views
+from app.views import main_views
 
 # Add custom jinja filters
 import custom_jinja_filters
