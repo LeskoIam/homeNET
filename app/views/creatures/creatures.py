@@ -22,31 +22,6 @@ def show_creatures():
     :return: response
     """
 
-    # creatures = db.session.query(Nodes.name, Nodes.id).filter(Nodes.id.in_((10, 12))).\
-    #     order_by(Nodes.id.asc()).all()
-    #
-    # # TODO. Update time for every single sensor
-    # timestamp = db.session.query(LastEntry.date_time).order_by(LastEntry.date_time.desc()).first()[0]
-    # print timestamp
-    #
-    # for creature in creatures:
-    #     print "\n", creature.name, creature.id
-    #     node_id = creature.id
-    #
-    #     all_count = db.session.query(func.count(PingerData.id)).filter(PingerData.node_id == node_id).first()[0]
-    #     down_count = db.session.query(func.count(PingerData.id)).filter(PingerData.node_id == node_id).\
-    #         filter(PingerData.up == False).first()[0]
-    #
-    #     print "all:", all_count
-    #     print "up:", all_count - down_count, (all_count - down_count) / (0.01 * all_count), "%"
-    #     print "down:", down_count, down_count / (0.01 * all_count), "%\n"
-
-    # data_out = {"name": creature.name, "y": all_count-down_count}
-    # data_out = sorted(data_out, key=lambda k: k['y'])
-    # series = {"data": data_out,
-    #           "status_last_update_time": datetime.datetime.strftime(timestamp, "%d.%m.%Y %H:%M:%S")
-    #           }
-
     return render_template("creatures.html", page_loc="creatures")
 
 
@@ -65,7 +40,6 @@ def get_creatures_data():
     timestamp = db.session.query(LastEntry.date_time).order_by(LastEntry.date_time.desc()).first()[0]
     print timestamp
 
-    creature_data = []
     creatures_data = []  # Data for all creatures together
     hist_data_day = []
     hist_data_week = []
@@ -85,21 +59,12 @@ def get_creatures_data():
         creatures_data.append([{"name": "{0}".format(creature.name), "y": up_count, "up": "Up"},
                                {"name": "{0}".format(creature.name), "y": down_count, "up": "Down"}])
 
-        # creatures_data.append({"name": "{0} - Up".format(creature.name), "y": up_count})
-        # creatures_data.append({"name": "{0} - Down".format(creature.name), "y": down_count})
-
-    # creature_data = sorted(creature_data, key=lambda k: k['y'])
-
-        # How to filter back time period
-        # filter(PingerData.date_time > func.current_date() - 100).\
         time_up_data = db.session.query(PingerData.date_time).filter(PingerData.node_id == node_id).\
             filter(PingerData.up == True).all()
         hist_data_day.append(histogram([x[0].hour for x in time_up_data], 1, 0, 23))
         hist_data_week.append(histogram([x[0].weekday() for x in time_up_data], 1, 0, 6))
-        #print histogram([x[0].hour for x in time_up_data], 1, 0, 23)
 
-    series = {"creature_data": creature_data,
-              "creatures_data": creatures_data,
+    series = {"creatures_data": creatures_data,
               "hist_data_day": hist_data_day,
               "hist_data_week": hist_data_week,
               "last_update_time": datetime.datetime.strftime(timestamp, "%d.%m.%Y %H:%M:%S")
