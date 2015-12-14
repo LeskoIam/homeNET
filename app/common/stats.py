@@ -52,7 +52,7 @@ def diff(data):
     return out_data
 
 
-def running_consumption(data, time_series):
+def time_diff(data, time_series):
     """Calculates running consumption E/day
 
     :param data:
@@ -65,7 +65,7 @@ def running_consumption(data, time_series):
     for d_d, t_d in zip(data_d, time_d):
         # print type(t_d)
         # print d_d, "|", t_d, "|", float(t_d.total_seconds())/60/60, (float(d_d)/float(t_d.total_seconds()))*60*60*24
-        out_data.append((float(d_d)/float(t_d.total_seconds()))*60*60*24)
+        out_data.append((float(d_d)/float(t_d.total_seconds())))
     return out_data, data_d, time_d
 
 
