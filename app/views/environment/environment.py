@@ -5,6 +5,7 @@ from app.forms import BackPeriodForm, HeatConsumptionInput, WaterConsumption
 from ..common import get_setting, time_since_epoch
 from app.common import stats
 from app import db
+import time
 
 import datetime
 from collections import namedtuple
@@ -125,7 +126,7 @@ def heating():
         a.data = data
         a.percent = data.value / (0.01 * 5)
         data_out.append(a)
-    sum_percent = sum([x.percent for x in data_out])/len(data_out)
+    sum_percent = sum([x.percent for x in data_out]) / len(data_out)
     sum_setting = sum([x.data.value for x in data_out])
     print sum_percent, sum_setting
     timestamp_str = data.date_time  # TODO. Update time for every single sensor
@@ -197,6 +198,68 @@ def get_heating_data():
     return jsonify(**series)
 
 
+@blueprint.route("/api/consumption_data")
+def get_consumption_data():
+    all_heating_sensors = db.session.query(Sensors.id, Sensors.location). \
+        filter(Sensors.id.in_((2, 3, 4, 5))).order_by(Sensors.id.asc()).all()
+
+    consumption_per_room = []
+    sum_consumption = None
+    max_iter = len(all_heating_sensors) - 1
+    for i, s in enumerate(all_heating_sensors):
+        data = db.session.query(Sensors.location, SensorData.date_time, SensorData.value). \
+            filter(Sensors.id == SensorData.sensor_id). \
+            filter(SensorData.sensor_id == s.id).order_by(SensorData.date_time.asc()).all()
+
+        time_ = [time_since_epoch(x.date_time) * 1000 for x in data]
+        data_ = [x.value for x in data]
+        diff_data_ = stats.diff([x.value for x in data])
+
+        if i == 0:
+            sum_consumption = diff_data_
+        else:
+            sum_consumption = [sum(x) for x in zip(sum_consumption, diff_data_)]
+
+        diff_data_ = zip(time_[1:], diff_data_)
+        data_ = zip(time_, data_)
+        if max_iter == i:
+            # If last iteration
+            sum_consumption = zip(time_[1:], sum_consumption)
+
+        out = [
+            {
+                "name": data[0].location.capitalize(),
+                "data": data_
+            },
+            {
+                "name": data[0].location.capitalize() + " consumption",
+                "data": diff_data_
+            }
+        ]
+
+        consumption_per_room.append(out)
+
+    print consumption_per_room
+    print sum_consumption
+
+    sum_consumption = [
+            {
+                "name": "sum cons",
+                "data": sum_consumption
+            }]
+    data_per_room = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id,
+                                     Sensors.location).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
+        order_by(SensorData.date_time.desc()).first()
+    timestamp_str = data_per_room.date_time  # TODO. Update time for every single sensor
+    series = {"consumption_per_room": consumption_per_room,
+              "status_last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
+              "sum_consumption": sum_consumption
+              }
+    return jsonify(**series)
+
+
+
 @blueprint.route("/api/water_data")
 def get_water_data():
     colors = {"hot": "red",
@@ -257,4 +320,5 @@ def get_temperature(back_period="None"):
         "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
         "scan_period": scan_period.value
     }
+    # print series["data"]
     return jsonify(**series)

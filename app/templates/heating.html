@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-
+    <!-- START first row -->
     <div class="row">
+        <!-- START heating status pie chart -->
         <div class="col-sm-6">
             <h2>Last Heating Status</h2>
             <div class="row">
@@ -11,12 +12,35 @@
             </div>
             <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
+        <!-- END heating status pie chart -->
 
+
+        <!-- START consumption view -->
+        <div class="col-sm-6">
+            <h2>Last Heating Status</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on <span class="status_last_update_time">last update time</span>
+                </div>
+            </div>
+            <div id="test_c1" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+        <!-- END consumption view -->
+
+
+    </div>
+    <!-- END first row -->
+
+    <!-- START second row -->
+    <div class="row">
+
+
+                <!-- START radiator settings progress bar view -->
         <div class="col-sm-6">
             <h2>Radiator Settings</h2>
             <div class="row">
                 <div class="col-sm-6">
-                    Last updated on {{ settings_last_update_time|format_datetime }}
+                    Last updated on <span class="status_last_update_time">last update time</span>
                 </div>
             </div>
             <table class="table table-striped">
@@ -55,64 +79,70 @@
                 </tr>
                 </tbody>
             </table>
-
         </div>
-    </div>
+        <!-- END radiator settings progress bar view -->
 
-    <div class="row">
+
+        <!-- START enter current reading heating status form -->
         <div class="col-sm-6">
-            <h2>Enter current heating status</h2>
-        </div>
-    </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2>Enter current heating status</h2>
+                </div>
+            </div>
 
-    <form action="" method="post" name="login">
-    {{ form.hidden_tag() }}
+            <form action="" method="post" name="login">
+            {{ form.hidden_tag() }}
 
-        <div class="row">
-            <div class="col-sm-6">
-                <table class="table table-striped table-responsive table-condensed">
-                    <thead>
+                <div class="col-sm-12">
+                    <table class="table table-striped table-responsive table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Radiator</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
                         <tr>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th>Radiator</th>
+                            <td>Kitchen</td>
+                            <td>{{ form.kitchen_status(size=1) }}</td>
+                            <td>{{ form.kitchen_radiator(size=1) }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
+                        <tr>
+                            <td>Hallway</td>
+                            <td>{{ form.hallway_status(size=1) }}</td>
+                            <td>{{ form.hallway_radiator(size=1) }}</td>
+                        </tr>
+                        <tr>
+                            <td>Bathroom</td>
+                            <td>{{ form.bathroom_status(size=1) }}</td>
+                            <td>{{ form.bathroom_radiator(size=1) }}</td>
+                        </tr>
+                        <tr>
+                            <td>Room</td>
+                            <td>{{ form.room_status(size=1) }}</td>
+                            <td>{{ form.room_radiator(size=1) }}</td>
+                        </tr>
 
-                    <tr>
-                        <td>Kitchen</td>
-                        <td>{{ form.kitchen_status(size=1) }}</td>
-                        <td>{{ form.kitchen_radiator(size=1) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Hallway</td>
-                        <td>{{ form.hallway_status(size=1) }}</td>
-                        <td>{{ form.hallway_radiator(size=1) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Bathroom</td>
-                        <td>{{ form.bathroom_status(size=1) }}</td>
-                        <td>{{ form.bathroom_radiator(size=1) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Room</td>
-                        <td>{{ form.room_status(size=1) }}</td>
-                        <td>{{ form.room_radiator(size=1) }}</td>
-                    </tr>
+                        </tbody>
+                    </table>
 
-                    </tbody>
-                </table>
-            </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p><br>
+                                <button value="save" type="submit" class="btn btn-success">Save Data</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <p><br>
-                    <button value="save" type="submit" class="btn btn-success">Save Data</button>
-                </p>
-            </div>
-        </div>
-    </form>
+        <!-- END enter current reading heating status form -->
+
+    </div>
+    <!-- END second row -->
 
     <script type="text/javascript">
 $(document).ready(function() {
@@ -173,7 +203,50 @@ $(document).ready(function() {
                 data: jdata.data
             }]
         });
+
+
+
     });
+
+        $.getJSON("/api/consumption_data", function (jdata) {
+            var chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'test_c1',
+                    {#                type: "column"#}
+                    {#						height: 155#}
+
+                },
+                title: {
+                    text: 'Consumption'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Consumption'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: 'e'
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+                series: jdata.sum_consumption
+            });
+        });
+
+
 });
 
 
