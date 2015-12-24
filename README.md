@@ -2,6 +2,11 @@
 Always wanted to have a local network (intranet) landing site.
 This is what I came up with. It's a project in it's infancy and will be added on as I remember new stuff.
 
+In last months this project took a turn, turn into hardware waters. I'm expanding it to include sensorics to monitor
+home temperature, humidity, light level,... I'm planning on having on implementing "smart house" like automation too.
+For this I'm developing sensorics and control hardware nodes and  main "processing" unit. For now everything is
+implemented with open hardware (RPi, Arduino), but will be integrated if there is need in the future (production?).
+
 The idea is to have a single place where relevant information (relevant to me/you) can be quickly accessed.
 I run a small-ish home network with a server, NAS, a few [BBB](http://beagleboard.org/black), oscilloscope
 with IP "GPIB" plus a few virtual machines and it's nice to know if devices are up and running just by
