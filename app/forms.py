@@ -3,6 +3,8 @@ from wtforms import StringField, SelectField, BooleanField, HiddenField, Integer
 from wtforms.validators import DataRequired, Optional
 
 __author__ = 'Lesko'
+
+
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
@@ -40,10 +42,10 @@ class BackPeriodForm(Form):
 
 
 class HeatConsumptionInput(Form):
-    kitchen_status = IntegerField("kitchen_status", validators=[Optional()])
-    hallway_status = IntegerField("hallway_status", validators=[Optional()])
-    bathroom_status = IntegerField("bathroom_status", validators=[Optional()])
-    room_status = IntegerField("room_status", validators=[Optional()])
+    kitchen_status = IntegerField("kitchen_status", validators=[DataRequired()])
+    hallway_status = IntegerField("hallway_status", validators=[DataRequired()])
+    bathroom_status = IntegerField("bathroom_status", validators=[DataRequired()])
+    room_status = IntegerField("room_status", validators=[DataRequired()])
 
     kitchen_radiator = FloatField("kitchen_radiator", validators=[Optional()])
     hallway_radiator = FloatField("hallway_radiator", validators=[Optional()])

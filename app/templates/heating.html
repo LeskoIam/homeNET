@@ -17,7 +17,7 @@
 
         <!-- START consumption view -->
         <div class="col-sm-6">
-            <h2>Last Heating Status</h2>
+            <h2>&nbsp;</h2>
             <div class="row">
                 <div class="col-sm-6">
                     Last updated on <span class="status_last_update_time">last update time</span>
@@ -208,7 +208,7 @@ $(document).ready(function() {
 
     });
 
-        $.getJSON("/api/consumption_data", function (jdata) {
+        $.getJSON("/api/heat_consumption_data", function (jdata) {
             var chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'test_c1',
@@ -217,7 +217,7 @@ $(document).ready(function() {
 
                 },
                 title: {
-                    text: 'Consumption'
+                    text: 'Consumption [e/hour]'
                 },
                 xAxis: {
                     type: 'datetime'

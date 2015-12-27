@@ -12,8 +12,17 @@
             <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
 
+        <!-- START consumption view -->
         <div class="col-sm-6">
+            <h2>&nbsp;</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    Last updated on <span class="last_update_time">last update time</span>
+                </div>
+            </div>
+            <div id="test_c1" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
+        <!-- END consumption view -->
     </div>
 
     <div class="row">
@@ -98,6 +107,45 @@ $(document).ready(function() {
             }]
         });
     });
+
+    $.getJSON("/api/water_consumption_data", function (jdata) {
+            var chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'test_c1',
+                    {#                type: "column"#}
+                    {#						height: 155#}
+
+                },
+                title: {
+                    text: 'Consumption [l/hour]'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Consumption'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: ' l/hour'
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: true
+                        }
+                    }
+                },
+                series: jdata.sum_consumption
+            });
+        });
+
 });
 </script>
 {% endblock %}

@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Indoor Temperature</h2><br />
+    <h2>Indoor Environment stats</h2><br />
     <div class="row">
         <div class="col-sm-6">
-            Last updated on <span class="last_update_time">last update time</span>
+            Node last updated on <span class="node_last_update_time">node last update time</span>
+            <br />
+            DS last updated on <span class="ds_last_update_time">ds last update time</span>
         </div>
     </div>
 
+    <br />
+
     <div class="row">
         <div class="col-sm-4">
-            <b>Last reading:</b> <span class="last_temp">last reading</span> °C<br />
+            <b>DS last reading:</b> <span class="ds_last_reading">DS last reading</span> °C<br />
+            <b>Node-1 DS last reading:</b> <span class="node_ds_last_reading">Node DS last reading</span> °C<br />
+            <b>Node-1 DHT last temperature reading:</b> <span class="node_dht_temp_last_reading">Node DS last reading</span> °C<br />
+            <b>Node-1 DHT last humidity reading:</b> <span class="node_dht_hum_last_reading">Node DS last reading</span> %<br />
+            <b>Node-1 LDR last light level:</b> <span class="node_ldr_last_light">Node-1 LDR last light level</span> e<br /><br />
         </div>
         <div class="col-sm-4">
-            <b>Average:</b> <span class="last_hour_average">average temperature</span> °C<br /><br />
+            <b>DS mean temperature:</b> <span class="ds_average">DS average temperature</span> °C<br />
+            <b>Node-1 DS mean temperature:</b> <span class="node_ds_average">Node-1 DS average temperature</span> °C<br />
+            <b>Node-1 DS mean DHT temperature:</b> <span class="node_dht_temp_average">Node-1 DHT average temperature</span> °C<br />
+            <b>Node-1 DS mean DHT humidity:</b> <span class="node_dht_hum_average">Node-1 DHT average humidity</span> %<br />
+            <b>Node-1 LDR mean light level:</b> <span class="node_ldr_average_light">Node-1 LDR mean light level</span> e<br /><br />
         </div>
         <div class="col-sm-4">
             <form action="" method="post" name="login">
@@ -40,9 +52,20 @@
 $(document).ready(function() {
         // TEST
         $.getJSON("/api/get_environment_data/{{ back_period|safe }}", function (jdata) {
-{#        $('span.last_temp').text(jdata.last_reading);#}
+        $('span.ds_last_reading').text(jdata.ds_last_reading);
+        $('span.node_ds_last_reading').text(jdata.node_ds_last_reading);
+        $('span.node_dht_hum_last_reading').text(jdata.node_dht_hum_last_reading);
+        $('span.node_dht_temp_last_reading').text(jdata.node_dht_temp_last_reading);
+
+
+        $('span.ds_average').text(jdata.ds_average.toFixed(3));
+        $('span.node_ds_average').text(jdata.node_ds_average.toFixed(3));
+        $('span.node_dht_temp_average').text(jdata.node_dht_temp_average.toFixed(3));
+        $('span.node_dht_hum_average').text(jdata.node_dht_hum_average.toFixed(3));
+
 {#        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));#}
-{#        $('span.last_update_time').text(jdata.last_update_time);#}
+        $('span.ds_last_update_time').text(jdata.ds_last_update_time);
+        $('span.node_last_update_time').text(jdata.node_last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'test_c1',
@@ -96,8 +119,8 @@ $(document).ready(function() {
 
 
     $.getJSON("/api/get_light_data/{{ back_period|safe }}", function (jdata) {
-{#        $('span.last_temp').text(jdata.last_reading);#}
-{#        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));#}
+        $('span.node_ldr_average_light').text(jdata.node_ldr_average_light.toFixed(3));
+        $('span.node_ldr_last_light').text(jdata.node_ldr_last_light.toFixed(3));
 {#        $('span.last_update_time').text(jdata.last_update_time);#}
         var chart = new Highcharts.Chart({
             chart: {
