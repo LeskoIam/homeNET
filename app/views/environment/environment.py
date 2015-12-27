@@ -259,7 +259,6 @@ def get_consumption_data():
     return jsonify(**series)
 
 
-
 @blueprint.route("/api/water_data")
 def get_water_data():
     colors = {"hot": "red",
@@ -318,6 +317,174 @@ def get_temperature(back_period="None"):
         "last_reading": temperature_data[0],
         "last_hour_average": stats.mean(temperature_data),
         "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
+        "scan_period": scan_period.value
+    }
+    # print series["data"]
+    return jsonify(**series)
+
+
+@blueprint.route("/api/get_environment_data")
+@blueprint.route("/api/get_environment_data/<back_period>")
+def get_environment_data(back_period="None"):
+    print "test:", back_period, type(back_period), repr(back_period)
+    if back_period != "None":
+        back_period = int(back_period)
+    else:
+        back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+
+    ds_temp = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 1). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    node_1_ds_temp = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 12). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    node_1_dht_temp = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 13). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    node_1_dht_hum = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 14). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    node_1_ldr_light = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 15). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    # print "Sensor_data:", data
+    scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
+    temperature_ds_data = []
+    node_1_temperature_ds_data = []
+    node_1_temperature_dht_data = []
+    node_1_humidity_dht_data = []
+    ldr_light = []
+    timestamp = []
+    timestamp_ds = []
+    timestamp_str = node_1_dht_temp[0][0]
+    for i in range(back_period):  # enumerate(node_1_dht_temp):
+        try:
+            node_1_temperature_ds_data.append(node_1_ds_temp[i][1] if node_1_ds_temp[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            node_1_temperature_dht_data.append(node_1_dht_temp[i][1] if node_1_dht_temp[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            node_1_humidity_dht_data.append(node_1_dht_hum[i][1] if node_1_dht_hum[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            temperature_ds_data.append(ds_temp[i][1] if ds_temp[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            timestamp_ds.append(time_since_epoch(ds_temp[i][0]) * 1000)
+        except IndexError:
+            pass
+
+        try:
+            timestamp.append(time_since_epoch(node_1_ds_temp[i][0]) * 1000)
+        except IndexError:
+            pass
+    series = {"data": [
+        {
+            "name": "DS18B20 T [°C]",
+            "type": "line",
+            "data": zip(timestamp_ds, temperature_ds_data)[::-1],
+            # "color": "green",
+            "tooltip": {
+                "valueSuffix": ' °C'
+            }
+        },
+        {
+            "name": "Node-1 DS18B20 T [°C]",
+            "type": "line",
+            "data": zip(timestamp, node_1_temperature_ds_data)[::-1],
+            # "color": "green",
+            "tooltip": {
+                "valueSuffix": ' °C'
+            }
+        },
+        {
+            "name": "Node-1 DHT22 T [°C]",
+            "type": "line",
+            "data": zip(timestamp, node_1_temperature_dht_data)[::-1],
+            # "color": "yellow",
+            "tooltip": {
+                "valueSuffix": ' °C'
+            }
+        },
+        {
+            "name": "Node-1 DHT22 H [%]",
+            "type": "line",
+            "yAxis": 1,
+            "data": zip(timestamp, node_1_humidity_dht_data)[::-1],
+            "color": "blue",
+            "tooltip": {
+                "valueSuffix": ' %'
+            }
+        }
+    ],
+        "back_period": back_period,
+        # "last_reading": temperature_ds_data[0],
+        # "last_hour_average": stats.mean(temperature_ds_data),
+        # "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
+        "scan_period": scan_period.value
+    }
+    # print series["data"]
+    return jsonify(**series)
+
+
+@blueprint.route("/api/get_light_data")
+@blueprint.route("/api/get_light_data/<back_period>")
+def get_light_data(back_period="None"):
+    print "test:", back_period, type(back_period), repr(back_period)
+    if back_period != "None":
+        back_period = int(back_period)
+    else:
+        back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+
+    node_1_ldr_light = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 15). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    print "Sensor_data:", node_1_ldr_light
+    scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
+    node_1_ldr_light_data = []
+    timestamp = []
+    # timestamp_str = node_1_ldr_light[0][0]
+    for i in range(back_period):  # enumerate(node_1_dht_temp):
+
+        try:
+            node_1_ldr_light_data.append(node_1_ldr_light[i][1] if node_1_ldr_light[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+        try:
+            timestamp.append(time_since_epoch(node_1_ldr_light[i][0]) * 1000)
+        except IndexError:
+            pass
+    print node_1_ldr_light_data
+    series = {"data": [
+        {
+            "name": "Node-1 LDR L [e]",
+            "type": "line",
+            "data": zip(timestamp, node_1_ldr_light_data)[::-1],
+            "color": "orange",
+            "tooltip": {
+                "valueSuffix": ' e'
+            }
+        }
+    ],
+        "back_period": back_period,
+        # "last_reading": temperature_ds_data[0],
+        # "last_hour_average": stats.mean(temperature_ds_data),
+        # "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
         "scan_period": scan_period.value
     }
     # print series["data"]

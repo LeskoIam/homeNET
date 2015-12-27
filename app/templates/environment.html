@@ -23,23 +23,35 @@
             </form>
         </div>
     </div>
-    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+{#    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>#}
+
+    <div class="row">
+
+        <div class="col-sm-8">
+            <div id="test_c1" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+
+        <div class="col-sm-4">
+            <div id="test_c2" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+    </div>
     <script type="text/javascript">
 
 $(document).ready(function() {
-    $.getJSON("/api/temperature_data/{{ back_period|safe }}", function (jdata) {
-        $('span.last_temp').text(jdata.last_reading);
-        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));
-        $('span.last_update_time').text(jdata.last_update_time);
+        // TEST
+        $.getJSON("/api/get_environment_data/{{ back_period|safe }}", function (jdata) {
+{#        $('span.last_temp').text(jdata.last_reading);#}
+{#        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));#}
+{#        $('span.last_update_time').text(jdata.last_update_time);#}
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'test_c',
+                renderTo: 'test_c1',
 {#                type: "column"#}
 {#						height: 155#}
 
 					},
                     title: {
-                        text: 'Indoor Temperature - last ' +
+                        text: 'Room - last ' +
                         jdata.back_period + ' readings ('
                         + jdata.scan_period + 's capture interval)',
                         x: -20 //center
@@ -47,7 +59,7 @@ $(document).ready(function() {
                     xAxis: {
                         type: 'datetime'
                     },
-                    yAxis: {
+                    yAxis: [{
                         title: {
                             text: 'Temperature [°C]'
                         },
@@ -57,8 +69,64 @@ $(document).ready(function() {
                             color: '#808080'
                         }]
                     },
+                    {
+                        title: {
+                            text: 'Humidity [%]',
+                            style: {
+                                color: "blue"
+                            }
+                        },
+                        opposite: true,
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    }],
+                    plotOptions: {
+                        line: {
+                            marker: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    series: jdata.data
+                });
+            });
+
+
+    $.getJSON("/api/get_light_data/{{ back_period|safe }}", function (jdata) {
+{#        $('span.last_temp').text(jdata.last_reading);#}
+{#        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));#}
+{#        $('span.last_update_time').text(jdata.last_update_time);#}
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'test_c2',
+{#                type: "column"#}
+{#						height: 155#}
+
+					},
+                    title: {
+                        text: 'Room light level - last ' +
+                        jdata.back_period + ' readings ('
+                        + jdata.scan_period + 's capture interval)',
+                        x: -20 //center
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Light level [e]'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
                     tooltip: {
-                        valueSuffix: '°C'
+                        valueSuffix: 'e'
                     },
                     plotOptions: {
                         line: {
@@ -70,6 +138,7 @@ $(document).ready(function() {
                     series: jdata.data
                 });
             });
+
         });
 </script>
 {% endblock %}
