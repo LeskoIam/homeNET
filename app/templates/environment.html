@@ -13,18 +13,20 @@
 
     <div class="row">
         <div class="col-sm-4">
-            <b>DS last reading:</b> <span class="ds_last_reading">DS last reading</span> °C<br />
-            <b>Node-1 DS last reading:</b> <span class="node_ds_last_reading">Node DS last reading</span> °C<br />
-            <b>Node-1 DHT last temperature reading:</b> <span class="node_dht_temp_last_reading">Node DS last reading</span> °C<br />
-            <b>Node-1 DHT last humidity reading:</b> <span class="node_dht_hum_last_reading">Node DS last reading</span> %<br />
-            <b>Node-1 LDR last light level:</b> <span class="node_ldr_last_light">Node-1 LDR last light level</span> e<br /><br />
+            <b>Last readings:</b><br />
+            DS temperature: <span class="ds_last_reading">DS last reading</span> °C<br />
+            Node-1 DS temperature: <span class="node_ds_last_reading">Node DS last reading</span> °C<br />
+            Node-1 DHT temperature reading: <span class="node_dht_temp_last_reading">Node DS last reading</span> °C<br />
+            Node-1 DHT humidity reading: <span class="node_dht_hum_last_reading">Node DS last reading</span> %<br />
+            Node-1 LDR light level: <span class="node_ldr_last_light">Node-1 LDR last light level</span> e<br /><br />
         </div>
         <div class="col-sm-4">
-            <b>DS mean temperature:</b> <span class="ds_average">DS average temperature</span> °C<br />
-            <b>Node-1 DS mean temperature:</b> <span class="node_ds_average">Node-1 DS average temperature</span> °C<br />
-            <b>Node-1 DS mean DHT temperature:</b> <span class="node_dht_temp_average">Node-1 DHT average temperature</span> °C<br />
-            <b>Node-1 DS mean DHT humidity:</b> <span class="node_dht_hum_average">Node-1 DHT average humidity</span> %<br />
-            <b>Node-1 LDR mean light level:</b> <span class="node_ldr_average_light">Node-1 LDR mean light level</span> e<br /><br />
+            <b>Mean readings:</b><br />
+            DS temperature: <span class="ds_average">DS average temperature</span> °C<br />
+            Node-1 DS temperature: <span class="node_ds_average">Node-1 DS average temperature</span> °C<br />
+            Node-1 DS DHT temperature: <span class="node_dht_temp_average">Node-1 DHT average temperature</span> °C<br />
+            Node-1 DS DHT humidity: <span class="node_dht_hum_average">Node-1 DHT average humidity</span> %<br />
+            Node-1 LDR light level: <span class="node_ldr_average_light">Node-1 LDR mean light level</span> e<br /><br />
         </div>
         <div class="col-sm-4">
             <form action="" method="post" name="login">
@@ -146,7 +148,8 @@ $(document).ready(function() {
                             value: 0,
                             width: 1,
                             color: '#808080'
-                        }]
+                        }],
+                        min: 0
                     },
                     tooltip: {
                         valueSuffix: 'e'
