@@ -89,12 +89,16 @@ class AppSettings(db.Model):
 
 class Sensors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    node_id = db.Column(db.Integer)
     location = db.Column(db.String(128), nullable=False)
     sensor_type = db.Column(db.String(32))
+    sensor_device = db.Column(db.String(32))
 
-    def __init__(self, location, sensor_type):
+    def __init__(self, location, sensor_type, sensor_device, node_id=None):
+        self.node_id = node_id
         self.location = location
         self.sensor_type = sensor_type
+        self.sensor_device = sensor_device
 
     def __repr__(self):
         return "<Sensor {0} '{1}': type: <{2}>; value '{3}'>".format(self.id,

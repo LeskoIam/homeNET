@@ -54,25 +54,67 @@ def add_settings(name, value_type, value, default_value):
 
 
 def add_sensors():
-    data = [  # Sensors("palm flower pot", "temperature"),
-        # Sensors("kitchen", "heat consumption"),
-        # Sensors("hallway", "heat consumption"),
-        # Sensors("bathroom", "heat consumption"),
-        # Sensors("room", "heat consumption"),
-        #
-        # Sensors("hallway", "cold water consumption"),
-        # Sensors("hallway", "hot water consumption")
-        Sensors(location="kitchen", sensor_type="radiator setting"),
-        Sensors(location="hallway", sensor_type="radiator setting"),
-        Sensors(location="bathroom", sensor_type="radiator setting"),
-        Sensors(location="room", sensor_type="radiator setting"),
+    data = [
+        Sensors(location="room",
+                sensor_type="temperature",
+                sensor_device="DS18B20"),
+
+        Sensors(location="room",
+                sensor_type="temperature",
+                sensor_device="DS18B20",
+                node_id=1),
+        Sensors(location="room",
+                sensor_type="temperature",
+                sensor_device="DHT22",
+                node_id=1),
+        Sensors(location="room",
+                sensor_type="humidity",
+                sensor_device="DHT22",
+                node_id=1),
+        Sensors(location="room",
+                sensor_type="light level",
+                sensor_device="LDR",
+                node_id=1),
+
+        Sensors(location="kitchen",
+                sensor_type="heat consumption",
+                sensor_device="heat distribution node"),
+        Sensors(location="hallway",
+                sensor_type="heat consumption",
+                sensor_device="heat distribution node"),
+        Sensors(location="bathroom",
+                sensor_type="heat consumption",
+                sensor_device="heat distribution node"),
+        Sensors(location="room",
+                sensor_type="heat consumption",
+                sensor_device="heat distribution node"),
+
+        Sensors(location="hallway",
+                sensor_type="cold water consumption",
+                sensor_device="measuring dial"),
+        Sensors(location="hallway",
+                sensor_type="hot water consumption",
+                sensor_device="measuring dial"),
+
+        Sensors(location="kitchen",
+                sensor_type="radiator setting",
+                sensor_device="radiator valve"),
+        Sensors(location="hallway",
+                sensor_type="radiator setting",
+                sensor_device="radiator valve"),
+        Sensors(location="bathroom",
+                sensor_type="radiator setting",
+                sensor_device="radiator valve"),
+        Sensors(location="room",
+                sensor_type="radiator setting",
+                sensor_device="radiator valve"),
     ]
     for d in data:
         try:
             db.session.add(d)
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
-            print "Not adding sensor"
+            print "Not adding sensor", d
 
 
 if __name__ == '__main__':
