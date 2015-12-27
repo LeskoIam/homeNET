@@ -220,7 +220,7 @@ def get_water_consumption_data(sensor_id=None):
         # diff_data_ = stats.diff([x.value for x in data])
         t_diff_data_ = stats.time_diff([x.value for x in data], [x.date_time for x in data])[0]
         t_diff_data_ = [x*60*60*1000 for x in t_diff_data_]  # L/Per hour
-        print t_diff_data_
+        # print t_diff_data_
 
         if i == 0:
             sum_consumption = t_diff_data_
@@ -246,8 +246,8 @@ def get_water_consumption_data(sensor_id=None):
 
         consumption_per_room.append(out)
 
-    print consumption_per_room
-    print sum_consumption
+    # print consumption_per_room
+    # print sum_consumption
 
     sum_consumption = [
             {
@@ -314,8 +314,8 @@ def get_heat_consumption_data(sensor_id=None):
 
         consumption_per_room.append(out)
 
-    print consumption_per_room
-    print sum_consumption
+    # print consumption_per_room
+    # print sum_consumption
     timestamp_str = data[-1].date_time
     sum_consumption = [
             {
@@ -349,7 +349,7 @@ def get_water_data():
         data = db.session.query(SensorData.date_time, SensorData.value, SensorData.sensor_id, Sensors.sensor_type). \
             join(Sensors).filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == s.id). \
             order_by(SensorData.date_time.desc()).first()
-        print data
+        # print data
         data_out.append({"y": data.value, "color": colors[m_c[data.sensor_id]]})
         categories.append(data.sensor_type.capitalize())
     timestamp_str = data[0]  # TODO: Update time for every single sensor
@@ -402,7 +402,7 @@ def get_water_data():
 @blueprint.route("/api/get_environment_data")
 @blueprint.route("/api/get_environment_data/<back_period>")
 def get_environment_data(back_period="None"):
-    print "test:", back_period, type(back_period), repr(back_period)
+    # print "test:", back_period, type(back_period), repr(back_period)
     if back_period != "None":
         back_period = int(back_period)
     else:
@@ -526,7 +526,7 @@ def get_environment_data(back_period="None"):
 @blueprint.route("/api/get_light_data")
 @blueprint.route("/api/get_light_data/<back_period>")
 def get_light_data(back_period="None"):
-    print "test:", back_period, type(back_period), repr(back_period)
+    # print "test:", back_period, type(back_period), repr(back_period)
     if back_period != "None":
         back_period = int(back_period)
     else:
@@ -536,7 +536,7 @@ def get_light_data(back_period="None"):
         filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 15). \
         order_by(SensorData.date_time.desc()).limit(back_period).all()
 
-    print "Sensor_data:", node_1_ldr_light
+    # print "Sensor_data:", node_1_ldr_light
     scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
     node_1_ldr_light_data = []
     timestamp = []
@@ -551,7 +551,7 @@ def get_light_data(back_period="None"):
             timestamp.append(time_since_epoch(node_1_ldr_light[i][0]) * 1000)
         except IndexError:
             pass
-    print node_1_ldr_light_data
+    # print node_1_ldr_light_data
     series = {"data": [
         {
             "name": "Node-1 LDR L [e]",
