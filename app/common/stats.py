@@ -53,7 +53,7 @@ def diff(data):
 
 
 def time_diff(data, time_series):
-    """Calculates running consumption E/day
+    """Calculates running consumption E/time_value
 
     :param data:
     :param time_series:
