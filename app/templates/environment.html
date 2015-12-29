@@ -52,7 +52,6 @@
     <script type="text/javascript">
 
 $(document).ready(function() {
-        // TEST
         $.getJSON("/api/get_environment_data/{{ back_period|safe }}", function (jdata) {
         $('span.ds_last_reading').text(jdata.ds_last_reading);
         $('span.node_ds_last_reading').text(jdata.node_ds_last_reading);

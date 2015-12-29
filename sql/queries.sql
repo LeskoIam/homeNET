@@ -71,3 +71,16 @@ WHERE sen.id = D_SD.sensor_id
 GROUP BY D_SD.date_time
 ORDER BY D_SD.date_time DESC
 LIMIT 100;
+
+
+-- maximum reading per sensor
+SELECT
+  sen.id,
+  sen.location,
+  sen.sensor_type,
+  min(sd.value) AS min_value,
+  max(sd.value) AS max_value
+FROM sensor_data AS sd, sensors as sen
+WHERE sd.sensor_id = sen.id
+GROUP BY sen.id
+ORDER BY sen.id
