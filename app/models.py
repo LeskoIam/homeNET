@@ -1,6 +1,8 @@
 from app import db
 
 __author__ = 'Lesko'
+
+
 # Documentation is like sex.
 # When it's good, it's very good.
 # When it's bad, it's better than nothing.
@@ -124,3 +126,25 @@ class SensorData(db.Model):
         return "<SensorData {0} '{1}': type: <{2}>".format(self.id,
                                                            self.value,
                                                            self.unit)
+
+
+class DiffSensorData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensors.id'))
+    date_time = db.Column(db.DateTime, nullable=False)
+
+    value_diff = db.Column(db.Float, nullable=False)
+    time_diff = db.Column(db.Float, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint("sensor_id", "date_time"),)
+
+    def __init__(self, sensor_id, date_time, value_diff, time_diff):
+        self.sensor_id = sensor_id
+        self.date_time = date_time
+        self.value = value_diff
+        self.time_diff = time_diff
+
+    def __repr__(self):
+        return "<DiffSensorData {0} '{1}': type: <{2}>".format(self.id,
+                                                               self.value_diff,
+                                                               self.time_diff)
