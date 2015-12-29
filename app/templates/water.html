@@ -9,7 +9,7 @@
                     Last updated on <span class="last_update_time">last update time</span>
                 </div>
             </div>
-            <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="water_status_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
 
         <!-- START consumption view -->
@@ -20,7 +20,7 @@
                     Last updated on <span class="last_update_time">last update time</span>
                 </div>
             </div>
-            <div id="test_c1" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="water_consumption_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
         <!-- END consumption view -->
     </div>
@@ -74,7 +74,7 @@ $(document).ready(function() {
         $('span.last_update_time').text(jdata.last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'test_c',
+                renderTo: 'water_status_plot',
                 type: 'column'
             },
             title: {
@@ -111,7 +111,7 @@ $(document).ready(function() {
     $.getJSON("/api/water_consumption_data", function (jdata) {
             var chart = new Highcharts.Chart({
                 chart: {
-                    renderTo: 'test_c1',
+                    renderTo: 'water_consumption_plot',
                     {#                type: "column"#}
                     {#						height: 155#}
 

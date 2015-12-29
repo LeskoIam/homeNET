@@ -10,7 +10,7 @@
                     Last updated on <span class="status_last_update_time">last update time</span>
                 </div>
             </div>
-            <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="heating_status_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
         <!-- END heating status pie chart -->
 
@@ -23,7 +23,7 @@
                     Last updated on <span class="status_last_update_time">last update time</span>
                 </div>
             </div>
-            <div id="test_c1" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="heat_consumption_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
         <!-- END consumption view -->
 
@@ -150,7 +150,7 @@ $(document).ready(function() {
         $('span.status_last_update_time').text(jdata.status_last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'test_c',
+                renderTo: 'heating_status_plot',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
@@ -211,7 +211,7 @@ $(document).ready(function() {
         $.getJSON("/api/heat_consumption_data", function (jdata) {
             var chart = new Highcharts.Chart({
                 chart: {
-                    renderTo: 'test_c1',
+                    renderTo: 'heat_consumption_plot',
                     {#                type: "column"#}
                     {#						height: 155#}
 
