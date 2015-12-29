@@ -233,7 +233,11 @@ $(document).ready(function() {
                     }]
                 },
                 tooltip: {
-                    valueSuffix: ' e/hour'
+                    valueSuffix: ' e/hour',
+                    pointFormat: '{series.name}: <b>{point.y:.3f} l/hour</b>',
+                    dateTimeLabelFormats: {
+                        day:"%A, %b %e, %Y %H:%M:%S"
+                    }
                 },
                 plotOptions: {
                     line: {
