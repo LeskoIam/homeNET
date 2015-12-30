@@ -121,7 +121,12 @@ def get_last_location_weather():
     # 1, 8, 16
     # 0, 1, 5
     data.insert(0, data_[1].string)
-    data.insert(1, base_url + data_[8].find("img")["src"])
+
+    clouds_image = data_[8].find("img")
+    if clouds_image is not None:
+        data.insert(1, base_url + clouds_image["src"])
+    else:
+        data.insert(1, None)
     data.insert(5, base_url + data_[16].find("img")["src"])
 
     return a(*data)
