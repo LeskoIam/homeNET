@@ -1,15 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
     <h2>Indoor Environment stats</h2><br />
+
     <div class="row">
         <div class="col-sm-6">
             Node last updated on <span class="node_last_update_time">node last update time</span>
             <br />
             DS last updated on <span class="ds_last_update_time">ds last update time</span>
         </div>
+        <div class="col-sm-6">
+            <form action="" method="post" name="login">
+                {{ form.hidden_tag() }}
+                For how long back do you want to see the data:
+                {{ form.back_period(size=6) }}
+                <button value="add" type="submit" class="btn btn-success">Show me</button>
+            </form>
+        </div>
     </div>
 
-    <br />
+    <div class="row">
+
+        <div class="col-sm-8">
+            <div id="environment_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+
+        <div class="col-sm-4">
+            <div id="light_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+        </div>
+    </div>
+
 
     <div class="row">
         <div class="col-sm-4">
@@ -28,27 +47,9 @@
             Node-1 DS DHT humidity: <span class="node_dht_hum_average">Node-1 DHT average humidity</span> %<br />
             Node-1 LDR light level: <span class="node_ldr_average_light">Node-1 LDR mean light level</span> e<br /><br />
         </div>
-        <div class="col-sm-4">
-            <form action="" method="post" name="login">
-                {{ form.hidden_tag() }}
-                For how long back do you want to see the data:
-                {{ form.back_period(size=6) }}
-                <button value="add" type="submit" class="btn btn-success">Show me</button>
-            </form>
-        </div>
     </div>
-{#    <div id="test_c" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>#}
 
-    <div class="row">
 
-        <div class="col-sm-8">
-            <div id="environment_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
-        </div>
-
-        <div class="col-sm-4">
-            <div id="light_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
-        </div>
-    </div>
     <script type="text/javascript">
 
 $(document).ready(function() {
@@ -64,7 +65,6 @@ $(document).ready(function() {
         $('span.node_dht_temp_average').text(jdata.node_dht_temp_average.toFixed(3));
         $('span.node_dht_hum_average').text(jdata.node_dht_hum_average.toFixed(3));
 
-{#        $('span.last_hour_average').text(jdata.last_hour_average.toFixed(3));#}
         $('span.ds_last_update_time').text(jdata.ds_last_update_time);
         $('span.node_last_update_time').text(jdata.node_last_update_time);
         var chart = new Highcharts.Chart({
@@ -125,7 +125,6 @@ $(document).ready(function() {
     $.getJSON("/api/get_light_data/{{ back_period|safe }}", function (jdata) {
         $('span.node_ldr_average_light').text(jdata.node_ldr_average_light.toFixed(3));
         $('span.node_ldr_last_light').text(jdata.node_ldr_last_light.toFixed(3));
-{#        $('span.last_update_time').text(jdata.last_update_time);#}
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'light_plot',

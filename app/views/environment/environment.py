@@ -400,6 +400,7 @@ def get_environment_data(back_period="None"):
     node_timestamp_str = node_1_dht_temp[0][0]
     timestamp_str = ds_temp[0][0]
     for i in range(back_period):  # enumerate(node_1_dht_temp):
+        # Try - except every one because we don't know if all data is available for all sensors
         try:
             node_1_temperature_ds_data.append(
                     node_1_ds_temp[i][1] if node_1_ds_temp[i][1] is not None else None)  # ????
