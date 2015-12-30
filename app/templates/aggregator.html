@@ -11,17 +11,50 @@
             </p>
         </div>
         <div class="col-sm-6">
-            <h3 style="color: #009900">Weather</h3>
-            <p>
-                <b>Information for locaion:</b> <span class="location"><i>location</i></span><br>
-                <br>
-                <b>Radar info update on:</b> <span class="radar_updated_text">test3</span><br>
-                <b>Rain level:</b> <span class="rain_level">test</span><br>
-                <b>Rain:</b> <span class="rain_mmph">test2</span> mm/h<br>
-            </p>
+            <h3 style="color: #009900">Weather <a href="http://www.arso.gov.si/" target="_blank">(ARSO)</a></h3>
+
+            <div class="row">
+                <div class="col-sm-3" align="center">
+                    <img src="{{ weather.clouds }}">
+                </div>
+                <div class="col-sm-3" align="center">
+                    Temperature<br>
+                    <b>{{ weather.temperature }} °C</b>
+                </div>
+                <div class="col-sm-3" align="center">
+                    Humidity<br>
+                    <b>{{ weather.humidity }} %</b>
+                </div>
+                <div class="col-sm-3" align="center">
+                    Rain level*<br>
+                    <b><span class="rain_level">test</span></b>
+                    <b>(<span class="rain_mmph">test3,2</span> mm/h)</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" align="center">
+                    Wind direction<br>
+                    <img src="{{ weather.wind_direction }}">
+                </div>
+                <div class="col-sm-3" align="center">
+                    Wind speed<br>
+                    <b>{{ weather.wind_speed }} km/h</b>
+                </div>
+                <div class="col-sm-3" align="center">
+                    Wind gusts speed<br>
+                    <b>{{ weather.wind_gust_speed }} km/h</b>
+                </div>
+                <div class="col-sm-3" align="center">
+                    Sun radiance<br>
+                    <b>{{ weather.sun_radiation }} W/m2</b>
+                </div>
+            </div>
+            <br>
+
             <p>
                 <img class="img-rounded img-responsive"
-                     src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif">
+                     src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif"><br>
+                <br><b>*Radar info update on:</b> <span class="radar_updated_text">test3</span><br>
             </p>
         </div>
     </div>
