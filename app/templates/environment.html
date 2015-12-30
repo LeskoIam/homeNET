@@ -70,53 +70,56 @@ $(document).ready(function() {
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'environment_plot',
-{#                type: "column"#}
-{#						height: 155#}
-
-					},
-                    title: {
-                        text: 'Room - last ' +
-                        jdata.back_period + ' readings ('
-                        + jdata.scan_period + 's capture interval)',
-                        x: -20 //center
-                    },
-                    xAxis: {
-                        type: 'datetime'
-                    },
-                    yAxis: [{
-                        title: {
-                            text: 'Temperature [°C]'
-                        },
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-                    {
-                        title: {
-                            text: 'Humidity [%]',
-                            style: {
-                                color: "blue"
-                            }
-                        },
-                        opposite: true,
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    }],
-                    plotOptions: {
-                        line: {
-                            marker: {
-                                enabled: true
-                            }
-                        }
-                    },
-                    series: jdata.data
-                });
-            });
+                zoomType: 'x',
+                events: {
+                    selection: function(event) {
+                        onZoomHandler(event, 'light_plot');
+                    }
+                }
+            },
+            title: {
+                text: 'Room - last ' +
+                jdata.back_period + ' readings ('
+                + jdata.scan_period + 's capture interval)',
+                x: -20 //center
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: [{
+                title: {
+                    text: 'Temperature [°C]'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            },
+            {
+                title: {
+                    text: 'Humidity [%]',
+                    style: {
+                        color: "blue"
+                    }
+                },
+                opposite: true,
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+            }],
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
+            series: jdata.data
+        });
+        });
 
 
     $.getJSON("/api/get_light_data/{{ back_period|safe }}", function (jdata) {
@@ -126,8 +129,12 @@ $(document).ready(function() {
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'light_plot',
-{#                type: "column"#}
-{#						height: 155#}
+                zoomType: 'x',
+                events: {
+                selection: function(event) {
+                    onZoomHandler(event, 'environment_plot');
+                }
+            }
 
 					},
                     title: {
@@ -163,6 +170,29 @@ $(document).ready(function() {
                     series: jdata.data
                 });
             });
+
+
+    function onZoomHandler(event, chartToUpdate)
+    {
+        var index = $('#' + chartToUpdate).data('highchartsChart');
+        var chart = Highcharts.charts[index];
+        if (event.xAxis)
+        {
+            chart.xAxis[0].setExtremes(event.xAxis[0].min, event.xAxis[0].max);
+            if (!chart.resetZoomButton)
+            {
+                chart.showResetZoom();
+            }
+        }
+        else
+        {
+            chart.xAxis[0].setExtremes(null, null);
+            if (chart.resetZoomButton)
+            {
+                chart.resetZoomButton = chart.resetZoomButton.destroy();
+            }
+        }
+    }
 
         });
 </script>
