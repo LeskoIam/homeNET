@@ -14,39 +14,39 @@
             <h3 style="color: #009900">Weather <a href="http://www.arso.gov.si/" target="_blank">(ARSO)</a></h3>
 
             <div class="row">
-                <div class="col-sm-3" align="center">
-                    <img src="{{ weather.clouds }}">
+                <div class="col-sm-3 text-center">
+                    <img src="{{ weather_1.clouds }}">
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Temperature<br>
-                    <b>{{ weather.temperature }} °C</b>
+                    <b>{{ weather_1.temperature | float | round(2) }} °C</b>
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Humidity<br>
-                    <b>{{ weather.humidity }} %</b>
+                    <b>{{ weather_1.humidity | float | round(2) }} %</b>
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Rain level*<br>
                     <b><span class="rain_level">test</span></b>
                     <b>(<span class="rain_mmph">test3,2</span> mm/h)</b>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Wind direction<br>
-                    <img src="{{ weather.wind_direction }}">
+                    <img src="{{ weather_1.wind_direction }}">
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Wind speed<br>
-                    <b>{{ weather.wind_speed }} km/h</b>
+                    <b>{{ weather_1.wind_speed | float | round(2) }} km/h</b>
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Wind gusts speed<br>
-                    <b>{{ weather.wind_gust_speed }} km/h</b>
+                    <b>{{ weather_1.wind_gust_speed | float | round(2) }} km/h</b>
                 </div>
-                <div class="col-sm-3" align="center">
+                <div class="col-sm-3 text-center">
                     Sun radiance<br>
-                    <b>{{ weather.sun_radiation }} W/m2</b>
+                    <b>{{ weather_1.sun_radiation | float | round(2) }} W/m2</b>
                 </div>
             </div>
             <br>
@@ -54,7 +54,9 @@
             <p>
                 <img class="img-rounded img-responsive"
                      src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif"><br>
-                <br><b>*Radar info update on:</b> <span class="radar_updated_text">test3</span><br>
+                <br>*Radar info update on: <span class="radar_updated_text">test3</span><br>
+                Weather info updated on: {{ weather_1.valid }} <br>
+                Information for ARSO observation station LJUBLJANA_BEŽIGRAD (46.065580, 14.512464)<br>
             </p>
         </div>
     </div>

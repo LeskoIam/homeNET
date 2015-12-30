@@ -235,7 +235,8 @@ def get_water_consumption_data(sensor_id=None):
     consumption_data = [
         {
             "name": "Sum",
-            "data": sum_cons_
+            "data": sum_cons_,
+            "lineWidth": 5
         }]
 
     # Get per node water consumption
@@ -301,7 +302,8 @@ def get_heat_consumption_data(sensor_id=None):
     consumption_data = [
         {
             "name": "Sum",
-            "data": sum_cons_
+            "data": sum_cons_,
+            "lineWidth": 5
         }]
 
     # Get per node heat consumption

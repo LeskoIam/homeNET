@@ -21,7 +21,7 @@ def view_aggregator():  # aggregator
     weather_2 = get_location_weather("Ljubljana")
 
     return render_template("aggregator.html",
-                           weather=weather_1,
+                           weather_1=weather_1,
                            weather_2=weather_2,
                            page_loc="aggregator")
 
@@ -142,9 +142,6 @@ def get_location_weather(location="Ljubljana"):
         .rain           - mm
         .sun_radiation  - W/m2
     """
-
-
-
     address = "http://www.arso.gov.si/vreme/napovedi%20in%20podatki/vreme_avt.html"
     page = requests.get(address)
     html = page.content
@@ -180,6 +177,5 @@ def slo_to_eng_compass(eng_str):
                        "Z": "W"}
     out = ""
     for c in eng_str:
-        print c
         out += compass_mapping[c.upper()]
     return out
