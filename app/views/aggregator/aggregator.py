@@ -156,7 +156,6 @@ def get_location_weather(location="Ljubljana"):
     station_data = parsed_html.find("table", attrs={"class": "online"})
     station_names = [x.string for x in station_data.findAll("td", attrs={"class": "onlineimena"})]
     station_data = [x for x in station_data.findAll("tr")]
-    print station_names
     datad = namedtuple("location_weather", ("temperature",
                                             "humidity",
                                             "wind_direction",
@@ -167,7 +166,6 @@ def get_location_weather(location="Ljubljana"):
                                             "sun_radiation"))
     for i, station_name in enumerate(station_names):
         if station_name.lower() == location.lower():
-            print station_name
             data = [x.string for x in station_data[i + 2].findAll("td")]
             data = data[1:]
             d = datad(data[0], data[1], slo_to_eng_compass(data[2]), data[3], data[5], *data[7:])
