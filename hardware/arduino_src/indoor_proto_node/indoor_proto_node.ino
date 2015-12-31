@@ -2,6 +2,8 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+int NODE_ID = 1;
+
 int DS18B20_pin = 3;
 OneWire  oneWire(DS18B20_pin);
 DallasTemperature sensors(&oneWire);
@@ -18,10 +20,13 @@ int command;
 
 void setup() {
   Serial.begin(115200);
+  Serial.setTimeout(10);  // fine tune it with o-scope!
   dht.begin();
   sensors.begin();
   pinMode(active_led_pin, OUTPUT);
-  Serial.println("Setup done!");
+  Serial.print("Node: ");
+  Serial.print(NODE_ID);
+  Serial.println("... setup done!");
   Serial.print("\n>> ");
 }
 
@@ -50,36 +55,43 @@ void handleSerialCom()
     {
       // Get DS15B20 temperature
       case 1:
-        readingSensorsBlink();
+        led_on();
         Serial.print("DS18B20 temperature ");
         Serial.println(get_ds18b20_temperature());
         Serial.println("OK");
         break;
       // Get DHT22 temperature
       case 2:
-        readingSensorsBlink();
+        led_on();
         Serial.print("DHT22 temperature ");
         Serial.println(get_DHT22_temperature());
         Serial.println("OK");
         break;
       // Get DHT22 humidity
       case 3:
-        readingSensorsBlink();
+        led_on();
         Serial.print("DHT22 humidity ");
         Serial.println(get_DHT22_humidity());
         Serial.println("OK");
         break;
       // Get LDR ligh level
       case 4:
-        readingSensorsBlink();
+        led_on();
         Serial.print("LDR light level ");
         Serial.println(analogRead(LDR_pin));
+        Serial.println("OK");
+        break;
+      case 9:
+        led_on();
+        Serial.print("Node ID ");
+        Serial.println(get_node_id());
         Serial.println("OK");
         break;
       default:
         Serial.println("NOK");
         break;
     }
+    led_off();
     Serial.print(">> ");
   }
 }
@@ -87,6 +99,10 @@ void handleSerialCom()
 float get_ds18b20_temperature()
 {
   sensors.requestTemperatures();
+  delay(10);
+  sensors.getTempCByIndex(0);
+  sensors.requestTemperatures();
+  delay(10);
   float temp = sensors.getTempCByIndex(0);
   return temp;
     
@@ -94,6 +110,8 @@ float get_ds18b20_temperature()
 
 float get_DHT22_temperature()
 {
+  dht.readTemperature();
+  delay(10);
   float temp = dht.readTemperature();
   return temp;
     
@@ -101,23 +119,35 @@ float get_DHT22_temperature()
 
 float get_DHT22_humidity()
 {
+  dht.readHumidity();
+  delay(10);
   float hum = dht.readHumidity();
   return hum;
 }
 
 int get_LDR()
 {
+  analogRead(LDR_pin);
+  delay(10);
   int light = analogRead(LDR_pin);
   return light;
 }
 
+int get_node_id()
+{
+  return NODE_ID;
+}
+  
+
 // #########################################
 
-void readingSensorsBlink()
+void led_on()
 {
   digitalWrite(active_led_pin, HIGH);
-  delay(20);
+}
+
+void led_off()
+{
   digitalWrite(active_led_pin, LOW);
-  delay(10);
 }
 
