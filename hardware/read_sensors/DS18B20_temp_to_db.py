@@ -14,7 +14,7 @@ eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.53/homeNET')
 
 while "pigs" != "fly":
     with eng.connect() as con:
-        d = con.execute("SELECT value FROM app_settings WHERE name = 'TEMPERATURE_SCAN_PERIOD';")
+        d = con.execute("SELECT value FROM app_settings WHERE name = 'ENVIRONMENT_SCAN_PERIOD';")
 
         sleep_time = d.first()
         sleep_time = float(sleep_time[0])

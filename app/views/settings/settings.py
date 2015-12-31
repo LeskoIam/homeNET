@@ -25,18 +25,18 @@ def view_settings():
         update_setting("PROC_MAX_TEMP_LIMIT",
                        form.server_temp_proc_max_temp_limit.data,
                        float)
-        update_setting("TEMPERATURE_BACK_PLOT_PERIOD",
+        update_setting("ENVIRONMENT_BACK_PLOT_PERIOD",
                        form.temperature_back_plot_period.data,
                        int)
-        update_setting("TEMPERATURE_SCAN_PERIOD",
+        update_setting("ENVIRONMENT_SCAN_PERIOD",
                        form.temperature_scan_period.data,
                        float)
         flash("Settings successfully changed!")
     details_plot_back_period = get_setting("NODE_DETAILS_PLOT_BACK_PERIOD", int)
     server_temp_plot_back_period = get_setting("SERVER_TEMP_PLOT_BACK_PERIOD", int)
     server_temp_proc_max_temp_limit = get_setting("PROC_MAX_TEMP_LIMIT", float)
-    temperature_plot_back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int)
-    temperature_scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
+    temperature_plot_back_period = get_setting("ENVIRONMENT_BACK_PLOT_PERIOD", int)
+    temperature_scan_period = get_setting("ENVIRONMENT_SCAN_PERIOD", float)
 
     form.node_details_plot_back_period.data = details_plot_back_period.value
     form.server_temp_plot_back_period.data = server_temp_plot_back_period.value

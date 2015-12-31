@@ -27,7 +27,7 @@ def view_environment():
         print "Form OK 21"
         back_period = form.back_period.data
         print back_period
-    back_period = back_period if back_period is not None else get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+    back_period = back_period if back_period is not None else get_setting("ENVIRONMENT_BACK_PLOT_PERIOD", int).value
     return render_template("environment.html",
                            form=form,
                            page_loc="environment",
@@ -373,7 +373,7 @@ def get_environment_data(back_period="None"):
     if back_period != "None":
         back_period = int(back_period)
     else:
-        back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+        back_period = get_setting("ENVIRONMENT_BACK_PLOT_PERIOD", int).value
 
     ds_temp = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
         filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 1). \
@@ -392,7 +392,7 @@ def get_environment_data(back_period="None"):
         order_by(SensorData.date_time.desc()).limit(back_period).all()
 
     # print "Sensor_data:", data
-    scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
+    scan_period = get_setting("ENVIRONMENT_SCAN_PERIOD", float)
     temperature_ds_data = []
     node_1_temperature_ds_data = []
     node_1_temperature_dht_data = []
@@ -500,14 +500,14 @@ def get_light_data(back_period="None"):
     if back_period != "None":
         back_period = int(back_period)
     else:
-        back_period = get_setting("TEMPERATURE_BACK_PLOT_PERIOD", int).value
+        back_period = get_setting("ENVIRONMENT_BACK_PLOT_PERIOD", int).value
 
     node_1_ldr_light = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
         filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 15). \
         order_by(SensorData.date_time.desc()).limit(back_period).all()
 
     # print "Sensor_data:", node_1_ldr_light
-    scan_period = get_setting("TEMPERATURE_SCAN_PERIOD", float)
+    scan_period = get_setting("ENVIRONMENT_SCAN_PERIOD", float)
     node_1_ldr_light_data = []
     timestamp = []
     # timestamp_str = node_1_ldr_light[0][0]
