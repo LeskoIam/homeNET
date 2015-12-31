@@ -1,23 +1,23 @@
 -- Create diff table
 
-CREATE TABLE diff_sensor_data
-(
-  id serial NOT NULL,
-  sensor_id integer,
-  date_time timestamp without time zone NOT NULL,
-  value_diff double precision NOT NULL,
-  time_diff double precision NOT NULL,
-  unique (sensor_id, date_time),
-  CONSTRAINT diff_sensor_data_pkey PRIMARY KEY (id),
-  CONSTRAINT diff_sensor_data_sensor_id_fkey FOREIGN KEY (sensor_id)
-      REFERENCES sensors (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE diff_sensor_data
-  OWNER TO lesko;
+-- CREATE TABLE diff_sensor_data
+-- (
+--   id serial NOT NULL,
+--   sensor_id integer,
+--   date_time timestamp without time zone NOT NULL,
+--   value_diff double precision NOT NULL,
+--   time_diff double precision NOT NULL,
+--   unique (sensor_id, date_time),
+--   CONSTRAINT diff_sensor_data_pkey PRIMARY KEY (id),
+--   CONSTRAINT diff_sensor_data_sensor_id_fkey FOREIGN KEY (sensor_id)
+--       REFERENCES sensors (id) MATCH SIMPLE
+--       ON UPDATE NO ACTION ON DELETE NO ACTION
+-- )
+-- WITH (
+--   OIDS=FALSE
+-- );
+-- ALTER TABLE diff_sensor_data
+--   OWNER TO lesko;
 
 
 
@@ -46,8 +46,14 @@ BEGIN
     --RAISE NOTICE 'test me too %', value_diff;
     --RAISE NOTICE 'date %', time_diff;
 
+    IF (SELECT EXISTS(
+          SELECT 1
+          FROM sensor_data
+          WHERE sensor_data.sensor_id = NEW.sensor_id)
+    ) THEN
     INSERT INTO diff_sensor_data(sensor_id, date_time, value_diff, time_diff)
             VALUES(NEW.sensor_id, NEW.date_time, value_diff, time_diff);
+    END IF;
 
     END IF;
 
@@ -60,8 +66,8 @@ $BODY$
 
 
 -- Register function to table
-CREATE TRIGGER my_diff_func_trigger
-BEFORE INSERT
-ON sensor_data
-FOR EACH ROW
-EXECUTE PROCEDURE my_diff_func();
+-- CREATE TRIGGER my_diff_func_trigger
+-- BEFORE INSERT
+-- ON sensor_data
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE my_diff_func();

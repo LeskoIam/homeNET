@@ -1,6 +1,7 @@
 from BeautifulSoup import BeautifulSoup
 from sqlalchemy import create_engine
 from collections import namedtuple
+from pprint import pprint
 import datetime
 import requests
 import socket
@@ -173,7 +174,7 @@ def arso_weather(engine):
     weather_1 = get_last_ljubljana_weather()
     w_1_update_time = " ".join(weather_1.valid.split(" ")[0:2])
     w_1_update_time = datetime.datetime.strptime(w_1_update_time, "%d.%m.%Y %H:%M")
-    # print w_1_update_time
+    print "ARSO update time:", w_1_update_time
 
     with engine.connect() as con:
         # Get previous update time
@@ -185,11 +186,11 @@ def arso_weather(engine):
         LIMIT 1;
         """)
         previous_update_time = d.first()
-    # print previous_update_time
+    print "Previous db update time:", previous_update_time
 
     if previous_update_time is None or previous_update_time[0] < w_1_update_time:
         print "Will save ARSO data to database", w_1_update_time
-        print weather_1
+        pprint(weather_1)
         with engine.connect() as con:
             # Insert temperature data
             d = con.execute("""
@@ -214,25 +215,27 @@ def arso_weather(engine):
 
 def main_looper(engine):
     print "Starting main looper"
-    with engine.connect() as con:
-        # Get pinger scan time
-        d = con.execute("SELECT value FROM app_settings WHERE name = 'PINGER_SCAN_PERIOD';")
-        pinger_scan_period = d.first()
-        pinger_scan_period = float(pinger_scan_period[0])
-
-        d = con.execute("SELECT value FROM app_settings WHERE name = 'ARSO_SCAN_PERIOD';")
-        arso_scan_period = d.first()
-        arso_scan_period = float(arso_scan_period[0])
-    print "Pinger_scan_period:", pinger_scan_period
-    print "ARSO_scan_period:", arso_scan_period
-    # First initial ping and arso
+    # First initial ping and ARSO
     ping_all(engine)
     arso_weather(engine)
+
     pinger_last_time = time.time()
     arso_last_time = time.time()
-
     while "pigs" != "fly":
         time_now = time.time()
+
+        with engine.connect() as con:
+            # Get pinger scan time
+            d = con.execute("SELECT value FROM app_settings WHERE name = 'PINGER_SCAN_PERIOD';")
+            pinger_scan_period = d.first()
+            pinger_scan_period = float(pinger_scan_period[0])
+
+            d = con.execute("SELECT value FROM app_settings WHERE name = 'ARSO_SCAN_PERIOD';")
+            arso_scan_period = d.first()
+            arso_scan_period = float(arso_scan_period[0])
+        print "Pinger_scan_period:", pinger_scan_period
+        print "ARSO_scan_period:", arso_scan_period
+
         if (pinger_last_time + pinger_scan_period) < time_now:
             print "\nPinger_scan_period:", pinger_scan_period
             ping_all(engine)
@@ -247,5 +250,12 @@ def main_looper(engine):
 
 if __name__ == '__main__':
     eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.53/homeNET')
-    main_looper(eng)
+    # main_looper(eng)
     # arso_weather(eng)
+
+    with eng.connect() as con:
+        # Get previous update time
+        d = con.execute("""
+            INSERT INTO sensor_data (sensor_id, date_time, value, unit)
+            VALUES (%s,%s,%s,%s);
+            """, (500, datetime.datetime.today(), float(1111), "EH"))
