@@ -12,7 +12,9 @@
         </div>
         <div class="col-sm-6">
             <h3 style="color: #009900">Weather <a href="http://www.arso.gov.si/" target="_blank">(ARSO)</a></h3>
-
+            Weather info updated on {{ weather_1.valid }}<br />
+            *Radar info update on <span class="radar_updated_text">test3</span>
+            <div style="border: 1px solid black; border-radius: 10px">
             <div class="row">
                 <div class="col-sm-3 text-center">
                     <img src="{{ weather_1.clouds }}" alt="Clear skye">
@@ -49,18 +51,15 @@
                     <b>{{ weather_1.sun_radiation | float | round(2) }} W/m2</b>
                 </div>
             </div>
+            </div>
             <br>
 
             <p>
                 <img class="img-rounded img-responsive"
                      src="http://www.arso.gov.si/vreme/napovedi%20in%20podatki/radar_anim.gif"><br>
-                <br>*Radar info update on <span class="radar_updated_text">test3</span>
-                - <a href="http://opendata.si">http://opendata.si/vreme/report/</a><br>
-                Weather info updated on {{ weather_1.valid }} -
-                observation station LJUBLJANA_BEŽIGRAD (46.065580, 14.512464)
+                <br><a href="http://opendata.si">http://opendata.si/vreme/report/</a><br>
                 <a href="http://meteo.arso.gov.si/uploads/probase/www/observ/surface/text/sl/observationAms_LJUBL-ANA_BEZIGRAD_history.html">
-                     here
-                     </a> <br>
+                     Observation station LJUBLJANA_BEŽIGRAD (46.065580, 14.512464)</a> <br>
             </p>
         </div>
     </div>
