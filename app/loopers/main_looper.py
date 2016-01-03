@@ -209,6 +209,18 @@ def arso_weather(engine):
             INSERT INTO sensor_data (sensor_id, date_time, value, unit)
             VALUES (%s,%s,%s,%s);
             """, (46, w_1_update_time, float(weather_1.sun_radiation), "W/m2"))
+
+            # Insert air pressure data
+            d = con.execute("""
+            INSERT INTO sensor_data (sensor_id, date_time, value, unit)
+            VALUES (%s,%s,%s,%s);
+            """, (51, w_1_update_time, float(weather_1.air_pressure), "hPa"))
+
+            # Real air pressure data
+            d = con.execute("""
+            INSERT INTO sensor_data (sensor_id, date_time, value, unit)
+            VALUES (%s,%s,%s,%s);
+            """, (52, w_1_update_time, float(weather_1.real_air_pressure), "hPa"))
     else:
         print "Will NOT save ARSO data to database"
 

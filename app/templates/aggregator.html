@@ -111,9 +111,9 @@ $(document).ready(function() {
 
         $('#wind_direction').attr('src', jdata.weather_1.wind_direction);
 
-        $('#wind_speed').text(jdata.weather_1.wind_speed);
+        $('#wind_speed').text(parseFloat(jdata.weather_1.wind_speed).toFixed(2));
         $('#sun_radiance').text(jdata.weather_1.sun_radiation);
-        $('#air_pressure').text(jdata.weather_1.air_pressure);
+        $('#air_pressure').text(parseFloat(jdata.weather_1.air_pressure).toFixed(2));
         $('#valid').text(jdata.weather_1.valid);
 
     });
