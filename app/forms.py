@@ -1,5 +1,10 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, BooleanField, HiddenField, IntegerField, FloatField
+from wtforms import StringField, \
+    SelectField, \
+    BooleanField, \
+    HiddenField, \
+    IntegerField,\
+    FloatField
 from wtforms.validators import DataRequired, Optional
 
 __author__ = 'Lesko'
