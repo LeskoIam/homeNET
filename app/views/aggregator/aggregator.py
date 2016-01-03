@@ -72,8 +72,8 @@ def arso_weather_summary():
     weather_2 = get_location_weather("Ljubljana")
 
     data = {
-        "weather_1": weather_1,
-        "weather_2": weather_2
+        "weather_1": weather_1.__dict__,  # For Python 2.7.10 and earlier namedtuple workaround
+        "weather_2": weather_2.__dict__
     }
     pprint(data)
     return jsonify(data)
