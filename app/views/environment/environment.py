@@ -21,6 +21,11 @@ blueprint = Blueprint('environment_blueprint', __name__, template_folder='templa
 
 @blueprint.route("/environment", methods=["GET", "POST"])
 def view_environment():
+    return render_template("under_construction.html")
+
+
+@blueprint.route("/indoor_environment", methods=["GET", "POST"])
+def view_indoor_environment():
     form = BackPeriodForm()
     back_period = None
     if form.validate_on_submit():
@@ -32,6 +37,31 @@ def view_environment():
                            form=form,
                            page_loc="environment",
                            back_period=back_period)
+
+
+@blueprint.route("/outdoor_environment", methods=["GET", "POST"])
+def view_outdoor_environment():
+    return render_template("under_construction.html")
+
+
+@blueprint.route("/weather_arso", methods=["GET", "POST"])
+def view_weather_arso():
+    form = BackPeriodForm()
+    back_period = None
+    if form.validate_on_submit():
+        print "Form OK 21"
+        back_period = form.back_period.data
+        print back_period
+    back_period = back_period if back_period is not None else get_setting("ARSO_BACK_PLOT_PERIOD", int).value
+    return render_template("weather_arso.html",
+                           form=form,
+                           page_loc="environment",
+                           back_period=back_period)
+
+
+@blueprint.route("/weather_local", methods=["GET", "POST"])
+def view_weather_local():
+    return render_template("under_construction.html")
 
 
 @blueprint.route("/heating", methods=['GET', 'POST'])
@@ -536,9 +566,103 @@ def get_light_data(back_period="None"):
         "back_period": back_period,
         "node_ldr_last_light": node_1_ldr_light_data[0],
         "node_ldr_average_light": stats.mean(node_1_ldr_light_data),
-        # "last_hour_average": stats.mean(temperature_ds_data),
-        # "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
         "scan_period": scan_period.value
+    }
+    # print series["data"]
+    return jsonify(**series)
+
+
+@blueprint.route("/api/get_weather_arso_data")
+@blueprint.route("/api/get_weather_arso_data/<back_period>")
+def get_weather_arso_data(back_period="None"):
+    if back_period != "None":
+        back_period = int(back_period)
+    else:
+        back_period = get_setting("ENVIRONMENT_BACK_PLOT_PERIOD", int).value
+
+    temp = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 44). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    sun_radiance = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 46). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    hum = db.session.query(SensorData.date_time, SensorData.value).join(Sensors). \
+        filter(Sensors.id == SensorData.sensor_id).filter(Sensors.id == 45). \
+        order_by(SensorData.date_time.desc()).limit(back_period).all()
+
+    # print "Sensor_data:", data
+    scan_period = 30
+    temperature_data = []
+    sun_radiance_data = []
+    humidity_data = []
+    timestamp = []
+    timestamp_str = temp[0][0]
+    for i in range(back_period):  # enumerate(node_1_dht_temp):
+        # Try - except every one because we don't know if all data is available for all sensors
+        try:
+            sun_radiance_data.append(
+                    sun_radiance[i][1] if sun_radiance[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            humidity_data.append(hum[i][1] if hum[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            temperature_data.append(temp[i][1] if temp[i][1] is not None else None)  # ????
+        except IndexError:
+            pass
+
+        try:
+            timestamp.append(time_since_epoch(sun_radiance[i][0]) * 1000)
+        except IndexError:
+            pass
+    series = {"data": [
+        {
+            "name": "Temperature [°C]",
+            "type": "line",
+            "data": zip(timestamp, temperature_data)[::-1],
+            # "color": "green",
+            "tooltip": {
+                "valueSuffix": ' °C'
+            }
+        },
+        {
+            "name": "Humidity [%]",
+            "type": "line",
+            "yAxis": 1,
+            "data": zip(timestamp, humidity_data)[::-1],
+            "color": "blue",
+            "tooltip": {
+                "valueSuffix": ' %'
+            }
+        }
+    ],
+        "sun_radiance_data": [{
+            "name": "Sun Radiance [W/m2]",
+            "type": "line",
+            "data": zip(timestamp, sun_radiance_data)[::-1],
+            "color": "orange",
+            "tooltip": {
+                "valueSuffix": ' W/m2'
+            }
+        }],
+
+        "back_period": back_period,
+
+        "temperature_last_reading": temperature_data[0],
+        "sun_radiance_last_reading": sun_radiance_data[0],
+        "humidity_last_reading": humidity_data[0],
+
+        "temperature_average": stats.mean(temperature_data),
+        "sun_radiance_average": stats.mean(sun_radiance_data),
+        "humidity_average": stats.mean(humidity_data),
+        "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S"),
+        "scan_period": scan_period
     }
     # print series["data"]
     return jsonify(**series)

@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Indoor Environment Stats</h2><br />
+    <h2>ARSO Weather Data</h2><br />
 
     <div class="row">
         <div class="col-sm-6">
-            Node last updated on <span class="node_last_update_time">node last update time</span>
-            <br />
-            DS last updated on <span class="ds_last_update_time">ds last update time</span>
+            Last updated on <span class="last_update_time">node last update time</span>
         </div>
         <div class="col-sm-6">
             <form action="" method="post" name="login">
@@ -21,11 +19,11 @@
     <div class="row">
 
         <div class="col-sm-8">
-            <div id="environment_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="temp_hum_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
 
         <div class="col-sm-4">
-            <div id="light_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
+            <div id="sun_radiation_plot" style="min-width: 400px; height: 400px; margin: 0 auto">Chart</div>
         </div>
     </div>
 
@@ -33,19 +31,15 @@
     <div class="row">
         <div class="col-sm-4">
             <b>Last readings:</b><br />
-            DS temperature: <b><span class="ds_last_reading">DS last reading</span> °C</b><br />
-            Node-1 DS temperature: <b><span class="node_ds_last_reading">Node DS last reading</span> °C</b><br />
-            Node-1 DHT temperature: <b><span class="node_dht_temp_last_reading">Node DS last reading</span> °C</b><br />
-            Node-1 DHT humidity:<b><span class="node_dht_hum_last_reading">Node DS last reading</span> %</b><br />
-            Node-1 LDR light level:<b><span class="node_ldr_last_light">Node-1 LDR last light level</span> e</b><br /><br />
+            Temperature: <b><span class="temperature_last_reading">DS last reading</span> °C</b><br />
+            Humidity: <b><span class="humidity_last_reading">Node DS last reading</span> %</b><br />
+            Sun radiation: <b><span class="sun_radiance_last_reading">Node-1 LDR last light level</span> W/m2</b><br /><br />
         </div>
         <div class="col-sm-4">
             <b>Mean readings:</b><br />
-            DS temperature: <b><span class="ds_average">DS average temperature</span> °C</b><br />
-            Node-1 DS temperature: <b><span class="node_ds_average">Node-1 DS average temperature</span> °C</b><br />
-            Node-1 DS DHT temperature: <b><span class="node_dht_temp_average">Node-1 DHT average temperature</span> °C</b><br />
-            Node-1 DS DHT humidity: <b><span class="node_dht_hum_average">Node-1 DHT average humidity</span> %</b><br />
-            Node-1 LDR light level: <b><span class="node_ldr_average_light">Node-1 LDR mean light level</span> e</b><br /><br />
+            Temperature: <b><span class="temperature_average">DS last reading</span> °C</b><br />
+            Humidity: <b><span class="humidity_average">Node DS last reading</span> %</b><br />
+            Sun radiation: <b><span class="sun_radiance_average">Node-1 LDR last light level</span> W/m2</b><br /><br />
         </div>
     </div>
 
@@ -53,34 +47,28 @@
     <script type="text/javascript">
 
 $(document).ready(function() {
-        $.getJSON("/api/get_environment_data/{{ back_period|safe }}", function (jdata) {
-        $('span.ds_last_reading').text(jdata.ds_last_reading);
-        $('span.node_ds_last_reading').text(jdata.node_ds_last_reading);
-        $('span.node_dht_hum_last_reading').text(jdata.node_dht_hum_last_reading);
-        $('span.node_dht_temp_last_reading').text(jdata.node_dht_temp_last_reading);
-
-
-        $('span.ds_average').text(jdata.ds_average.toFixed(3));
-        $('span.node_ds_average').text(jdata.node_ds_average.toFixed(3));
-        $('span.node_dht_temp_average').text(jdata.node_dht_temp_average.toFixed(3));
-        $('span.node_dht_hum_average').text(jdata.node_dht_hum_average.toFixed(3));
-
-        $('span.ds_last_update_time').text(jdata.ds_last_update_time);
-        $('span.node_last_update_time').text(jdata.node_last_update_time);
+        $.getJSON("/api/get_weather_arso_data/{{ back_period|safe }}", function (jdata) {
+        $('span.humidity_average').text(jdata.humidity_average);
+        $('span.sun_radiance_average').text(jdata.sun_radiance_average.toFixed(3));
+        $('span.temperature_average').text(jdata.temperature_average.toFixed(3));
+        $('span.humidity_last_reading').text(jdata.humidity_last_reading.toFixed(3));
+        $('span.sun_radiance_last_reading').text(jdata.sun_radiance_last_reading.toFixed(3));
+        $('span.temperature_last_reading').text(jdata.temperature_last_reading);
+        $('span.last_update_time').text(jdata.last_update_time);
         var chart = new Highcharts.Chart({
             chart: {
-                renderTo: 'environment_plot',
+                renderTo: 'temp_hum_plot',
                 zoomType: 'x',
                 events: {
                     selection: function(event) {
-                        onZoomHandler(event, 'light_plot');
+                        onZoomHandler(event, 'sun_radiation_plot');
                     }
                 }
             },
             title: {
-                text: 'Room - last ' +
+                text: 'Ljubljana - last ' +
                 jdata.back_period + ' readings ('
-                + jdata.scan_period + 's capture interval)',
+                + jdata.scan_period + 'min capture interval)',
                 x: -20 //center
             },
             xAxis: {
@@ -119,27 +107,22 @@ $(document).ready(function() {
             },
             series: jdata.data
         });
-        });
 
-
-    $.getJSON("/api/get_light_data/{{ back_period|safe }}", function (jdata) {
-        $('span.node_ldr_average_light').text(jdata.node_ldr_average_light.toFixed(3));
-        $('span.node_ldr_last_light').text(jdata.node_ldr_last_light.toFixed(3));
-        var chart = new Highcharts.Chart({
+            var chart2 = new Highcharts.Chart({
             chart: {
-                renderTo: 'light_plot',
+                renderTo: 'sun_radiation_plot',
                 zoomType: 'x',
                 events: {
                 selection: function(event) {
-                    onZoomHandler(event, 'environment_plot');
+                    onZoomHandler(event, 'temp_hum_plot');
                 }
             }
 
 					},
                     title: {
-                        text: 'Room light level - last ' +
+                        text: 'Sun Radiation - last ' +
                         jdata.back_period + ' readings ('
-                        + jdata.scan_period + 's capture interval)',
+                        + jdata.scan_period + 'min capture interval)',
                         x: -20 //center
                     },
                     xAxis: {
@@ -147,7 +130,7 @@ $(document).ready(function() {
                     },
                     yAxis: {
                         title: {
-                            text: 'Light level [e]'
+                            text: 'Radiation [W/m2]'
                         },
                         plotLines: [{
                             value: 0,
@@ -157,7 +140,7 @@ $(document).ready(function() {
                         min: 0
                     },
                     tooltip: {
-                        valueSuffix: 'e'
+                        valueSuffix: 'W/m2'
                     },
                     plotOptions: {
                         line: {
@@ -166,9 +149,10 @@ $(document).ready(function() {
                             }
                         }
                     },
-                    series: jdata.data
+                    series: jdata.sun_radiance_data
                 });
-            });
+
+        });
 
 
     function onZoomHandler(event, chartToUpdate)
