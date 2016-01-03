@@ -10,8 +10,6 @@ import datetime
 from collections import namedtuple
 from sqlalchemy import func
 
-from pprint import pprint
-
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
@@ -334,7 +332,6 @@ def get_heat_consumption_data(sensor_id=None):
               "sum_consumption": consumption_data,
               "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
               }
-    pprint(series)
     return jsonify(**series)
 
 

@@ -12,43 +12,49 @@
         </div>
         <div class="col-sm-6">
             <h3 style="color: #009900">Weather</h3>
-            Weather info updated on {{ weather_1.valid }}<br />
-            *Radar info update on <span class="radar_updated_text">test3</span>
+            Weather info updated on <span id="valid">Updating...</span><br />
+            *Radar info update on <span class="radar_updated_text">Updating...</span>
             <div style="border: 1px solid black; border-radius: 10px">
             <div class="row">
+
                 <div class="col-sm-3 text-center">
-                    <img src="{{ weather_1.clouds }}" alt="Clear sky">
+                    <img id="clouds" src="" alt="Clear sky">
                 </div>
+
                 <div class="col-sm-3 text-center">
                     Temperature<br>
-                    <b>{{ weather_1.temperature | float | round(2) }} °C</b>
+                    <b><span id="temperature">Updating...</span> °C</b>
                 </div>
+
                 <div class="col-sm-3 text-center">
                     Humidity<br>
-                    <b>{{ weather_1.humidity | float | round(2) }} %</b>
+                    <b><span id="humidity">Updating...</span> %</b>
                 </div>
+
                 <div class="col-sm-3 text-center">
                     Rain level*<br>
-                    <b><span class="rain_level">test</span></b>
-                    <b>(<span class="rain_mmph">test3,2</span> mm/h)</b>
+                    <b><span class="rain_level">Updating...</span></b>
+                    <b>(<span class="rain_mmph">Updating...</span> mm/h)</b>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-3 text-center">
                     Wind direction<br>
-                    <img src="{{ weather_1.wind_direction }}">
+                    <img id="wind_direction" src="" alt="No wind">
                 </div>
+
                 <div class="col-sm-3 text-center">
                     Wind speed<br>
-                    <b>{{ weather_1.wind_speed | float | round(2) }} km/h</b>
+                    <b><span id="wind_speed">Updating...</span> km/h</b>
                 </div>
+
                 <div class="col-sm-3 text-center">
-                    Wind gusts speed<br>
-                    <b>{{ weather_1.wind_gust_speed | float | round(2) }} km/h</b>
+                    Air pressure<br>
+                    <b><span id="air_pressure">Updating...</span> hPa</b>
                 </div>
                 <div class="col-sm-3 text-center">
                     Sun radiance<br>
-                    <b>{{ weather_1.sun_radiation | float | round(2) }} W/m2</b>
+                    <b><span id="sun_radiance">Updating...</span> W/m2</b>
                 </div>
             </div>
             </div>
@@ -93,6 +99,22 @@ $(document).ready(function() {
         $('span.n_all_active_nodes').text(jdata.network.n_all_active_nodes);
         $('span.n_up_nodes').text(jdata.network.n_all_up_nodes);
 
+
+    });
+
+    $.getJSON('/api/arso_weather_summary', function (jdata) {
+        //$('#clouds').text(jdata.weather_1.clouds);
+        $('#clouds').attr('src', jdata.weather_1.clouds);
+
+        $('#temperature').text(jdata.weather_1.temperature);
+        $('#humidity').text(jdata.weather_1.humidity);
+
+        $('#wind_direction').attr('src', jdata.weather_1.wind_direction);
+
+        $('#wind_speed').text(jdata.weather_1.wind_speed);
+        $('#sun_radiance').text(jdata.weather_1.sun_radiation);
+        $('#air_pressure').text(jdata.weather_1.air_pressure)
+        $('#valid').text(jdata.weather_1.valid)
 
     });
 });

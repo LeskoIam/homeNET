@@ -6,6 +6,8 @@ import requests
 from collections import namedtuple
 from BeautifulSoup import BeautifulSoup
 
+from pprint import pprint
+
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
@@ -17,12 +19,8 @@ blueprint = Blueprint('aggregator_blueprint', __name__, template_folder='templat
 
 @blueprint.route("/aggregator")
 def view_aggregator():  # aggregator
-    weather_1 = get_last_location_weather()
-    weather_2 = get_location_weather("Ljubljana")
 
     return render_template("aggregator.html",
-                           weather_1=weather_1,
-                           weather_2=weather_2,
                            page_loc="aggregator")
 
 
@@ -65,6 +63,19 @@ def get_network_summary():
             "n_all_up_nodes": n_all_up_nodes
         }
     }
+    return jsonify(data)
+
+
+@blueprint.route("/api/arso_weather_summary")
+def arso_weather_summary():
+    weather_1 = get_last_location_weather()
+    weather_2 = get_location_weather("Ljubljana")
+
+    data = {
+        "weather_1": weather_1,
+        "weather_2": weather_2
+    }
+    pprint(data)
     return jsonify(data)
 
 
