@@ -10,6 +10,8 @@ import datetime
 from collections import namedtuple
 from sqlalchemy import func
 
+from pprint import pprint
+
 __author__ = 'Lesko'
 # Documentation is like sex.
 # When it's good, it's very good.
@@ -235,7 +237,7 @@ def get_water_consumption_data(sensor_id=None):
     consumption_data = [
         {
             "name": "Sum",
-            "data": sum_cons_,
+            "data": sum_cons_[::-1],
             "lineWidth": 5
         }]
 
@@ -256,7 +258,7 @@ def get_water_consumption_data(sensor_id=None):
 
         consumption_data.append({
             "name": " ".join(row.sensor_type.split(" ")[0:2]).capitalize(),
-            "data": node_cons_
+            "data": node_cons_[::-1]
         })
 
     timestamp_str = per_node_consumption[0].date_time
@@ -302,7 +304,7 @@ def get_heat_consumption_data(sensor_id=None):
     consumption_data = [
         {
             "name": "Sum",
-            "data": sum_cons_,
+            "data": sum_cons_[::-1],
             "lineWidth": 5
         }]
 
@@ -324,7 +326,7 @@ def get_heat_consumption_data(sensor_id=None):
 
         consumption_data.append({
             "name": row.location.capitalize(),
-            "data": node_cons_
+            "data": node_cons_[::-1]
         })
 
     timestamp_str = per_node_consumption[0].date_time
@@ -332,6 +334,7 @@ def get_heat_consumption_data(sensor_id=None):
               "sum_consumption": consumption_data,
               "last_update_time": datetime.datetime.strftime(timestamp_str, "%d.%m.%Y %H:%M:%S")
               }
+    pprint(series)
     return jsonify(**series)
 
 
