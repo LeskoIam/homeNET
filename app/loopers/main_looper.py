@@ -270,7 +270,7 @@ def main_looper(engine):
 
 
 if __name__ == '__main__':
-    eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.53/homeNET')
+    eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.99/homeNET')
     main_looper(eng)
     # arso_weather(eng)
 

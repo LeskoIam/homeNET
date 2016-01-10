@@ -10,7 +10,7 @@ __author__ = 'Lesko'
 # When it lies to you, it may be a while before you realize something's wrong.
 
 sensor = W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, "0000073c6f1f")
-eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.53/homeNET')
+eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.99/homeNET')
 
 while "pigs" != "fly":
     with eng.connect() as con:

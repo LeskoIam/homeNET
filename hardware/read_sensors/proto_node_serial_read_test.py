@@ -115,7 +115,7 @@ def main():
 
 
 def main_to_db():
-    eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.53/homeNET')
+    eng = create_engine('postgresql://lesko:ma19ne99@192.168.1.99/homeNET')
     with eng.connect() as con:
         d = con.execute("SELECT value FROM app_settings WHERE name = 'ENVIRONMENT_SCAN_PERIOD';")
 
