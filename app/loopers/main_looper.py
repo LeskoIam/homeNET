@@ -246,27 +246,36 @@ def main_looper(engine):
     pinger_last_time = time.time()
     arso_last_time = time.time()
     while "pigs" != "fly":
-        time_now = time.time()
-        if (pinger_last_time + pinger_scan_period) < time_now:
-            ping_all(engine)
-            print "\nPinger_scan_period:", pinger_scan_period
-            with engine.connect() as con:
-                # Get pinger scan time
-                d = con.execute("SELECT value FROM app_settings WHERE name = 'PINGER_SCAN_PERIOD';")
-                pinger_scan_period = d.first()
-                pinger_scan_period = float(pinger_scan_period[0])
-            pinger_last_time = time_now
+        try:
+            time_now = time.time()
+            if (pinger_last_time + pinger_scan_period) < time_now:
+                ping_all(engine)
+                print "\nPinger_scan_period:", pinger_scan_period
+                with engine.connect() as con:
+                    # Get pinger scan time
+                    d = con.execute("SELECT value FROM app_settings WHERE name = 'PINGER_SCAN_PERIOD';")
+                    pinger_scan_period = d.first()
+                    pinger_scan_period = float(pinger_scan_period[0])
+                pinger_last_time = time_now
 
-        if (arso_last_time + arso_scan_period) < time_now:
-            arso_weather(engine)
-            print "\nARSO_scan_period:", arso_scan_period
-            with engine.connect() as con:
-                # Get ARSO scan time
-                d = con.execute("SELECT value FROM app_settings WHERE name = 'ARSO_SCAN_PERIOD';")
-                arso_scan_period = d.first()
-                arso_scan_period = float(arso_scan_period[0])
-            arso_last_time = time_now
-    time.sleep(1)
+            if (arso_last_time + arso_scan_period) < time_now:
+                arso_weather(engine)
+                print "\nARSO_scan_period:", arso_scan_period
+                with engine.connect() as con:
+                    # Get ARSO scan time
+                    d = con.execute("SELECT value FROM app_settings WHERE name = 'ARSO_SCAN_PERIOD';")
+                    arso_scan_period = d.first()
+                    arso_scan_period = float(arso_scan_period[0])
+                arso_last_time = time_now
+        except Exception as exc:
+            with open("LOOPER_ERROR.log", "a") as error_log:
+                error_log.write("exc: {0}\nexc.message: {1}\nexc.args: {2}".format(exc,
+                                                                                   exc.message,
+                                                                                   exc.args))
+            print exc
+            print exc.message
+            print exc.args
+        time.sleep(1)
 
 
 if __name__ == '__main__':
